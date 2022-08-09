@@ -22,6 +22,14 @@ volumeSize:
   pyrus-postgresql: 3Gi
   pyrus-logs-pgsql: 3Gi
 
+standalonePostgreSQLBackup:
+  ## required backup values
+  #AWS_ACCESS_KEY_ID: YOURCREDENTIAL  
+  #AWS_SECRET_ACCESS_KEY: YOURCREDENTIAL  
+  #WALG_S3_PREFIX: s3://YOURBACKET/SOMEDIR   
+  ## optional if you use different s3 storage than aws
+  #AWS_ENDPOINT:
+
 ## Standard required installation settings ###################################
 pyrusSetupParam:
   adminEmail: YOURADMINEMAIL

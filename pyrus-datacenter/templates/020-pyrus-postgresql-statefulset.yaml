@@ -39,6 +39,11 @@ spec:
             timeoutSeconds: 10
             successThreshold: 1
             failureThreshold: 10
+          env:
+          {{- range $ci, $cv := .Values.standalonePostgreSQLBackup }}
+            - name: {{ $ci }}
+              value: {{ $cv }}
+          {{- end }}
           readinessProbe:
             exec:
               command:
