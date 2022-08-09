@@ -1,0 +1,131 @@
+root:
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/affinity-mode: "persistent"
+    nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
+    nginx.ingress.kubernetes.io/auth-cache-duration: 200 302 60m
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_input_headers "X-IP: $real_ip";
+      
+      if ($http_referer !~ '^https?:\/\/([^\/]+\.)?(webvisor\.com)\/') {
+        more_set_headers "X-Frame-Options: $xfro";
+      }
+      
+      proxy_cache_min_uses 1;
+      add_header X-Proxy-Cache $upstream_cache_status;
+      more_set_headers "Strict-Transport-Security: max-age=15552000";
+            
+      rewrite /login https://$host/signup-or-login permanent;
+      rewrite /create-an-account https://$host/signup-or-login permanent;
+      rewrite /passwordrecovery https://$host/signup-or-login permanent;
+      rewrite /ru/login https://$host/ru/signup-or-login  permanent;
+      rewrite /ru/create-an-account https://$host/ru/signup-or-login  permanent;
+      rewrite /ru/passwordrecovery https://$host/ru/signup-or-login permanent;
+      rewrite /en/login https://$host/en/signup-or-login  permanent;
+      rewrite /en/create-an-account https://$host/en/signup-or-login  permanent;
+      rewrite /en/passwordrecovery https://$host/en/signup-or-login permanent;
+      
+  paths:
+    - path: /
+      pathType: Prefix
+
+avatar:
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers  "Cache-Control: public,max-age=3600";
+  paths:
+    - path: /avatar
+      pathType: Prefix
+
+image-icn-svg:
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers  "Cache-Control: public,max-age=2592000";
+  paths:
+    - path: /images/icn-svg
+      pathType: Prefix
+  mockHeaderTests:
+    - path: /images/icn-svg
+      tests:
+        Try200:
+
+assets:
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/affinity-mode: "balanced"
+    nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
+    nginx.ingress.kubernetes.io/auth-cache-duration: 200 302 60m;
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      expires max;
+      more_set_headers $cache_header;
+      proxy_cache_min_uses 1;
+      add_header X-Proxy-Cache $upstream_cache_status;
+  paths:
+    - path: /assets
+      pathType: Prefix
+
+
+t:
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/affinity-mode: "balanced"
+    nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
+    nginx.ingress.kubernetes.io/auth-cache-duration: 200 302 60m;
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_cache_min_uses 1;
+      add_header X-Proxy-Cache $upstream_cache_status;
+      
+      add_header Strict-Transport-Security "max-age=15552000;";
+  paths:
+    - path: /t
+      pathType: Prefix
+  mockHeaderTests:
+    - path: /t
+      tests:
+        Try200:
+
+v4:
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/affinity-mode: "balanced"
+    nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header X-Proxy-Cache $upstream_cache_status;
+  paths:
+    - path: /api/
+      pathType: Prefix
+    - path: /v4/
+      pathType: Prefix
+
+js-libs-pdfjs:
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      gzip_types application/javascript;
+      expires max;
+  paths:
+    - path: /Js/Libs/pdfjs/
+      pathType: Prefix
+
+js-forms:
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/affinity-mode: "balanced"
+    nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
+  paths:
+    - path: /webwidget/
+      pathType: Prefix
+    - path: /form/
+      pathType: Prefix
+
+metrics:
+  annotations:
+    nginx.ingress.kubernetes.io/whitelist-source-range: 10.8.0.0/24,10.42.0.0/16,10.43.0.0/16
+  paths:
+    - path: /metrics
+      pathType: Prefix
+

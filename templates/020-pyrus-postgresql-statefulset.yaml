@@ -1,0 +1,64 @@
+{{- $cname := "pyrus-postgresql" }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: &name {{ $cname }}
+  labels: &selector
+    app: *name
+spec:
+  selector:
+    matchLabels:
+      app: *name
+  serviceName: *name
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: *name
+    spec:
+      terminationGracePeriodSeconds: 20
+{{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        - name: docker-pyrus-cred
+{{- end }}
+      containers:
+        - name: *name
+          image: simplygoodsoftware/{{ .Values.devPrefix }}pyrus-pgsql-13:latest
+          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          volumeMounts:
+            - name: {{ $cname }}-data
+              mountPath: /var/lib/postgresql/data
+          startupProbe:
+            exec:
+              command:
+                - bash
+                - -ec
+                - 'psql -U pyrusadm -d postgres -c "select 1"'
+            initialDelaySeconds: 25
+            periodSeconds: 10
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 10
+          readinessProbe:
+            exec:
+              command:
+                - bash
+                - -c
+                - |
+                  pg_isready -h ${HOSTNAME}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ $cname }}-data
+      labels:
+        app: *name
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ index .Values.volumeSize $cname }}
+

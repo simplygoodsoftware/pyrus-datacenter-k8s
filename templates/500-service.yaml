@@ -1,0 +1,61 @@
+{{ $vl := .Values }}
+{{ $rl := .Release }}
+{{- range $serviceName, $serviceVal := .Values.headlessServicePorts }}
+{{-    if gt (int (include "pyrus-datacenter.countStrategy" (list $vl $serviceName "replicas" 0))) 0 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $serviceName }}
+  namespace: {{ $rl.Namespace }}
+  labels:
+    app: {{ $serviceName }}
+    {{- if (index $vl.pyrusMetrics $serviceName) }}
+    pyrus-metrics: "true"
+    {{- end }}
+spec:
+  clusterIP: None
+  ports:
+    {{- range $key, $port := $serviceVal }}
+    - name: {{ $serviceName }}-{{ $port }}
+      port: {{ $port }}
+      protocol: TCP
+    {{- end }}
+  selector:
+    app: {{ $serviceName }}
+{{-    end }}
+{{- end }}
+{{- range $serviceName, $serviceVal := .Values.clusterIpServicePorts }}
+{{-    if gt (int (include "pyrus-datacenter.countStrategy" (list $vl $serviceName "replicas" 0))) 0 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $serviceName }}
+  namespace: {{ $rl.Namespace }}
+  labels:
+    app: {{ $serviceName }}
+    {{- if (index $vl.pyrusMetrics $serviceName) }}
+    pyrus-metrics: "true"
+    {{- end }}
+spec:
+  ports:
+    {{- range $key, $port := $serviceVal }}
+    {{-   if contains ":" ($port | toString) }}
+      {{- $portsForward := ( split ":" $port ) }}
+    - name: {{ $serviceName }}-{{ $portsForward._0 }}-{{ $portsForward._1 }}
+      port: {{ $portsForward._0 }}
+      targetPort: {{ $portsForward._1 }}
+    {{-   else }}
+    - name: {{ $serviceName }}-{{ $port }}
+      port: {{ $port }}
+    {{-   end }}
+      protocol: TCP
+    {{- end }}
+  selector:
+    app: {{ $serviceName }}
+{{- if hasKey $vl.internalTrafficPolicy $serviceName }}
+  internalTrafficPolicy: {{ index $vl.internalTrafficPolicy $serviceName }}
+{{-    end }}
+{{-    end }}
+{{- end }}

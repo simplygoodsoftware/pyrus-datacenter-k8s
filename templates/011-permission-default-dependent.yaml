@@ -1,0 +1,36 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pyrus-start-orders
+rules:
+  - apiGroups:
+        - ""
+    resources:
+      - endpoints
+    verbs:
+      - get
+      - watch
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+      - jobs/status
+    resourceNames:
+      - set-pyrus-setupparam
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pyrus-setup-status
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pyrus-start-orders
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: {{ .Release.Namespace }}

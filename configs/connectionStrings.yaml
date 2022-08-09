@@ -1,0 +1,28 @@
+MAIN_CONN_STRING: >-
+      {
+          "ConnectionName": "default",
+          "ConnectionString": "Server=pyrus-postgresql;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrusdb;",
+          "DatabaseEngine": "Postgres",
+          "DatabaseType": "Data"
+      }
+FILES_CONN_STRING: >-
+      {
+          "ConnectionName": "files",
+          "ConnectionString": "Server=pyrus-postgresql;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrusdb;",
+          "DatabaseEngine": "Postgres",
+          "DatabaseType": "Files"
+      }
+PRIVATE_LOGS_CONN_STRING: >-
+      {
+          "ConnectionName": "privateLogs",
+          "ConnectionString": "Server=pyrus-logs-pgsql;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrus_logs;",
+          "DatabaseEngine": "Postgres",
+          "DatabaseType": "PrivateLogs"
+      }
+PUBLIC_LOGS_CONN_STRING: >-
+      {
+          "ConnectionName": "publicLogs",
+          "ConnectionString": "Server=pyrus-logs-pgsql;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrus_logs;",
+          "DatabaseEngine": "Postgres",
+          "DatabaseType": "PublicLogs"
+      }

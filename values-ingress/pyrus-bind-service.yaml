@@ -1,0 +1,16 @@
+push-webwidgetpush-qrcode:
+  annotations:
+    nginx.ingress.kubernetes.io/location-snippet: |
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade websocket;
+      proxy_set_header Connection "upgrade";
+  paths:
+    - path: /bind
+      pathType: Prefix
+
+metrics:
+  annotations:
+    nginx.ingress.kubernetes.io/whitelist-source-range: 10.8.0.0/24,10.42.0.0/16,10.43.0.0/16
+  paths:
+    - path: /bind/metrics
+      pathType: Prefix

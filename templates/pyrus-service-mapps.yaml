@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pyrus-elastic
+spec:
+  clusterIP: None
+  internalTrafficPolicy: Cluster
+  ports:
+  - name: elasticsearch
+    port: 9200
+    protocol: TCP
+    targetPort: 9200
+  selector:
+    app: elasticsearch-master
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pyrus-nats
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+  - name: nats-clients
+    port: 4222
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: nats
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pyrus-postgresql
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+  - name: postgresql
+    port: 5432
+    protocol: TCP
+  selector:
+    app: pyrus-postgresql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pyrus-logs-pgsql
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+  - name: postgresql
+    port: 5432
+    protocol: TCP
+  selector:
+    app: pyrus-logs-pgsql

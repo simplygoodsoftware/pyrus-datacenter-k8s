@@ -1,0 +1,20 @@
+{{ $rl := .Release }}
+{{ $vl := .Values }}
+{{- range $serviceName, $values := .Values.pyrusMetrics }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $serviceName }}-metrics
+  namespace: {{ $rl.Namespace }}
+  labels:
+    app: {{ $serviceName }}
+    prometheus.io/scrape: "true"
+spec:
+  ports:
+    - name: metrics
+      port: {{ $values }}
+      protocol: TCP
+  selector:
+    app: {{ $serviceName }}
+{{- end }}

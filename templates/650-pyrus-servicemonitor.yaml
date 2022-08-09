@@ -1,0 +1,27 @@
+{{- $rl := .Release }}
+{{- if lt (len .Values.pyrusMetrics) 0  }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: prometheus-kube-{{ $rl.Name }}-pyrus
+  labels:
+    app: kube-{{ $rl.Name }}-stack-kube-pyrus
+    release: {{ $rl.Name }}
+spec:
+  endpoints:
+    - interval: 30s
+      port: metrics
+      scheme: http
+      relabelings:
+        - sourceLabels:
+          - __meta_kubernetes_pod_node_name
+          - __meta_kubernetes_pod_name
+          targetLabel: instance
+  namespaceSelector:
+    matchNames:
+    - {{ $rl.Namespace }}
+  selector:
+    matchLabels:
+      prometheus.io/scrape: "true"
+{{- end }}

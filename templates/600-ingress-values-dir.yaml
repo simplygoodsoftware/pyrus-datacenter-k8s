@@ -1,0 +1,57 @@
+{{- $vl := .Values }}
+{{- $rl := .Release }}
+{{- $VlvalueIngressDir := (index $vl "values-ingress-dir") }}
+{{- range $pathTargetFile, $asd :=  .Files.Glob  "values-ingress/*.yaml" }}
+{{-   $currentService := regexReplaceAll ".*/([^/]+)\\.y.?ml$" $pathTargetFile "${1}" }}
+{{-   $ValuesIngressDir := $.Files.Get $pathTargetFile | fromYaml }}
+{{-   range $ingressName, $ingressValue := $ValuesIngressDir }}
+{{-     $targetTls := coalesce $ingressValue.tls $VlvalueIngressDir.tls }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "selectIngressDc" (list $vl $rl) }}-{{ $currentService }}-{{ $ingressName }}
+  annotations:
+    kubernetes.io/ingress.class: {{ include "selectIngressDc" (list $vl $rl) }}
+    forceUpdateByHelmRevision: "{{ $rl.Revision }}"
+    checkRelease: "{{ include "selectIngressDc" (list $vl $rl) }}"
+{{-     if hasKey $VlvalueIngressDir "annotations" }}
+    {{- toYaml $VlvalueIngressDir.annotations | nindent 4 }}
+{{-     end }}
+{{- if hasKey (index $vl "values-ingress-dir") "addoneSnippetFromFile" }}
+{{- include "pyrus-prod.mergeAnnotationFromFile" (list $ingressValue $VlvalueIngressDir $ $currentService) | indent 4 }}
+{{- end }}
+  labels:
+    ingressClass: {{ include "selectIngressDc" (list $vl $rl) }}
+    ingressRevision: "{{ $rl.Revision }}"
+spec:
+  #ingressClassName: {{ include "selectIngressDc" (list $vl $rl) }}
+{{-     if and $targetTls (not .withoutTls) }}
+  tls:
+{{-       range $targetTls }}
+    - hosts:
+{{-         range .hosts }}
+        - {{ . }}
+{{-         end }}
+      secretName: {{ coalesce .secretName (index $vl "values-ingress-dir").secretNameDefault }}
+{{-       end }}
+{{-     end }}
+  rules:
+{{-     range (coalesce .withoutTls $targetTls) }}
+{{-       range .hosts }}
+  - host: {{ . }}
+    http:
+      paths:
+{{-         range $ingressValue.paths }}
+      - path: {{ .path }}
+        pathType: {{ .pathType }}
+        backend:
+          service:
+            name: {{ $currentService }}
+            port:
+              number: 80
+{{-         end }}
+{{-       end }}
+{{-     end }}
+{{-   end }}
+{{- end }}

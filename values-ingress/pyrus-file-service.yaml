@@ -1,0 +1,25 @@
+v4-files-download:
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      rewrite /v4/files/download/([0-9]+) /services/attachment?id=$1 break;
+      add_header X-Proxy-Cache $upstream_cache_status;
+  paths:
+    - path: /v4/files/download
+      pathType: Prefix
+    - path: /services/attachment
+      pathType: Prefix
+
+service-upload:
+  paths:
+    - path: /services/upload
+      pathType: Prefix
+    - path: /v4/files/upload
+      pathType: Prefix
+    - path: /api/v4/files/upload
+      pathType: Prefix
+    - path: /services/preview
+      pathType: Prefix
+    - path: /services/viewtxt
+      pathType: Prefix
+    - path: /restapi/upload
+      pathType: Prefix

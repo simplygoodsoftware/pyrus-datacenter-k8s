@@ -1,0 +1,471 @@
+importWebSecrets:
+  - YOURDOMAIN.COM
+
+## kubernetes.io/ingress.class=nginx
+forceIngressClass: nginx
+
+#### !!! Pyrus will work only with the first domain name !!! ######################
+values-ingress-dir:
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  addoneSnippetFromFileExclude:
+    help-pyrus-com: "anyval"
+  addoneSnippetFromFile:
+    nginx.ingress.kubernetes.io/configuration-snippet: configs/ingress-https-redirect.cfg
+  secretNameDefault: YOURDOMAIN.COM
+  tls:
+    - hosts:
+        - YOURDOMAIN.COM
+
+## Legacy volume size settings ################################################
+volumeSize:
+  pyrus-postgresql: 3Gi
+  pyrus-logs-pgsql: 3Gi
+
+## Standard required installation settings ###################################
+pyrusSetupParam:
+  adminEmail: YOURADMINEMAIL
+  adminPass: YOURADMINEPASSWORD
+  license: YOURLICENSE
+
+## Advanced settings
+
+imagePullSecrets:
+containersRepo: 
+  default: simplygoodsoftware
+
+tagsContainers:
+  All: 1.3.3
+
+## Nats settings ##############################################################
+nats:
+  enabled: true
+  cluster:
+    enabled: true
+    replicas: 3
+
+  nats:
+    limits:
+      maxPayload: "2000000"
+      tls:
+        allow_non_tls: true
+
+    logging:
+      debug: "false"
+      trace: "false"
+      logtime: "false"
+
+  auth:
+    enabled: false
+
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+       - topologyKey: kubernetes.io/hostname
+         labelSelector:
+           matchExpressions:
+             - key: app.kubernetes.io/name
+               operator: In
+               values:
+                 - nats
+  #  nodeAffinity:
+  #    requiredDuringSchedulingIgnoredDuringExecution:
+  #      nodeSelectorTerms:
+  #      - matchExpressions:
+  #        - key: "node-role.kubernetes.io/nats"
+  #          operator: Exists
+
+
+## Elasticsearch settings #####################################################
+elasticsearch:
+  esJavaOpts: "-Xms1g -Xmx1g"
+  image: "simplygoodsoftware/elastic-selfhosted"
+  imageTag: "7.13.4-ha"
+  clusterHealthCheckParams: "wait_for_status=green&timeout=30s"
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "60"
+      memory: "200Gi"
+  extraEnvs:
+    - name: cluster.name
+      value: docker-cluster
+    - name: indices.recovery.max_bytes_per_sec
+      value: "600mb"
+    - name: indices.fielddata.cache.size
+      value: "40%"
+    - name: indices.breaker.fielddata.limit
+      value: "40%"
+    - name: indices.breaker.request.limit
+      value: "60%"
+    - name: script.max_compilations_rate
+      value: "100/1m"
+  affinity:
+  #  requiredDuringSchedulingIgnoredDuringExecution:
+  #    nodeSelectorTerms:
+  #    - matchExpressions:
+  #      - key: "node-role.kubernetes.io/elasticsearch"
+  #        operator: Exists
+
+## Pyrus Settings #############################################################
+
+## future_gates, do not use it in current version
+internalTrafficPolicy: {}
+  #pyrus-web-api: Local
+  #pyrus-file-service: Local
+  #pyrus-bind-service: Local
+
+## Uncomment next values if you have kind: ServiceMonitors
+pyrusMetrics: {}
+  #pyrus-identity-server: 80
+  #pyrus-bind-service: 80
+  #pyrus-web-api: 80
+  #pyrus-notification-service: 80
+  #pyrus-async-worker: 80
+  #pyrus-file-service: 18888
+  #pyrus-schedule-to-today: 80
+  #pyrus-mail-reader: 80
+  #pyrus-mail-sender: 80
+
+nodeSelector: {}
+
+tolerations: {}
+affinity:
+  pyrus-web-api:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - web-api
+            topologyKey: "kubernetes.io/hostname"
+
+resources:
+  pyrus-notification-service: default
+  pyrus-mail-sender: default
+  pyrus-mail-reader: default
+  pyrus-bind-service: default
+  pyrus-file-service: default
+  pyrus-identity-server: default
+  pyrus-web-api: default
+  pyrus-schedule-to-today: default
+  pyrus-async-worker:  default
+
+## Deep settings of Pyrus #####################################################
+defaults:
+  countStrategy:
+    replicas: 3
+    maxSurge: 0
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 5
+      memory: 8Gi
+  startupProbe:
+    httpGet:
+      path: /health/ready
+      port: 80
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 10
+    successThreshold: 1
+    failureThreshold: 120
+  livenessProbe:
+    httpGet:
+      path: /health/ready
+      port: 80
+    initialDelaySeconds: 180
+    periodSeconds: 6
+    timeoutSeconds: 6
+    successThreshold: 1
+    failureThreshold: 10
+  readinessProbe:
+    httpGet:
+      path: /health/ready
+      port: 80
+    initialDelaySeconds: 30
+    periodSeconds: 3
+    timeoutSeconds: 3
+    successThreshold: 1
+    failureThreshold: 3
+
+countStrategy:
+  pyrus-identity-server:
+    replicas: 2
+    maxSurge: 0
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+  pyrus-bind-service:
+    replicas: 2
+    maxSurge: 0
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+  pyrus-notification-service:
+    replicas: 2
+    maxSurge: 0
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+  pyrus-mail-reader:
+    replicas: 2
+    maxSurge: 0
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+  pyrus-mail-sender:
+    replicas: 2
+    maxSurge: 0
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+  pyrus-web-api:
+    replicas: 3
+    maxSurge: 0
+    maxUnavailable: 2
+    revisionHistoryLimit: 2
+  pyrus-async-worker:
+    replicas: 2
+    maxSurge: 1
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+  pyrus-file-service:
+    replicas: 3
+    maxSurge: 0
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+  pyrus-schedule-to-today:
+    replicas: 1
+    maxSurge: 0
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+  pyrus-smtp:
+    replicas: 1
+    maxSurge: 0
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+  pyrus-preview-generator:
+    replicas: 3
+    maxSurge: 0
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+
+startupProbe:
+  pyrus-mail-reader: default
+  pyrus-identity-server: default
+  pyrus-mail-reader: default
+  pyrus-mail-sender: default
+  pyrus-notification-service: default
+  pyrus-bind-service: default
+  pyrus-web-api:
+    httpGet:
+      path: /health/ready
+      port: 80
+    initialDelaySeconds: 180
+    periodSeconds: 30
+    timeoutSeconds: 10
+    successThreshold: 1
+    failureThreshold: 180
+  pyrus-file-service:
+    httpGet:
+      path: /health/ready
+      port: 18888
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 10
+    successThreshold: 1
+    failureThreshold: 60
+  pyrus-schedule-to-today:
+    httpGet:
+      path: /health/ready
+      port: 80
+    initialDelaySeconds: 180
+    periodSeconds: 10
+    timeoutSeconds: 10
+    successThreshold: 1
+    failureThreshold: 120
+
+livenessProbe:
+  pyrus-mail-reader: default
+  pyrus-identity-server: default
+  pyrus-mail-reader: default
+  pyrus-mail-sender: default
+  pyrus-notification-service: default
+  pyrus-bind-service: default
+  pyrus-web-api:
+    httpGet:
+      path: /health/ready
+      port: 80
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 10
+    successThreshold: 1
+    failureThreshold: 100
+  pyrus-file-service:
+    httpGet:
+      path: /health/ready
+      port: 18888
+    initialDelaySeconds: 20
+    periodSeconds: 6
+    timeoutSeconds: 6
+    successThreshold: 1
+    failureThreshold: 10
+  pyrus-schedule-to-today:
+    httpGet:
+      path: /health/ready
+      port: 80
+    initialDelaySeconds: 180
+    periodSeconds: 10
+    timeoutSeconds: 10
+    successThreshold: 1
+    failureThreshold: 25
+
+readinessProbe:
+  pyrus-identity-server: default
+  pyrus-mail-reader: default
+  pyrus-mail-sender: default
+  pyrus-notification-service: default
+  pyrus-bind-service:
+    httpGet:
+      path: /health/ready
+      port: 80
+    initialDelaySeconds: 30
+    periodSeconds: 1
+    timeoutSeconds: 1
+    successThreshold: 5
+    failureThreshold: 3
+  pyrus-web-api:
+    httpGet:
+      path: /health/ready
+      port: 80
+    initialDelaySeconds: 30
+    periodSeconds: 1
+    timeoutSeconds: 1
+    successThreshold: 7
+    failureThreshold: 7
+  pyrus-file-service:
+    httpGet:
+      path: /health/ready
+      port: 18888
+    initialDelaySeconds: 30
+    periodSeconds: 1
+    timeoutSeconds: 1
+    successThreshold: 5
+    failureThreshold: 3
+
+clusterIpServicePorts:
+  pyrus-identity-server: [ 80 ]
+  pyrus-bind-service: [ 80 ]
+  pyrus-web-api: [ 80 ]
+  pyrus-file-service: [ "80:18888", "18888:18888" ]
+  pyrus-notification-service: [ "80" ]
+  pyrus-async-worker: [ "80" ]
+  pyrus-smtp: [ 25 ]
+  pyrus-nats: [ 4222 ]
+
+## Deeper Pyrus settings #################################################
+env:
+  pyrus-notification-service:
+    - name: GcmPushBrokerOptions__PyrusWorkersCount
+      value: "3"
+  pyrus-identity-server:
+    - name: APPLICATION_NAME
+      value: identity-server
+  pyrus-mail-reader:
+    - name: APPLICATION_NAME
+      value: mail-reader
+    - name: MAILREADER_ENVIRONMENT
+      value: Production
+  pyrus-mail-sender:
+    - name: APPLICATION_NAME
+      value: mail-sender
+  pyrus-bind-service:
+    - name: APPLICATION_NAME
+      value: bind-service
+    - name: HOST
+      value: bind
+  pyrus-web-api:
+    - name: APPLICATION_NAME
+      value: web-api
+  pyrus-file-service:
+    - name: APPLICATION_NAME
+      value: file-service
+  pyrus-async-worker:
+    - name: APPLICATION_NAME
+      value: async-worker
+  pyrus-schedule-to-today:
+    - name: APPLICATION_NAME
+      value: schedule-to-today
+  pyrus-preview-generator:
+    - name: APPLICATION_NAME
+      value: preview-generator
+    - name: ALL_IMAGES_COUNT
+      value: "3"
+
+imageDevPrefix:
+installationType: dc
+pullPolicy: IfNotPresent
+
+deployDefaultTemplate:
+  pyrus-identity-server: {}
+  pyrus-notification-service: {}
+  pyrus-mail-sender: {}
+  pyrus-mail-reader: {}
+  pyrus-bind-service: {}
+  pyrus-web-api: {}
+  pyrus-file-service: {}
+  pyrus-async-worker: {}
+  pyrus-schedule-to-today: {}
+  pyrus-preview-generator: {}
+
+waitEndpoints:
+  WaitOnEnd:
+    - kubectl
+    - wait
+    - --for=condition=complete 
+    - job.batch/set-pyrus-setupparam
+    - --timeout=600s
+  pyrus-preview-generator:
+    - pyrus-postgresql
+    - pyrus-elastic
+    - pyrus-logs-pgsql
+    - pyrus-nats
+  pyrus-identity-server:
+    - pyrus-postgresql
+  pyrus-web-api:
+    - pyrus-postgresql
+    - pyrus-elastic
+    - pyrus-logs-pgsql
+  pyrus-file-service:
+    - pyrus-postgresql
+    - pyrus-elastic
+    - pyrus-logs-pgsql
+    - pyrus-nats
+    - pyrus-identity-server
+  pyrus-bind-service:
+    - pyrus-postgresql
+    - pyrus-logs-pgsql
+    - pyrus-nats
+  pyrus-mail-reader:
+    - pyrus-postgresql
+    - pyrus-elastic
+    - pyrus-logs-pgsql
+    - pyrus-nats
+  pyrus-mail-sender:
+    - pyrus-postgresql
+    - pyrus-elastic
+    - pyrus-logs-pgsql
+    - pyrus-nats
+  pyrus-async-worker:
+    - pyrus-postgresql
+    - pyrus-elastic
+    - pyrus-logs-pgsql
+    - pyrus-nats
+    - pyrus-smtp
+

@@ -1,0 +1,21 @@
+{{- $cname := "pyrus-smtp" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: &name {{ $cname }}
+  labels: &selector
+    app: *name
+spec:
+  selector:
+    matchLabels:
+      app: *name
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: *name
+    spec:
+      containers:
+        - name: *name
+          image: namshi/smtp
+

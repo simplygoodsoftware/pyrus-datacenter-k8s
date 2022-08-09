@@ -1,0 +1,105 @@
+{{ $vl := .Values }}
+{{ $rl := .Release }}
+{{- range $currentService, $currentServiceValue := $vl.deployDefaultTemplate -}}
+{{- $cname := $currentService }}
+{{- $currentDefaultImageValue := (index $vl.deployDefaultTemplate $cname) }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: &name {{ $cname }}
+  labels: &selector
+    app: *name
+spec:
+  selector:
+    matchLabels:
+      app: *name
+  replicas: {{ include "pyrus-datacenter.countStrategy" (list $vl $cname "replicas" 0) }}
+  revisionHistoryLimit: {{ include "pyrus-datacenter.countStrategy" (list $vl $cname "revisionHistoryLimit" 0) }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ include "pyrus-datacenter.countStrategy" (list $vl $cname "maxSurge" 1) }}
+      maxUnavailable: {{ include "pyrus-datacenter.countStrategy" (list $vl $cname "maxUnavailable" 0) }}
+  template:
+    metadata:
+      labels:
+        app: *name
+      annotations:
+        checksum/config: {{ $.Files.Get "configs/connectionStrings.yaml" | sha256sum }}
+    spec:
+{{- if $vl.imagePullSecrets }}
+      imagePullSecrets:
+        - name: docker-pyrus-cred
+{{- end }}
+{{- if or (hasKey $vl.waitEndpoints $cname) (hasKey $vl.waitEndpoints "WaitOnEnd") }}
+      initContainers:
+{{-    if (hasKey $vl.waitEndpoints $cname) }}
+        - name: depends-on
+          image: simplygoodsoftware/k8s-waits
+          imagePullPolicy: IfNotPresent
+          command: 
+            - wait_endpoints
+{{-        range (index $vl.waitEndpoints $cname) }}
+            - {{ $rl.Namespace }}/endpoints/{{ . }}
+{{-        end }}
+{{-    end }}
+{{-    if (hasKey $vl.waitEndpoints "WaitOnEnd") }}
+        - name: wait-setup-variable-complite
+          image: simplygoodsoftware/k8s-waits
+          imagePullPolicy: IfNotPresent
+          command:
+{{-        range $vl.waitEndpoints.WaitOnEnd }}
+            - {{ . }}
+{{-        end }}
+{{-    end }}
+{{- end }}
+      containers:
+        - name: *name
+          image: {{ include "pyrus-image" (list $vl $cname )}}
+          imagePullPolicy: {{ $vl.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          {{- if hasKey $vl.env $currentService }}
+          env:
+            {{- with (index $vl.env $currentService) }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- end  }}
+          {{- include "pyrus-datacenter.part-generator" (list $vl $cname "resources") }}
+          {{- include "pyrus-datacenter.part-generator" (list $vl $cname "startupProbe") }}
+          {{- include "pyrus-datacenter.part-generator" (list $vl $cname "livenessProbe") }}
+          {{- include "pyrus-datacenter.part-generator" (list $vl $cname "readinessProbe") }}
+      {{- with (index $vl.nodeSelector $cname) }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      affinity:
+      {{- range $affinitiName, $affinityValue := (index $vl.affinity $cname) }}
+        {{- if eq $affinitiName "podAntiAffinity" }}
+        podAntiAffinity:
+          {{- if kindIs "string" $affinityValue }}
+            {{- if eq $affinityValue "default" }}
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - *name
+            {{- end }}
+          {{- else }}
+          {{- $affinityValue | toYaml | nindent 12 }}
+          {{- end }}
+        {{ else }}
+        {{ $affinitiName }}:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- with (index $vl.tolerations $cname) }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
