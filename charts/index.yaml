@@ -1,0 +1,24 @@
+apiVersion: v1
+entries:
+  pyrus-datacenter:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2022-08-09T23:22:18.224401698+07:00"
+    dependencies:
+    - condition: nats.enabled
+      name: nats
+      repository: https://nats-io.github.io/k8s/helm/charts/
+      version: 0.12.0
+    description: 'Pyrus datacenter instalation v2 for Kubernetes  ## Install  helm
+      -n pyrus install --dependency-update --create-namespace pyrus-datacenter ./pyrus-datacenter-v2  ##
+      Upgrade helm -n pyrus upgrade pyrus-datacenter ./pyrus-datacenter-v2 --reset-values  ##
+      Uninstall helm -n pyrus uninstall pyrus-datacenter '
+    digest: 72d9981ef1e9010e00299f26e11c70fe0a344b3f1bfa9862b993a644872695ae
+    maintainers:
+    - name: Simply Good Software Inc.
+    name: pyrus-datacenter
+    type: application
+    urls:
+    - https://simplygoodsoftware.github.io/charts/pyrus-datacenter-2.0.0.tgz
+    version: 2.0.0
+generated: "2022-08-09T23:22:18.215636009+07:00"
