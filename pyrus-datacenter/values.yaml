@@ -1,6 +1,3 @@
-importWebSecrets:
-  - YOURDOMAIN.COM
-
 ## kubernetes.io/ingress.class=nginx
 forceIngressClass: nginx
 
@@ -33,7 +30,7 @@ standalonePostgreSQLBackup:
 ## Standard required installation settings ###################################
 pyrusSetupParam:
   adminEmail: YOURADMINEMAIL
-  adminPass: YOURADMINEPASSWORD
+  adminPass: YOURADMINPASSWORD
   license: YOURLICENSE
 
 ## Advanced settings
