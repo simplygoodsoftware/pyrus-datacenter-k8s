@@ -4,10 +4,10 @@ description: |
   Pyrus datacenter instalation v2 for Kubernetes
   
   ## Install 
-  helm -n pyrus install --dependency-update --create-namespace pyrus-datacenter ./pyrus-datacenter-v2
+  helm -n pyrus install --dependency-update --create-namespace pyrus-datacenter ./pyrus-datacenter
   
   ## Upgrade
-  helm -n pyrus upgrade pyrus-datacenter ./pyrus-datacenter-v2 --reset-values
+  helm -n pyrus upgrade pyrus-datacenter ./pyrus-datacenter --reset-values
   
   ## Uninstall
   helm -n pyrus uninstall pyrus-datacenter
@@ -19,7 +19,7 @@ maintainers:
 type: application
 
 ## Helm chart version
-version: 2.0.0
+version: 2.0.1
 
 ## Pyrus default version
 appVersion: "latest"

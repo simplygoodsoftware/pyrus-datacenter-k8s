@@ -9,7 +9,7 @@ values-ingress-dir:
     help-pyrus-com: "anyval"
   addoneSnippetFromFile:
     nginx.ingress.kubernetes.io/configuration-snippet: configs/ingress-https-redirect.cfg
-  secretNameDefault: YOURDOMAIN.COM
+  secretNameDefault: pyrus-ssl
   tls:
     - hosts:
         - YOURDOMAIN.COM
