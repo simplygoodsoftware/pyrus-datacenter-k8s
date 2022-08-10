@@ -51,7 +51,7 @@ values-ingress-dir:
   secretNameDefault: <DOMAIN>
 ```
 
-### Рекомендованные параметры ingress-nginx
+### Параметры Ingress-NGINX
 ```
   allow-backend-server-header: "true"
   allow-snippet-annotations: "true"
