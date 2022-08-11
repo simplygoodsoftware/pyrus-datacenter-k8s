@@ -6,12 +6,6 @@ root:
     nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
     nginx.ingress.kubernetes.io/auth-cache-duration: 200 302 60m
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_input_headers "X-IP: $real_ip";
-      
-      if ($http_referer !~ '^https?:\/\/([^\/]+\.)?(webvisor\.com)\/') {
-        more_set_headers "X-Frame-Options: $xfro";
-      }
-      
       proxy_cache_min_uses 1;
       add_header X-Proxy-Cache $upstream_cache_status;
       more_set_headers "Strict-Transport-Security: max-age=15552000";
