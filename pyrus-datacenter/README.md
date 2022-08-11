@@ -2,7 +2,7 @@
 
 ## Pyrus Datacenter K8S
 Pyrus Datacenter K8S is an on-premise version of Pyrus, distributed as a Helm Chart to be installed in Kubernetes.\
-The system works as a High Availability cluster.\
+The system works as a High Availability cluster.
 
 ## Requirements
 To successfully install Pyrus Datacenter you'll need:
