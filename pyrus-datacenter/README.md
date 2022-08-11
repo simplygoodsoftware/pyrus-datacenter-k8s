@@ -1,40 +1,37 @@
 [![PyrusLogo](https://pyrus.com/images/logo/logo_small_x2.png)](https://pyrus.com)
 
 ## Pyrus Datacenter K8S
-Pyrus Datacenter K8S — безоблачная версия Pyrus, которая поставляется в виде Helm Chart и развёртывается в системе Kubernetes.\
-Платформа поддерживает работу в режиме High Availability.\
-Более подробную информацию о Pyrus Datacenter можно узнать в нашей [справке](https://pyrus.com/ru/help/datacenter).
+Pyrus Datacenter K8S is an on-premise version of Pyrus, distributed as a Helm Chart to be installed in Kubernetes.\
+The system works as a High Availability cluster.\
 
-## Требования
-Для запуска Pyrus Datacenter вам понадобятся:
-* Лицензия Pyrus Datacenter
-* SSL сертификат на выбранное вами доменное имя
-* Логин и пароль учётной записи вашего SMTP сервера, для отправки почтовых сообщений пользователям
+## Requirements
+To successfully install Pyrus Datacenter you'll need:
+* Pyrus Datacenter license
+* SSL certificate for a domain of your choice
+* Login and password for an SMTP server that's going to be needed to send mail to users
   
-## Конфигурация
+## Configuration
 
-В данном разделе описаны необходимые для запуска Pyrus Datacenter параметры установки.
-
-### Версия Pyrus Datacenter
+### Pyrus Datacenter version
 ```
 tagsContainers:
   All: 1.3.3
 ```
 
-### Лицензия
+### License
 ```
 pyrusSetupParam:
   license: <LICENSE>
 ```
 
-### Эл. почта и пароль администратора Pyrus Datacenter
+### E-mail and password for the administrator of Pyrus Datacenter
 ```
 pyrusSetupParam:
   adminEmail: <ADMINEMAIL>
   adminPass: <ADMINPASSWORD>
 ```
 
-### Доменное имя
+### URL
 ```
 values-ingress-dir:
   tls:
@@ -42,13 +39,13 @@ values-ingress-dir:
         - <DOMAIN>
 ```
 
-### SSL сертификат
-Добавьте Kubernetes Secret с данными вашего сертификата
+### SSL certificate
+Add a Kubernetes Secret with your certificate and keys
 ```
 kubectl create secret generic pyrus-ssl --from-file=tls.crt=your_cert.crt --from-file=tls.key=your_key.key
 ```
 
-### Параметры Ingress-NGINX
+### Ingress-NGINX parameters
 ```
   allow-backend-server-header: "true"
   allow-snippet-annotations: "true"
@@ -59,11 +56,11 @@ kubectl create secret generic pyrus-ssl --from-file=tls.crt=your_cert.crt --from
   upstream-keepalive-time: 20m
 ```
 
-## Резервное копирование и восстановление данных
+## Backup and Restore
 
-Pyrus Datacenter поставляется с внутренней СУБД PostgreSQL, используемой для хранения данных.\
-С целью обеспечения сохранности данных реализовано автоматическое резервное копирование на основе [wal-g](https://github.com/wal-g/wal-g), позволяющее выгружать копии в AWS S3 или другое S3-совместимое хранилище.\
-Для работы данного функционала необходимо указать параметры S3:
+Pyrus Datacenter comes with an internal PostgreSQL service, which is used for data storage.\
+To provide contingency measures in case of hardware failure or other disasters, the system comes with an automatic backup procedure based on [wal-g](https://github.com/wal-g/wal-g), which backs everything up to AWS S3 (or any other S3-compliant storages). \
+In order to enable said functionality, you'll need to specify the following S3 parameters:
 
 ```
 standalonePostgreSQLBackup:
@@ -72,17 +69,17 @@ standalonePostgreSQLBackup:
   WALG_S3_PREFIX: s3://<S3BUCKET>/<DIRECTORY>
 ```
 
-При использовании S3-совместимого хранилища, отличного от AWS S3:
+If you want to use an S3 storage other than AWS S3:
 ```
 standalonePostgreSQLBackup:
   AWS_ENDPOINT: <S3_URL>
 ```
 
-### Описание процесса резервного копирования
+### Backup procedure description
 
-Резервное копирование запускается автоматически.\
-Полная резервная копия по умолчанию делается в 01:00 ежедневно.\
-Для изменения периодичности снятия резервной копии, вы можете воспользоваться следующей SQL командой в контейнере PostgreSQL: 
+The backup procedure launches automatically. \
+A full copy is made at 01:00 am every night. \
+To change the schedule of these backups, you can use the following SQL statement inside the PostgreSQL container:
 
 ```
 --                    ┌───────────── min (0 - 59)
@@ -95,31 +92,30 @@ standalonePostgreSQLBackup:
 SELECT cron.schedule('0 1 * * *', $$SELECT backup_manage(RETAIN_FIND_FULL integer, WALG_DELTA_MAX_STEPS integer)$$);
 ```
 
-Параметр *RETAIN_FIND_FULL* указывает количество резервных копий, сохраняемых в S3.\
-По умолчанию - 7 резервных копий.
+*RETAIN_FIND_FULL* tells the system *how many* sequential backups to store.\
+Default value - 7.
  
-Параметр *WALG_DELTA_MAX_STEPS* управляет количеством шагов, на которые дельта-копия максимально отстаёт 
-от полной копии.\
-По умолчанию - 3 шага.
+*WALG_DELTA_MAX_STEPS* manages the amount of steps between a delta-copy and a full copy.\
+Default value - 3.
 
-Все задания можно посмотреть sql командой:
+You can list all scheduled jobs using the following sql command:
 ```
 select * from cron.job;
 ```
 
-### Восстановление из резервной копии
+### Restoring from a backup
 
-Для восстановления резервной копии необходимо указать в **ENVIROMENT** контейнера *pyrus-postgres* имя точки восстановления.\
-Например, для последней точки:
+To restore a backup you need to specify its name in the *pyrus-postgres* environment.\
+For example, using the latest backup:
 ```
 RESTORE_NAME: LATEST
 ```
 
-Список резервных копий можно посмотреть командой:
+You can list all the available backup copies with the following command:
 ```
 wal-g backup-list
 ```
 
-Восстановление из копии начнётся только если директория ${PGDATA} будет пустой.\
-В обратном случае, процесс восстановления будет проигнорирован и система запустится из файлов расположенных в данной директории, либо инициализировать чистую базу при их отсутствии.
+The restoration will only start if the ${PGDATA} directory is empty.\
+Otherwise, the process will be skipped and the system will start using the data located in that directory, or re-initialize from scratch if that's empty.
 
