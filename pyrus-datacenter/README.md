@@ -13,6 +13,8 @@ Pyrus Datacenter K8S — безоблачная версия Pyrus, котора
   
 ## Конфигурация
 
+В данном разделе описаны необходимые для запуска Pyrus Datacenter параметры установки.
+
 ### Версия Pyrus Datacenter
 ```
 tagsContainers:
@@ -43,12 +45,7 @@ values-ingress-dir:
 ### SSL сертификат
 Добавьте Kubernetes Secret с данными вашего сертификата
 ```
-kubectl create secret generic <DOMAIN> --from-file=tls.crt=your_cert.crt --from-file=tls.key=your_key.key
-```
-
-```
-values-ingress-dir:
-  secretNameDefault: <DOMAIN>
+kubectl create secret generic pyrus-ssl --from-file=tls.crt=your_cert.crt --from-file=tls.key=your_key.key
 ```
 
 ### Параметры Ingress-NGINX
