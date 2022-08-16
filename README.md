@@ -22,7 +22,7 @@ helm -n pyrus install pyrus-datacenter              \
   pyrus-datacenter-k8s/pyrus-datacenter             \
   --set pyrusSetupParam.adminEmail=YOURADMINEMAIL   \
   --set pyrusSetupParam.adminPass=YOURADMINPASSWORD \
-  --set pyrusSetupParam.license=LICENSE         \
+  --set pyrusSetupParam.license=LICENSE             \
   --set 'values-ingress-dir.tls[0].hosts[0]=YOURDOMAIN'
 ```
 
