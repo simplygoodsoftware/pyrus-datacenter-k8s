@@ -27,22 +27,6 @@ spec:
             - {{ .Release.Namespace }}/endpoints/pyrus-elastic
             - {{ .Release.Namespace }}/endpoints/pyrus-logs-pgsql
 
-        - name: setup-administrator-account
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
-          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
-          args: [
-            "--create", "--skip",
-            "--email", "{{ .Values.pyrusSetupParam.adminEmail }}",
-            "--adminpassword",  "{{ .Values.pyrusSetupParam.adminPass }}"
-            ]
-
-        - name: start-change-tracking
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
-          imagePullPolicy: IfNotPresent
-          args:
-            - -ct
-            - --start
-
         - name: setup-elastic-index-it
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
@@ -66,6 +50,66 @@ spec:
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           args:
             - -ip
+
+{{- if not (hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME")  }}
+
+        - name: setup-administrator-account
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          args: [
+            "--create", "--skip",
+            "--email", "{{ .Values.pyrusSetupParam.adminEmail }}",
+            "--adminpassword",  "{{ .Values.pyrusSetupParam.adminPass }}"
+            ]
+
+{{- else }}
+
+        - name: setup-administrator-account
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          args: [
+            "--setadmin",
+            "--email", "{{ .Values.pyrusSetupParam.adminEmail }}",
+            "--adminpassword",  "{{ .Values.pyrusSetupParam.adminPass }}"
+            ]
+
+        - name: setup-elastic-index-rt
+          image: simplygoodsoftware/pyrus-elastic-console
+          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          args:
+            - -rt
+
+        - name: setup-elastic-index-wgall
+          image: simplygoodsoftware/pyrus-elastic-console
+          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          args:
+            - -wgall
+
+        - name: setup-elastic-index-wcall
+          image: simplygoodsoftware/pyrus-elastic-console
+          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          args:
+            - -wcall
+
+        - name: setup-elastic-index-wpall
+          image: simplygoodsoftware/pyrus-elastic-console
+          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          args:
+            - -wpall
+
+        - name: setup-elastic-index-wnall
+          image: simplygoodsoftware/pyrus-elastic-console
+          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          args:
+            - -wnall
+{{- end }}
+
+        - name: start-change-tracking
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          imagePullPolicy: IfNotPresent
+          args:
+            - -ct
+            - --start
 
 {{- if .Values.pyrusSetupParam.s3 }}
         - name: setup-s3-storrage-1
