@@ -30,4 +30,8 @@ dependencies:
     repository: "https://nats-io.github.io/k8s/helm/charts/"
     condition: nats.enabled
 
-
+  - name: postgres-operator
+    version: "1.8.2"
+    repository: "https://opensource.zalando.com/postgres-operator/charts/postgres-operator"
+    condition: postgresql.enabledHA
+    alias: postgresql

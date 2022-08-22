@@ -14,10 +14,24 @@ values-ingress-dir:
     - hosts:
         - YOURDOMAIN.COM
 
+postgresqlOwnerCreds:
+  pyrusdb: 
+    name: pyrusadm
+    pass: pyruspwd
+
 ## Legacy volume size settings ################################################
 volumeSize:
   pyrus-postgresql: 3Gi
   pyrus-logs-pgsql: 3Gi
+
+## HA PostgreSQL configurations ###############################################
+postgresql:
+  enabledHA: true
+  postgresql:
+    configGeneral:
+      kubernetes_use_configmaps: true
+      docker_image: registry.opensource.zalan.do/acid/spilo-13:2.1-p1
+
 
 standalonePostgreSQLBackup:
   ## required backup values

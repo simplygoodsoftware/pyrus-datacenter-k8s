@@ -1,0 +1,33 @@
+{{- $vl := .Values }}
+{{- if .Values.postgresql.enabledHA }}
+{{-   range $cname, $cval := $vl.postgresqlOwnerCreds }}
+---
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: pyrus-postgresql
+spec:
+  teamId: pyrus
+  volume:
+    size: 2Gi
+  numberOfInstances: 3
+  users:
+    {{ $cval.name }}:  # database owner
+    - superuser
+    - createdb
+  databases:
+    {{ $cname }}: {{ $cval.name }}  # dbname: owner
+  patroni:
+    pg_hba:
+      - local   all          all                          trust
+      - hostssl all          +zalandos 127.0.0.1/32       pam
+      - host    all          all       127.0.0.1/32       md5
+      - hostssl all          +zalandos ::1/128            pam
+      - local   replication  standby                      trust
+      - hostssl replication  standby   all                md5
+      - hostssl all          +zalandos all                pam
+      - host    all          all       all                md5
+  postgresql:
+    version: "13"
+{{-   end }}
+{{- end }}
