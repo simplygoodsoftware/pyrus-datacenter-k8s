@@ -26,7 +26,7 @@ volumeSize:
 
 ## HA PostgreSQL configurations ###############################################
 postgresql:
-  enabledHA: true
+  enabledHA: false
   postgresql:
     configGeneral:
       kubernetes_use_configmaps: true
