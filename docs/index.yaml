@@ -3,7 +3,32 @@ entries:
   pyrus-datacenter:
   - apiVersion: v2
     appVersion: latest
-    created: "2022-08-16T23:17:39.346690682+07:00"
+    created: "2022-09-01T01:32:26.016269714+07:00"
+    dependencies:
+    - condition: nats.enabled
+      name: nats
+      repository: https://nats-io.github.io/k8s/helm/charts/
+      version: 0.12.0
+    - alias: postgresql
+      condition: postgresql.enabledHA
+      name: postgres-operator
+      repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+      version: 1.8.2
+    description: 'Pyrus datacenter instalation v2 for Kubernetes  ## Install  helm
+      -n pyrus install --dependency-update --create-namespace pyrus-datacenter ./pyrus-datacenter  ##
+      Upgrade helm -n pyrus upgrade pyrus-datacenter ./pyrus-datacenter --reset-values  ##
+      Uninstall helm -n pyrus uninstall pyrus-datacenter '
+    digest: 00cbd3e3ff291efbe421886dc2776bf2fe0909134a54028a6618a3ff838c337f
+    maintainers:
+    - name: Simply Good Software Inc.
+    name: pyrus-datacenter
+    type: application
+    urls:
+    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.3.tgz
+    version: 2.0.3
+  - apiVersion: v2
+    appVersion: latest
+    created: "2022-09-01T01:32:26.010023362+07:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -23,7 +48,7 @@ entries:
     version: 2.0.2
   - apiVersion: v2
     appVersion: latest
-    created: "2022-08-16T23:17:39.332943357+07:00"
+    created: "2022-09-01T01:32:26.002110128+07:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -43,7 +68,7 @@ entries:
     version: 2.0.1
   - apiVersion: v2
     appVersion: latest
-    created: "2022-08-16T23:17:39.32729586+07:00"
+    created: "2022-09-01T01:32:25.994918288+07:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -61,4 +86,4 @@ entries:
     urls:
     - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.0.tgz
     version: 2.0.0
-generated: "2022-08-16T23:17:39.319394274+07:00"
+generated: "2022-09-01T01:32:25.985115768+07:00"

@@ -8,8 +8,9 @@ metadata:
   annotations:
     helm.sh/hook: post-install
     helm.sh/hook-weight: "-5"
-    helm.sh/hook-delete-policy: hook-failed
+    #helm.sh/hook-delete-policy: hook-failed
 spec:
+  activeDeadlineSeconds: 1200
   template:
     spec:
       restartPolicy: OnFailure
@@ -26,6 +27,25 @@ spec:
             - {{ .Release.Namespace }}/endpoints/pyrus-postgresql
             - {{ .Release.Namespace }}/endpoints/pyrus-elastic
             - {{ .Release.Namespace }}/endpoints/pyrus-logs-pgsql
+
+{{- if not (hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME")  }}
+
+        - name: setup-create-db
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          args: [
+            "--create", "--skip",
+            "--email", "{{ .Values.pyrusSetupParam.adminEmail }}",
+            "--adminpassword",  "{{ .Values.pyrusSetupParam.adminPass }}"
+            ]
+{{- end }}
+
+        - name: start-change-tracking
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          imagePullPolicy: IfNotPresent
+          args:
+            - -ct
+            - --start
 
         - name: setup-elastic-index-it
           image: simplygoodsoftware/pyrus-elastic-console
@@ -51,18 +71,7 @@ spec:
           args:
             - -ip
 
-{{- if not (hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME")  }}
-
-        - name: setup-administrator-account
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
-          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
-          args: [
-            "--create", "--skip",
-            "--email", "{{ .Values.pyrusSetupParam.adminEmail }}",
-            "--adminpassword",  "{{ .Values.pyrusSetupParam.adminPass }}"
-            ]
-
-{{- else }}
+{{- if hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME"  }}
 
         - name: setup-administrator-account
           image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
@@ -103,13 +112,6 @@ spec:
           args:
             - -wnall
 {{- end }}
-
-        - name: start-change-tracking
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
-          imagePullPolicy: IfNotPresent
-          args:
-            - -ct
-            - --start
 
 {{- if .Values.pyrusSetupParam.s3 }}
         - name: setup-s3-storrage-1

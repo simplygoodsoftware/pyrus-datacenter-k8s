@@ -2,8 +2,8 @@ dependencies:
 - name: nats
   repository: https://nats-io.github.io/k8s/helm/charts/
   version: 0.12.0
-- name: elasticsearch
-  repository: https://helm.elastic.co/
-  version: 7.17.3
-digest: sha256:03516f0a3aae707f6c8ad0496f99a0a89d46e8f7e80c09a98ab3311438e86094
-generated: "2022-08-04T18:16:54.154296569Z"
+- name: postgres-operator
+  repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+  version: 1.8.2
+digest: sha256:49ac5f6a70a73fb53e1fd5eb79050ed2575ed6716f0bb820d11193d04f9a6746
+generated: "2022-08-19T19:31:03.156364122Z"

@@ -1,0 +1,15 @@
+{{- $vl := .Values }}
+{{- range $cname, $cval := $vl.postgresqlOwnerCreds }}
+apiVersion: v1
+data:
+  username: {{ $cval.name | b64enc }}
+  password: {{ $cval.pass | b64enc }}
+kind: Secret
+metadata:
+  name: {{ $cval.name }}.pyrus-postgresql.credentials.postgresql.acid.zalan.do
+  labels:
+    application: spilo
+    cluster-name: pyrus-postgresql
+    team: pyrus
+type: Opaque
+{{- end  }}
