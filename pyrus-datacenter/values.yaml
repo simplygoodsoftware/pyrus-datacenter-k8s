@@ -33,7 +33,7 @@ postgresql:
       docker_image: registry.opensource.zalan.do/acid/spilo-13:2.1-p1
 
 
-standalonePostgreSQLBackup:
+standalonePostgreSQLBackup: {}
   ## required backup values
   #AWS_ACCESS_KEY_ID: YOURCREDENTIAL  
   #AWS_SECRET_ACCESS_KEY: YOURCREDENTIAL  
