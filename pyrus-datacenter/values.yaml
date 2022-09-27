@@ -54,7 +54,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.3.4
+  All: 1.3.6
 
 ## Nats settings ##############################################################
 nats:
