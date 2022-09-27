@@ -14,6 +14,12 @@ values-ingress-dir:
     - hosts:
         - YOURDOMAIN.COM
 
+database:
+  external: false
+
+preview:
+  external: false
+  
 postgresqlOwnerCreds:
   pyrusdb: 
     name: pyrusadm

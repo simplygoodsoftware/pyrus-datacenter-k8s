@@ -24,7 +24,9 @@ spec:
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           command: 
             - wait_endpoints
+{{- if not .Values.database.external }}
             - {{ .Release.Namespace }}/endpoints/pyrus-postgresql
+{{- end }}
             - {{ .Release.Namespace }}/endpoints/pyrus-elastic
             - {{ .Release.Namespace }}/endpoints/pyrus-logs-pgsql
 

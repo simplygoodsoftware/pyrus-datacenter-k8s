@@ -27,6 +27,7 @@ spec:
     app.kubernetes.io/name: nats
 ---
 {{- if not .Values.postgresql.enabledHA }}
+{{- if not .Values.database.external }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -39,6 +40,7 @@ spec:
     protocol: TCP
   selector:
     app: pyrus-postgresql
+{{- end }}
 {{- end }}
 ---
 apiVersion: v1
