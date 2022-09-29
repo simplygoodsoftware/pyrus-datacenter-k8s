@@ -3,7 +3,32 @@ entries:
   pyrus-datacenter:
   - apiVersion: v2
     appVersion: latest
-    created: "2022-09-06T21:29:34.128046767+07:00"
+    created: "2022-09-27T14:06:50.3918706+03:00"
+    dependencies:
+    - condition: nats.enabled
+      name: nats
+      repository: https://nats-io.github.io/k8s/helm/charts/
+      version: 0.12.0
+    - alias: postgresql
+      condition: postgresql.enabledHA
+      name: postgres-operator
+      repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+      version: 1.8.2
+    description: 'Pyrus datacenter instalation v2 for Kubernetes  ## Install  helm
+      -n pyrus install --dependency-update --create-namespace pyrus-datacenter ./pyrus-datacenter  ##
+      Upgrade helm -n pyrus upgrade pyrus-datacenter ./pyrus-datacenter --reset-values  ##
+      Uninstall helm -n pyrus uninstall pyrus-datacenter '
+    digest: 8db3451777dbeb006193bfb1b06838e88051e609776ed612103f6bed69b61030
+    maintainers:
+    - name: Simply Good Software Inc.
+    name: pyrus-datacenter
+    type: application
+    urls:
+    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.6.tgz
+    version: 2.0.6
+  - apiVersion: v2
+    appVersion: latest
+    created: "2022-09-27T14:06:50.3849836+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -28,7 +53,7 @@ entries:
     version: 2.0.5
   - apiVersion: v2
     appVersion: latest
-    created: "2022-09-06T21:29:34.122065995+07:00"
+    created: "2022-09-27T14:06:50.3792545+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -53,7 +78,7 @@ entries:
     version: 2.0.4
   - apiVersion: v2
     appVersion: latest
-    created: "2022-09-06T21:29:34.11471913+07:00"
+    created: "2022-09-27T14:06:50.3729074+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -78,7 +103,7 @@ entries:
     version: 2.0.3
   - apiVersion: v2
     appVersion: latest
-    created: "2022-09-06T21:29:34.108574968+07:00"
+    created: "2022-09-27T14:06:50.366705+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -98,7 +123,7 @@ entries:
     version: 2.0.2
   - apiVersion: v2
     appVersion: latest
-    created: "2022-09-06T21:29:34.100996276+07:00"
+    created: "2022-09-27T14:06:50.3620321+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -118,7 +143,7 @@ entries:
     version: 2.0.1
   - apiVersion: v2
     appVersion: latest
-    created: "2022-09-06T21:29:34.095858536+07:00"
+    created: "2022-09-27T14:06:50.356201+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -136,4 +161,4 @@ entries:
     urls:
     - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.0.tgz
     version: 2.0.0
-generated: "2022-09-06T21:29:34.088633332+07:00"
+generated: "2022-09-27T14:06:50.3512417+03:00"
