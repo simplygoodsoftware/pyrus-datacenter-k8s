@@ -29,7 +29,8 @@ spec:
 {{- end }}
             - {{ .Release.Namespace }}/endpoints/pyrus-elastic
             - {{ .Release.Namespace }}/endpoints/pyrus-logs-pgsql
-
+            
+{{- if not .Values.database.external }}
 {{- if not (hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME")  }}
 
         - name: setup-create-db
@@ -48,6 +49,8 @@ spec:
           args:
             - -ct
             - --start
+            
+{{- end }}
 
         - name: setup-elastic-index-it
           image: simplygoodsoftware/pyrus-elastic-console
