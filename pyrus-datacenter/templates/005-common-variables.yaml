@@ -6,8 +6,6 @@ metadata:
   annotations:
     checksum/config: {{ $.Files.Get "configs/connectionStrings.yaml" | sha256sum }}
 data:
-  {{- if eq .Values.installationType "prod" }}
   {{-   range $key, $vl := ($.Files.Get "configs/connectionStrings.yaml" | fromYaml) }}
   {{ $key }}: {{ $vl | toYaml | indent 4 }}
   {{-   end }}
-  {{- end }}
