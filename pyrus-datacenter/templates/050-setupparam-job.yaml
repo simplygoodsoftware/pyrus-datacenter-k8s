@@ -55,6 +55,9 @@ spec:
         - name: setup-elastic-index-it
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args:
             - -it
 
