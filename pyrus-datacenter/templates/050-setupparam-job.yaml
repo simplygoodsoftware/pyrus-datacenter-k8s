@@ -64,18 +64,27 @@ spec:
         - name: setup-elastic-index-ip
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args:
             - -in
 
         - name: setup-elastic-index-ic
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args:
             - -ic
 
         - name: setup-elastic-index-ip2
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args:
             - -ip
 
@@ -84,6 +93,9 @@ spec:
         - name: setup-administrator-account
           image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args: [
             "--setadmin",
             "--email", "{{ .Values.pyrusSetupParam.adminEmail }}",
@@ -93,30 +105,45 @@ spec:
         - name: setup-elastic-index-rt
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args:
             - -rt
 
         - name: setup-elastic-index-wgall
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args:
             - -wgall
 
         - name: setup-elastic-index-wcall
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args:
             - -wcall
 
         - name: setup-elastic-index-wpall
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args:
             - -wpall
 
         - name: setup-elastic-index-wnall
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args:
             - -wnall
 {{- end }}
@@ -125,43 +152,67 @@ spec:
         - name: setup-s3-storrage-1
           image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args: [ "--setup", "-id", "9900151", "-v", "{{ .Values.pyrusSetupParam.s3.keyId }}"]
 
         - name: setup-s3-storrage-2
           image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args: ["--setup", "-id", "9900152", "-v", "{{ .Values.pyrusSetupParam.s3.secretKey }}"]
 
         - name: setup-s3-storrage-3
           image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args: ["--setup", "-id", "9900153", "-v", "{{ .Values.pyrusSetupParam.s3.buket }}"]
 
         - name: setup-s3-storrage-4
           image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args: [ "--setup", "-id", "9910002", "-v", "{{ .Values.pyrusSetupParam.s3.region }}" ]
 
         - name: setup-s3-storrage-5
           image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args: [ "--setup", "-id", "9910004", "-v", "{{ .Values.pyrusSetupParam.s3.useit }}"]
 {{- end}}
 
         - name: setup-license-variables
           image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args: ["--setup", "-id", "100000", "-v", "{{ .Values.pyrusSetupParam.license }}"]
 
         - name: setup-domain-name
           image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args: ["--setup", "-id", "100001", "-v", "{{ first (first (index .Values "values-ingress-dir").tls).hosts }}"]
 
 {{- if .Values.imageDevPrefix }}
         - name: update-database-for-dev
           image: simplygoodsoftware/dev-pyrus-setup
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args:
             - --update
 {{- end }}
