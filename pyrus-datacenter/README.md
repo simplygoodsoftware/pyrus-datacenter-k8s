@@ -15,7 +15,7 @@ To successfully install Pyrus Datacenter you'll need:
 ### Pyrus Datacenter version
 ```
 tagsContainers:
-  All: 1.4.1
+  All: 1.3.3
 ```
 
 ### License
