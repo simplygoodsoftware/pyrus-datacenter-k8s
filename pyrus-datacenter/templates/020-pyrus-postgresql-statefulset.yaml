@@ -1,5 +1,6 @@
 {{- $cname := "pyrus-postgresql" }}
 {{- if not .Values.postgresql.enabledHA }}
+{{- if not .Values.database.external }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -67,4 +68,5 @@ spec:
       resources:
         requests:
           storage: {{ index .Values.volumeSize $cname }}
+{{- end }}
 {{- end }}

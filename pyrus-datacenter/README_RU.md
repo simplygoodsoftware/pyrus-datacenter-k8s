@@ -18,7 +18,7 @@ Pyrus Datacenter K8S — безоблачная версия Pyrus, котора
 ### Версия Pyrus Datacenter
 ```
 tagsContainers:
-  All: 1.3.3
+  All: 1.4.1
 ```
 
 ### Лицензия

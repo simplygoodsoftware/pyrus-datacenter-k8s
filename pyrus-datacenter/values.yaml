@@ -14,6 +14,12 @@ values-ingress-dir:
     - hosts:
         - YOURDOMAIN.COM
 
+database:
+  external: false
+
+preview:
+  external: false
+  
 postgresqlOwnerCreds:
   pyrusdb: 
     name: pyrusadm
@@ -54,7 +60,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.3.8
+  All: 1.4.1
 
 ## Nats settings ##############################################################
 nats:
