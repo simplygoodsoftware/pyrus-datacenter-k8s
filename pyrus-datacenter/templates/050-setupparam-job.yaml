@@ -41,15 +41,22 @@ spec:
             "--email", "{{ .Values.pyrusSetupParam.adminEmail }}",
             "--adminpassword",  "{{ .Values.pyrusSetupParam.adminPass }}"
             ]
+          envFrom:
+            - configMapRef:
+                name: common-variables
+
 {{- end }}
 
         - name: start-change-tracking
           image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
           args:
             - -ct
             - --start
-            
+
 {{- end }}
 
         - name: setup-elastic-index-it
@@ -61,7 +68,7 @@ spec:
           args:
             - -it
 
-        - name: setup-elastic-index-ip
+        - name: setup-elastic-index-in
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
@@ -79,7 +86,7 @@ spec:
           args:
             - -ic
 
-        - name: setup-elastic-index-ip2
+        - name: setup-elastic-index-ip
           image: simplygoodsoftware/pyrus-elastic-console
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
