@@ -1,3 +1,4 @@
+{{- if not (lookup "batch/v1" "Job" .Release.Namespace "set-pyrus-setupparam") }}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -5,6 +6,9 @@ metadata:
   name: &name set-pyrus-setupparam
   labels: &selector
     app: *name
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    meta.helm.sh/release-name: {{ .Release.Name | quote }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace | quote }}
   annotations:
     helm.sh/hook: post-install
     helm.sh/hook-weight: "-5"
@@ -12,6 +16,8 @@ metadata:
 spec:
   activeDeadlineSeconds: 1200
   template:
+    metadata:
+      labels: *selector
     spec:
       restartPolicy: OnFailure
 {{- if .Values.imagePullSecrets }}
@@ -34,7 +40,7 @@ spec:
 {{- if not (hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME")  }}
 
         - name: setup-create-db
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           args: [
             "--create", "--skip",
@@ -48,7 +54,7 @@ spec:
 {{- end }}
 
         - name: start-change-tracking
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -60,7 +66,7 @@ spec:
 {{- end }}
 
         - name: setup-elastic-index-it
-          image: simplygoodsoftware/pyrus-elastic-console
+          image: simplygoodsoftware/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -69,7 +75,7 @@ spec:
             - -it
 
         - name: setup-elastic-index-in
-          image: simplygoodsoftware/pyrus-elastic-console
+          image: simplygoodsoftware/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -78,7 +84,7 @@ spec:
             - -in
 
         - name: setup-elastic-index-ic
-          image: simplygoodsoftware/pyrus-elastic-console
+          image: simplygoodsoftware/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -87,7 +93,7 @@ spec:
             - -ic
 
         - name: setup-elastic-index-ip
-          image: simplygoodsoftware/pyrus-elastic-console
+          image: simplygoodsoftware/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -98,7 +104,7 @@ spec:
 {{- if hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME"  }}
 
         - name: setup-administrator-account
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -110,7 +116,7 @@ spec:
             ]
 
         - name: setup-elastic-index-rt
-          image: simplygoodsoftware/pyrus-elastic-console
+          image: simplygoodsoftware/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -119,7 +125,7 @@ spec:
             - -rt
 
         - name: setup-elastic-index-wgall
-          image: simplygoodsoftware/pyrus-elastic-console
+          image: simplygoodsoftware/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -128,7 +134,7 @@ spec:
             - -wgall
 
         - name: setup-elastic-index-wcall
-          image: simplygoodsoftware/pyrus-elastic-console
+          image: simplygoodsoftware/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -137,7 +143,7 @@ spec:
             - -wcall
 
         - name: setup-elastic-index-wpall
-          image: simplygoodsoftware/pyrus-elastic-console
+          image: simplygoodsoftware/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -146,7 +152,7 @@ spec:
             - -wpall
 
         - name: setup-elastic-index-wnall
-          image: simplygoodsoftware/pyrus-elastic-console
+          image: simplygoodsoftware/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -157,7 +163,7 @@ spec:
 
 {{- if .Values.pyrusSetupParam.s3 }}
         - name: setup-s3-storrage-1
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -165,7 +171,7 @@ spec:
           args: [ "--setup", "-id", "9900151", "-v", "{{ .Values.pyrusSetupParam.s3.keyId }}"]
 
         - name: setup-s3-storrage-2
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -173,7 +179,7 @@ spec:
           args: ["--setup", "-id", "9900152", "-v", "{{ .Values.pyrusSetupParam.s3.secretKey }}"]
 
         - name: setup-s3-storrage-3
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -181,7 +187,7 @@ spec:
           args: ["--setup", "-id", "9900153", "-v", "{{ .Values.pyrusSetupParam.s3.buket }}"]
 
         - name: setup-s3-storrage-4
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -189,7 +195,7 @@ spec:
           args: [ "--setup", "-id", "9910002", "-v", "{{ .Values.pyrusSetupParam.s3.region }}" ]
 
         - name: setup-s3-storrage-5
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -198,7 +204,7 @@ spec:
 {{- end}}
 
         - name: setup-license-variables
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -206,7 +212,7 @@ spec:
           args: ["--setup", "-id", "100000", "-v", "{{ .Values.pyrusSetupParam.license }}"]
 
         - name: setup-domain-name
-          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup
+          image: simplygoodsoftware/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -215,7 +221,7 @@ spec:
 
 {{- if .Values.imageDevPrefix }}
         - name: update-database-for-dev
-          image: simplygoodsoftware/dev-pyrus-setup
+          image: simplygoodsoftware/dev-pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -228,3 +234,4 @@ spec:
           image: simplygoodsoftware/k8s-waits
           imagePullPolicy: IfNotPresent
           command: [ "ls" ]
+{{- end }}

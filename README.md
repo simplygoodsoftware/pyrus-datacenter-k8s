@@ -45,4 +45,18 @@ helm -n pyrus install pyrus-datacenter              \
   -f pyrus.values.yaml
 ```
 
+Example to update to version 1.8.0
+```
+helm -n pyrus upgrade pyrus-datacenter                   \
+  pyrus-datacenter-k8s/pyrus-datacenter                  \
+  --set pyrusSetupParam.adminEmail=YOURADMINEMAIL        \
+  --set pyrusSetupParam.adminPass=YOURADMINPASSWORD      \
+  --set pyrusSetupParam.license=LICENSE                  \
+  --set 'values-ingress-dir.tls[0].hosts[0]=YOURDOMAIN'  \
+  --set 'values-ingress-dir.secretNameDefault=pyrus-ssl' \
+  --set tagsContainers.All=1.8.0                         \
+  --reset-values
+```
+DO NOT FORGET TO REDEFINE YOURE VARIABLES AND CALL --reset-values
+
 For a detailed explanation on installation parameters please refer to the [README](https://github.com/simplygoodsoftware/pyrus-datacenter-k8s/tree/main/pyrus-datacenter) document.

@@ -17,10 +17,11 @@ spec:
   replicas: {{ include "pyrus-datacenter.countStrategy" (list $vl $cname "replicas" 0) }}
   revisionHistoryLimit: {{ include "pyrus-datacenter.countStrategy" (list $vl $cname "revisionHistoryLimit" 0) }}
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: {{ include "pyrus-datacenter.countStrategy" (list $vl $cname "maxSurge" 1) }}
-      maxUnavailable: {{ include "pyrus-datacenter.countStrategy" (list $vl $cname "maxUnavailable" 0) }}
+{{- if hasKey $vl "deploymentUpdateStratagy" }}
+{{-   toYaml $vl.deploymentUpdateStratagy | nindent 4 }}
+{{- else }}
+    type: Recreate
+{{- end }}
   template:
     metadata:
       labels:
@@ -50,7 +51,7 @@ spec:
           imagePullPolicy: IfNotPresent
           command:
 {{-        range $vl.waitEndpoints.WaitOnEnd }}
-            - {{ . }}
+            - {{ tpl . $ }}
 {{-        end }}
 {{-    end }}
 {{- end }}

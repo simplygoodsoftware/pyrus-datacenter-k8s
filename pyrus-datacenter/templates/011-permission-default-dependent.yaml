@@ -4,7 +4,7 @@ metadata:
   name: pyrus-start-orders
 rules:
   - apiGroups:
-        - ""
+      - ""
     resources:
       - endpoints
     verbs:
@@ -15,8 +15,6 @@ rules:
     resources:
       - jobs
       - jobs/status
-    resourceNames:
-      - set-pyrus-setupparam
     verbs:
       - get
       - list

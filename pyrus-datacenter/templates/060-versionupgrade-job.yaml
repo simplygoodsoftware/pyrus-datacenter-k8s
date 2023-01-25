@@ -1,0 +1,52 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: &name upgrade-version-{{ .Values.tagsContainers.All }}
+  labels: &selector
+    app: *name
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "1"
+    #helm.sh/hook-delete-policy: hook-failed
+spec:
+  activeDeadlineSeconds: 1200
+  template:
+    metadata:
+      labels: *selector
+    spec:
+      restartPolicy: OnFailure
+{{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        - name: docker-pyrus-cred
+{{- end }}
+      initContainers:
+        - name: depends-on
+          image: simplygoodsoftware/k8s-waits
+          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          command:
+            - wait_endpoints
+{{- if not .Values.database.external }}
+            - {{ .Release.Namespace }}/endpoints/pyrus-postgresql
+{{- end }}
+            - {{ .Release.Namespace }}/endpoints/pyrus-elastic
+            - {{ .Release.Namespace }}/endpoints/pyrus-logs-pgsql
+
+      containers:
+        - name: check-relise-version-is-equal-bd-or-update
+          image: simplygoodsoftware/pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          command:
+            - sh
+            - -c
+            - |
+              export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
+              printf "Current version: ${VERSION_IS}"
+              printf "\nContainer version: {{ .Values.tagsContainers.All }}\n"
+              test "${VERSION_IS}" = "{{ .Values.tagsContainers }}" \
+                && echo "Version is equal"                          \
+                || dotnet Pyrus.DataMigrations.dll --update
+

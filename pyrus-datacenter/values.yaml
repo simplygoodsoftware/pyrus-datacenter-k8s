@@ -60,7 +60,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.4.3
+  All: 1.7.0
 
 ## Nats settings ##############################################################
 nats:
@@ -451,11 +451,12 @@ deployDefaultTemplate:
 
 waitEndpoints:
   WaitOnEnd:
-    - kubectl
-    - wait
-    - --for=condition=complete 
-    - job.batch/set-pyrus-setupparam
-    - --timeout=600s
+    - sh
+    - -c
+    - >
+      kubectl wait --for=condition=complete job.batch/set-pyrus-setupparam --timeout=600s
+      &&
+      kubectl wait --for=condition=complete job -l app=upgrade-version-{{ .Values.tagsContainers.All }} --timeout=600s
   pyrus-preview-generator:
     - pyrus-postgresql
     - pyrus-elastic
@@ -494,3 +495,5 @@ waitEndpoints:
     - pyrus-nats
     - pyrus-smtp
 
+deploymentUpdateStratagy:
+  type: Recreate
