@@ -1,0 +1,13 @@
+# Приведение файлов Linux к LF
+* text eol=lf
+*.zip binary
+*.tgz binary
+*.so binary
+*.png binary
+*.exe binary
+*.cmd text eol=crlf
+*.ps0 text eol=crlf
+*.ps1 text eol=crlf
+*.ps2 text eol=crlf
+*.ps3 text eol=crlf
+*.vbs text eol=crlf
