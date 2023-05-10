@@ -25,7 +25,7 @@ spec:
 {{- end }}
       containers:
         - name: *name
-          image: simplygoodsoftware/{{ .Values.devPrefix }}pyrus-pgsql-13:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.devPrefix }}pyrus-pgsql-13:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           volumeMounts:
             - name: {{ $cname }}-data

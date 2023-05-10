@@ -20,7 +20,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: setup-complite
-          image: simplygoodsoftware/k8s-waits
+          image: {{ .Values.containersRepo.default }}/k8s-waits
           imagePullPolicy: IfNotPresent
           command: [ "ls" ]
 {{- end }}

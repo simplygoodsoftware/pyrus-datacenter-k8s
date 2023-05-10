@@ -1,3 +1,11 @@
+avatar:
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers  "Cache-Control: public,max-age=3600";
+  paths:
+    - path: /avatar
+      pathType: Prefix
+
 v4-files-download:
   annotations:
     nginx.ingress.kubernetes.io/configuration-snippet: |
