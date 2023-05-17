@@ -6,13 +6,8 @@ metadata:
   name: &name set-pyrus-setupparam
   labels: &selector
     app: *name
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    meta.helm.sh/release-name: {{ .Release.Name | quote }}
-    meta.helm.sh/release-namespace: {{ .Release.Namespace | quote }}
   annotations:
-    helm.sh/hook: post-install
-    helm.sh/hook-weight: "-5"
-    #helm.sh/hook-delete-policy: hook-failed
+    helm.sh/resource-policy: keep
 spec:
   activeDeadlineSeconds: 1200
   template:
@@ -36,9 +31,10 @@ spec:
             - {{ .Release.Namespace }}/endpoints/pyrus-elastic
             - {{ .Release.Namespace }}/endpoints/pyrus-logs-pgsql
 
-{{- if not .Values.database.external }}
-{{- if not (hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME")  }}
+{{- if eq .Release.Revision 1 }}
 
+{{-   if not .Values.database.external }}
+{{-     if not (hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME")  }}
         - name: setup-create-db
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
@@ -50,8 +46,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: common-variables
-
-{{- end }}
+{{-     end }}
 
         - name: start-change-tracking
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
@@ -63,7 +58,7 @@ spec:
             - -ct
             - --start
 
-{{- end }}
+{{-   end }}
 
         - name: setup-elastic-index-it
           image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
@@ -101,7 +96,7 @@ spec:
           args:
             - -ip
 
-{{- if hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME"  }}
+{{-   if hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME"  }}
 
         - name: setup-administrator-account
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
@@ -159,9 +154,9 @@ spec:
                 name: common-variables
           args:
             - -wnall
-{{- end }}
+{{-   end }}
 
-{{- if .Values.pyrusSetupParam.s3 }}
+{{-   if .Values.pyrusSetupParam.s3 }}
         - name: setup-s3-storrage-1
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
@@ -201,7 +196,7 @@ spec:
             - configMapRef:
                 name: common-variables
           args: [ "--setup", "-id", "9910004", "-v", "{{ .Values.pyrusSetupParam.s3.useit }}"]
-{{- end}}
+{{-   end }}
 
         - name: setup-license-variables
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
@@ -219,7 +214,7 @@ spec:
                 name: common-variables
           args: ["--setup", "-id", "100001", "-v", "{{ first (first (index .Values "values-ingress-dir").tls).hosts }}"]
 
-{{- if .Values.imageDevPrefix }}
+{{-   if .Values.imageDevPrefix }}
         - name: update-database-for-dev
           image: {{ .Values.containersRepo.default }}/dev-pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
@@ -228,6 +223,8 @@ spec:
                 name: common-variables
           args:
             - --update
+{{-   end }}
+
 {{- end }}
       containers:
         - name: setup-complite
@@ -235,3 +232,4 @@ spec:
           imagePullPolicy: IfNotPresent
           command: [ "ls" ]
 {{- end }}
+
