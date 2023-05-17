@@ -37,9 +37,9 @@ spec:
       initContainers:
 {{-    if (hasKey $vl.waitEndpoints $cname) }}
         - name: depends-on
-          image: simplygoodsoftware/k8s-waits
+          image: {{ $vl.containersRepo.default }}/k8s-waits
           imagePullPolicy: IfNotPresent
-          command: 
+          command:
             - wait_endpoints
 {{-        range (index $vl.waitEndpoints $cname) }}
             - {{ $rl.Namespace }}/endpoints/{{ . }}
@@ -47,7 +47,7 @@ spec:
 {{-    end }}
 {{-    if (hasKey $vl.waitEndpoints "WaitOnEnd") }}
         - name: wait-setup-variable-complite
-          image: simplygoodsoftware/k8s-waits
+          image: {{ $vl.containersRepo.default }}/k8s-waits
           imagePullPolicy: IfNotPresent
           command:
 {{-        range $vl.waitEndpoints.WaitOnEnd }}

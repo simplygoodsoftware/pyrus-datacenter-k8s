@@ -15,10 +15,18 @@ Pyrus Datacenter K8S — безоблачная версия Pyrus, котора
 
 В данном разделе описаны необходимые для запуска Pyrus Datacenter параметры установки.
 
-### Версия Pyrus Datacenter
+### Выбор yandex репозитория образов Pyrus Datacenter
+```
+containersRepo:
+  default: cr.yandex/crpn0l4dp22f8mv5ln18
+
+elasticsearch:
+  image: "cr.yandex/crpn0l4dp22f8mv5ln18/elastic-selfhosted"
+```
+### Форсирование версии Pyrus Datacenter
 ```
 tagsContainers:
-  All: 1.4.1
+  All: 1.9.0
 ```
 
 ### Лицензия
@@ -122,4 +130,3 @@ wal-g backup-list
 
 Восстановление из копии начнётся только если директория ${PGDATA} будет пустой.\
 В обратном случае, процесс восстановления будет проигнорирован и система запустится из файлов расположенных в данной директории, либо инициализировать чистую базу при их отсутствии.
-

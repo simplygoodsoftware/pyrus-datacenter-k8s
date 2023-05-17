@@ -19,17 +19,8 @@ root:
       rewrite /en/login https://$host/en/signup-or-login  permanent;
       rewrite /en/create-an-account https://$host/en/signup-or-login  permanent;
       rewrite /en/passwordrecovery https://$host/en/signup-or-login permanent;
-      
   paths:
     - path: /
-      pathType: Prefix
-
-avatar:
-  annotations:
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers  "Cache-Control: public,max-age=3600";
-  paths:
-    - path: /avatar
       pathType: Prefix
 
 image-icn-svg:
@@ -122,4 +113,3 @@ metrics:
   paths:
     - path: /metrics
       pathType: Prefix
-

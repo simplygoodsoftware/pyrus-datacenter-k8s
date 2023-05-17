@@ -19,9 +19,9 @@ database:
 
 preview:
   external: false
-  
+
 postgresqlOwnerCreds:
-  pyrusdb: 
+  pyrusdb:
     name: pyrusadm
     pass: pyruspwd
 
@@ -41,9 +41,9 @@ postgresql:
 
 standalonePostgreSQLBackup: {}
   ## required backup values
-  #AWS_ACCESS_KEY_ID: YOURCREDENTIAL  
-  #AWS_SECRET_ACCESS_KEY: YOURCREDENTIAL  
-  #WALG_S3_PREFIX: s3://YOURBACKET/SOMEDIR   
+  #AWS_ACCESS_KEY_ID: YOURCREDENTIAL
+  #AWS_SECRET_ACCESS_KEY: YOURCREDENTIAL
+  #WALG_S3_PREFIX: s3://YOURBACKET/SOMEDIR
   ## optional if you use different s3 storage than aws
   #AWS_ENDPOINT:
 
@@ -56,11 +56,11 @@ pyrusSetupParam:
 ## Advanced settings
 
 imagePullSecrets:
-containersRepo: 
+containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.7.0
+  All: 1.9.0
 
 ## Nats settings ##############################################################
 nats:

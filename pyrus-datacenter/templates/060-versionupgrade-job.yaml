@@ -22,7 +22,7 @@ spec:
 {{- end }}
       initContainers:
         - name: depends-on
-          image: simplygoodsoftware/k8s-waits
+          image: {{ .Values.containersRepo.default }}/k8s-waits
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           command:
             - wait_endpoints
@@ -34,7 +34,7 @@ spec:
 
       containers:
         - name: check-relise-version-is-equal-bd-or-update
-          image: simplygoodsoftware/pyrus-setup:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -49,4 +49,3 @@ spec:
               test "${VERSION_IS}" = "{{ .Values.tagsContainers }}" \
                 && echo "Version is equal"                          \
                 || dotnet Pyrus.DataMigrations.dll --update
-
