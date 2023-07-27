@@ -5,6 +5,8 @@ avatar:
   paths:
     - path: /avatar
       pathType: Prefix
+    - path: /services/avatar
+      pathType: Prefix
 
 v4-files-download:
   annotations:
