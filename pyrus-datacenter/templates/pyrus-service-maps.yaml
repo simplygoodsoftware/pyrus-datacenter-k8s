@@ -13,6 +13,21 @@ spec:
   selector:
     app: elasticsearch-master
 ---
+{{- if not (lookup "v1" "Service" .Release.Namespace "pyrus-nats") }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: pyrus-nats
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+  - name: nats-clients
+    port: 4222
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: nats
+{{- end }}
+---
 {{- if not .Values.postgresql.enabledHA }}
 {{- if not .Values.database.external }}
 apiVersion: v1

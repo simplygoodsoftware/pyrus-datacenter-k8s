@@ -105,7 +105,7 @@ nats:
 elasticsearch:
   esJavaOpts: "-Xms1g -Xmx1g"
   image: "simplygoodsoftware/elastic-selfhosted"
-  imageTag: "7.13.4-ha"
+  imageTag: "7.17.10-ha"
   clusterHealthCheckParams: "wait_for_status=green&timeout=30s"
   resources:
     requests:

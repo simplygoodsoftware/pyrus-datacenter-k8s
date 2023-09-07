@@ -3,7 +3,32 @@ entries:
   pyrus-datacenter:
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.156099732+07:00"
+    created: "2023-09-08T00:49:57.006509912+08:00"
+    dependencies:
+    - condition: nats.enabled
+      name: nats
+      repository: https://nats-io.github.io/k8s/helm/charts/
+      version: 0.12.0
+    - alias: postgresql
+      condition: postgresql.enabledHA
+      name: postgres-operator
+      repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+      version: 1.8.2
+    description: 'Pyrus datacenter instalation v2 for Kubernetes  ## Install  helm
+      -n pyrus install --dependency-update --create-namespace pyrus-datacenter ./pyrus-datacenter  ##
+      Upgrade helm -n pyrus upgrade pyrus-datacenter ./pyrus-datacenter --reset-values  ##
+      Uninstall helm -n pyrus uninstall pyrus-datacenter '
+    digest: 3653e7bf614e96f084fc2d7a90b051b22071edc1f6cec8c8fd0c17005290d0b9
+    maintainers:
+    - name: Simply Good Software Inc.
+    name: pyrus-datacenter
+    type: application
+    urls:
+    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.13.tgz
+    version: 2.0.13
+  - apiVersion: v2
+    appVersion: latest
+    created: "2023-09-08T00:49:56.999702653+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -28,7 +53,7 @@ entries:
     version: 2.0.12
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.142124567+07:00"
+    created: "2023-09-08T00:49:56.992389811+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -53,7 +78,7 @@ entries:
     version: 2.0.11
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.131237778+07:00"
+    created: "2023-09-08T00:49:56.986704118+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -78,7 +103,7 @@ entries:
     version: 2.0.10
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.211627043+07:00"
+    created: "2023-09-08T00:49:57.049234092+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -103,7 +128,7 @@ entries:
     version: 2.0.9
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.203765527+07:00"
+    created: "2023-09-08T00:49:57.042415512+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -128,7 +153,7 @@ entries:
     version: 2.0.7
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.197176943+07:00"
+    created: "2023-09-08T00:49:57.036136199+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -153,7 +178,7 @@ entries:
     version: 2.0.6
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.189709928+07:00"
+    created: "2023-09-08T00:49:57.030411131+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -178,7 +203,7 @@ entries:
     version: 2.0.5
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.181792215+07:00"
+    created: "2023-09-08T00:49:57.023041962+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -203,7 +228,7 @@ entries:
     version: 2.0.4
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.175618098+07:00"
+    created: "2023-09-08T00:49:57.017427082+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -228,7 +253,7 @@ entries:
     version: 2.0.3
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.167137341+07:00"
+    created: "2023-09-08T00:49:57.010863904+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -248,7 +273,7 @@ entries:
     version: 2.0.2
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.118116477+07:00"
+    created: "2023-09-08T00:49:56.979806298+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -268,7 +293,7 @@ entries:
     version: 2.0.1
   - apiVersion: v2
     appVersion: latest
-    created: "2023-07-28T01:27:38.108626968+07:00"
+    created: "2023-09-08T00:49:56.975335837+08:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -286,4 +311,4 @@ entries:
     urls:
     - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.0.tgz
     version: 2.0.0
-generated: "2023-07-28T01:27:38.094646453+07:00"
+generated: "2023-09-08T00:49:56.968137961+08:00"

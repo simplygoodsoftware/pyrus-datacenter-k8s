@@ -9,16 +9,6 @@ root:
       proxy_cache_min_uses 1;
       add_header X-Proxy-Cache $upstream_cache_status;
       more_set_headers "Strict-Transport-Security: max-age=15552000";
-            
-      rewrite /login https://$host/signup-or-login permanent;
-      rewrite /create-an-account https://$host/signup-or-login permanent;
-      rewrite /passwordrecovery https://$host/signup-or-login permanent;
-      rewrite /ru/login https://$host/ru/signup-or-login  permanent;
-      rewrite /ru/create-an-account https://$host/ru/signup-or-login  permanent;
-      rewrite /ru/passwordrecovery https://$host/ru/signup-or-login permanent;
-      rewrite /en/login https://$host/en/signup-or-login  permanent;
-      rewrite /en/create-an-account https://$host/en/signup-or-login  permanent;
-      rewrite /en/passwordrecovery https://$host/en/signup-or-login permanent;
   paths:
     - path: /
       pathType: Prefix
