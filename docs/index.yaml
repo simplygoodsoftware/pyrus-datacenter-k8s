@@ -3,7 +3,32 @@ entries:
   pyrus-datacenter:
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:57.006509912+08:00"
+    created: "2024-01-19T07:51:58.7084891+03:00"
+    dependencies:
+    - condition: nats.enabled
+      name: nats
+      repository: https://nats-io.github.io/k8s/helm/charts/
+      version: 0.18.2
+    - alias: postgresql
+      condition: postgresql.enabledHA
+      name: postgres-operator
+      repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+      version: 1.8.2
+    description: 'Pyrus datacenter instalation v2 for Kubernetes  ## Install  helm
+      -n pyrus install --dependency-update --create-namespace pyrus-datacenter ./pyrus-datacenter  ##
+      Upgrade helm -n pyrus upgrade pyrus-datacenter ./pyrus-datacenter --reset-values  ##
+      Uninstall helm -n pyrus uninstall pyrus-datacenter '
+    digest: e1872cb1e8e49cd61009b29605807a64e6cf88556e595635c3ec6294a22c83b9
+    maintainers:
+    - name: Simply Good Software Inc.
+    name: pyrus-datacenter
+    type: application
+    urls:
+    - pyrus-datacenter-2.0.14.tgz
+    version: 2.0.14
+  - apiVersion: v2
+    appVersion: latest
+    created: "2024-01-19T07:51:58.7024918+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -24,11 +49,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.13.tgz
+    - pyrus-datacenter-2.0.13.tgz
     version: 2.0.13
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:56.999702653+08:00"
+    created: "2024-01-19T07:51:58.6974892+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -49,11 +74,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.12.tgz
+    - pyrus-datacenter-2.0.12.tgz
     version: 2.0.12
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:56.992389811+08:00"
+    created: "2024-01-19T07:51:58.6914912+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -74,11 +99,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.11.tgz
+    - pyrus-datacenter-2.0.11.tgz
     version: 2.0.11
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:56.986704118+08:00"
+    created: "2024-01-19T07:51:58.6864908+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -99,11 +124,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.10.tgz
+    - pyrus-datacenter-2.0.10.tgz
     version: 2.0.10
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:57.049234092+08:00"
+    created: "2024-01-19T07:51:58.7469345+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -124,11 +149,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.9.tgz
+    - pyrus-datacenter-2.0.9.tgz
     version: 2.0.9
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:57.042415512+08:00"
+    created: "2024-01-19T07:51:58.7417344+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -149,11 +174,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.7.tgz
+    - pyrus-datacenter-2.0.7.tgz
     version: 2.0.7
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:57.036136199+08:00"
+    created: "2024-01-19T07:51:58.734428+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -174,11 +199,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.6.tgz
+    - pyrus-datacenter-2.0.6.tgz
     version: 2.0.6
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:57.030411131+08:00"
+    created: "2024-01-19T07:51:58.7294273+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -199,11 +224,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.5.tgz
+    - pyrus-datacenter-2.0.5.tgz
     version: 2.0.5
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:57.023041962+08:00"
+    created: "2024-01-19T07:51:58.7234895+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -224,11 +249,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.4.tgz
+    - pyrus-datacenter-2.0.4.tgz
     version: 2.0.4
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:57.017427082+08:00"
+    created: "2024-01-19T07:51:58.7184901+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -249,11 +274,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.3.tgz
+    - pyrus-datacenter-2.0.3.tgz
     version: 2.0.3
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:57.010863904+08:00"
+    created: "2024-01-19T07:51:58.7134902+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -269,11 +294,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.2.tgz
+    - pyrus-datacenter-2.0.2.tgz
     version: 2.0.2
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:56.979806298+08:00"
+    created: "2024-01-19T07:51:58.68098+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -289,11 +314,11 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.1.tgz
+    - pyrus-datacenter-2.0.1.tgz
     version: 2.0.1
   - apiVersion: v2
     appVersion: latest
-    created: "2023-09-08T00:49:56.975335837+08:00"
+    created: "2024-01-19T07:51:58.6774395+03:00"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -309,6 +334,6 @@ entries:
     name: pyrus-datacenter
     type: application
     urls:
-    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.0.tgz
+    - pyrus-datacenter-2.0.0.tgz
     version: 2.0.0
-generated: "2023-09-08T00:49:56.968137961+08:00"
+generated: "2024-01-19T07:51:58.6717223+03:00"

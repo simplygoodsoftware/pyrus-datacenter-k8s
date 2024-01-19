@@ -75,6 +75,20 @@ nats:
       tls:
         allow_non_tls: true
 
+    jetstream:
+      enabled: true
+
+      memStorage:
+        enabled: true
+        size: 4Gi
+
+      fileStorage:
+        size: 4Gi
+        enabled: true
+
+        tls:
+          allow_non_tls: true
+
     logging:
       debug: "false"
       trace: "false"
@@ -284,7 +298,6 @@ countStrategy:
 startupProbe:
   pyrus-mail-reader: default
   pyrus-identity-server: default
-  pyrus-mail-reader: default
   pyrus-mail-sender: default
   pyrus-notification-service: default
   pyrus-bind-service: default
@@ -319,7 +332,6 @@ startupProbe:
 livenessProbe:
   pyrus-mail-reader: default
   pyrus-identity-server: default
-  pyrus-mail-reader: default
   pyrus-mail-sender: default
   pyrus-notification-service: default
   pyrus-bind-service: default
