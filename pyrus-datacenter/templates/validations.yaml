@@ -1,0 +1,1 @@
+{{ include "pyrus-datacenter.validations.nats" . }}
