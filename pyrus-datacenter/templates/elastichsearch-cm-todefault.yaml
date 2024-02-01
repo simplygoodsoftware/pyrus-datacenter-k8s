@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elastichsearch-cm-to-default
+data:
+  elasticsearch.yml: |
+    cluster.name: "docker-cluster"
+    network.host: 0.0.0.0

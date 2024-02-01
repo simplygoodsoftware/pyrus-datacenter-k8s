@@ -60,7 +60,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.10.0
+  All: 1.12.1
 
 ## Nats settings ##############################################################
 nats:
@@ -119,7 +119,7 @@ nats:
 elasticsearch:
   esJavaOpts: "-Xms1g -Xmx1g"
   image: "simplygoodsoftware/elastic-selfhosted"
-  imageTag: "7.17.10-ha"
+  imageTag: "7.17.10"
   clusterHealthCheckParams: "wait_for_status=green&timeout=30s"
   resources:
     requests:
@@ -141,6 +141,14 @@ elasticsearch:
       value: "60%"
     - name: script.max_compilations_rate
       value: "100/1m"
+  extraVolumes:
+    - name: elastichsearch-cm-to-default
+      configMap:
+        name: elastichsearch-cm-to-default
+  extraVolumeMounts:
+    - name: elastichsearch-cm-to-default
+      mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+      subPath: elasticsearch.yml
   affinity:
   #  requiredDuringSchedulingIgnoredDuringExecution:
   #    nodeSelectorTerms:
