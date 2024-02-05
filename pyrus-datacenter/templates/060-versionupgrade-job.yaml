@@ -42,6 +42,55 @@ spec:
             - sh
             - -c
             - kubectl wait --for=condition=complete job.batch/set-pyrus-setupparam --timeout=600s
+{{- range $.Values.versionUpgradeHistoryBefore1121 }}
+{{- $upversion := . }}
+        - name: up-to-{{ $upversion | replace "." "-" }}
+          image: {{ $.Values.containersRepo.default }}/pyrus-setup:{{ $upversion }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          command:
+            - sh
+            - -c
+            - |
+              export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version \
+                | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
+              
+              printf "Current version: ${VERSION_IS}"
+              
+              printf "{{ $upversion }}\n${VERSION_IS}\n" \
+                | sort -V | head -n 1 | grep -q "{{ $upversion }}" && echo " skip" && exit 0
+              
+              echo "Upping it."
+
+              dotnet Pyrus.DataMigrations.dll --update
+{{- end }}
+{{- range $.Values.versionUpgradeHistory1121 }}
+{{- $upversion := . }}
+        - name: up-to-{{ $upversion | replace "." "-" }}
+          image: {{ $.Values.containersRepo.default }}/pyrus-setup:{{ $upversion }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          command:
+            - sh
+            - -c
+            - |
+              export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version \
+                | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
+              
+              printf "Current version: ${VERSION_IS}"
+              
+              printf "{{ $upversion }}\n${VERSION_IS}\n" \
+                | sort -V | head -n 1 | grep -q "{{ $upversion }}" && echo " skip" && exit 0
+              
+              echo " upping it..."
+
+              yes | dotnet Pyrus.DataMigrations.dll --update
+{{- end }}
+
       containers:
         - name: check-relise-version-is-equal-bd-or-update
           image: {{ .Values.containersRepo.default }}/pyrus-setup:{{ .Values.tagsContainers.All }}
@@ -56,6 +105,11 @@ spec:
               export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
               printf "Current version: ${VERSION_IS}"
               printf "\nContainer version: {{ .Values.tagsContainers.All }}\n"
-              test "${VERSION_IS}" = "{{ .Values.tagsContainers }}" \
-                && echo "Version is equal"                          \
-                || dotnet Pyrus.DataMigrations.dll --update
+              
+              if [ "${VERSION_IS}" != "{{ .Values.tagsContainers.All }}" ];then
+                  echo "Update containers is fall"
+                  exit 1
+              fi
+              
+              echo "Version is equal"
+              
