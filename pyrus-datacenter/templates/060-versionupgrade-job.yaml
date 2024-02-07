@@ -66,6 +66,66 @@ spec:
 
               dotnet Pyrus.DataMigrations.dll --update
 {{- end }}
+{{-   if .Values.pyrusSetupParam.s3 }}
+        - name: setup-s3-storrage-1
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: [ "--setup", "-id", "9900151", "-v", "{{ .Values.pyrusSetupParam.s3.keyId }}"]
+
+        - name: setup-s3-storrage-2
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: ["--setup", "-id", "9900152", "-v", "{{ .Values.pyrusSetupParam.s3.secretKey }}"]
+
+        - name: setup-s3-storrage-3
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: ["--setup", "-id", "9900153", "-v", "{{ .Values.pyrusSetupParam.s3.buket }}"]
+
+        - name: setup-s3-storrage-4
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: [ "--setup", "-id", "9910002", "-v", "{{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }}" ]
+
+        - name: setup-s3-storrage-5
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: [ "--setup", "-id", "9910004", "-v", "true"]
+
+        - name: setup-s3-storrage-1210
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: 
+            - --configure-s3
+            - --accessKey
+            - {{ .Values.pyrusSetupParam.s3.keyId }}
+            - --secretKey
+            - {{ .Values.pyrusSetupParam.s3.secretKey }}
+            - --bucket
+            - {{ .Values.pyrusSetupParam.s3.buket }}
+            - --endpointUrl
+            - {{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }}
+{{- else }}
+{{-   fail "\n\n! BREAK ! NEED to define .Values.pyrusSetupParam.s3\n" }}
+{{- end }}
 {{- range $.Values.versionUpgradeHistory1121 }}
 {{- $upversion := . }}
         - name: up-to-{{ $upversion | replace "." "-" }}
@@ -88,7 +148,7 @@ spec:
               
               echo " upping it..."
 
-              yes | dotnet Pyrus.DataMigrations.dll --update
+              dotnet Pyrus.DataMigrations.dll --update --no-interactive
 {{- end }}
 
       containers:

@@ -52,6 +52,11 @@ pyrusSetupParam:
   adminEmail: YOURADMINEMAIL
   adminPass: YOURADMINPASSWORD
   license: YOURLICENSE
+  #s3:
+  #  keyId:
+  #  secretKey:
+  #  buket:
+  #  S3_BLOB_STORAGE_ENDPOINT:
 
 ## Advanced settings
 

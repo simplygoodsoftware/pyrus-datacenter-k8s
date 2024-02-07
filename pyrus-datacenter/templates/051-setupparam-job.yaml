@@ -187,7 +187,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: common-variables
-          args: [ "--setup", "-id", "9910002", "-v", "{{ .Values.pyrusSetupParam.s3.region }}" ]
+          args: [ "--setup", "-id", "9910002", "-v", "{{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }}" ]
 
         - name: setup-s3-storrage-5
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
@@ -195,7 +195,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: common-variables
-          args: [ "--setup", "-id", "9910004", "-v", "{{ .Values.pyrusSetupParam.s3.useit }}"]
+          args: [ "--setup", "-id", "9910004", "-v", "true"]
 {{-   end }}
 
         - name: setup-license-variables
