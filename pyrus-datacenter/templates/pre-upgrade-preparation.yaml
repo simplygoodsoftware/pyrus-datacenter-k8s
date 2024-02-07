@@ -104,11 +104,11 @@ spec:
               kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-schedule-to-today"
               kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-web-api"
               
-              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-identity-server
-              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-identity-server"
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-identity-server || echo
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-identity-server" || echo
               
-              kubectl -n {{ $.Release.Namespace }} delete statefulset pyrus-datacenter-nats
-              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app.kubernetes.io/name=nats"
+              kubectl -n {{ $.Release.Namespace }} delete statefulset pyrus-datacenter-nats || echo
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app.kubernetes.io/name=nats" || echo
 {{-     end }}
 {{-   end }}
 {{- end }}

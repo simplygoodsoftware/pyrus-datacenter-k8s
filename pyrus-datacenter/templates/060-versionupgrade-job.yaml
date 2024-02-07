@@ -148,7 +148,7 @@ spec:
               
               echo " upping it..."
 
-              dotnet Pyrus.DataMigrations.dll --update --no-interactive
+              dotnet Pyrus.DataMigrations.dll --update --noninteractive
 {{- end }}
 
       containers:
