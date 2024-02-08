@@ -42,6 +42,128 @@ spec:
             - sh
             - -c
             - kubectl wait --for=condition=complete job.batch/set-pyrus-setupparam --timeout=600s
+{{- range $.Values.versionUpgradeHistoryBefore1121 }}
+{{- $upversion := . }}
+        - name: up-to-{{ $upversion | replace "." "-" }}
+          image: {{ $.Values.containersRepo.default }}/pyrus-setup:{{ $upversion }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          command:
+            - sh
+            - -c
+            - |
+              export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version \
+                | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
+              
+              printf "Current version: ${VERSION_IS}"
+              
+              printf "{{ $upversion }}\n${VERSION_IS}\n" \
+                | sort -V | head -n 1 | grep -q "{{ $upversion }}" && echo " skip" && exit 0
+              
+              echo "Upping it."
+
+              dotnet Pyrus.DataMigrations.dll --update
+{{- end }}
+{{-   if (semverCompare ">=1.12.1" $.Values.tagsContainers.All) }}
+{{-     if .Values.pyrusSetupParam.s3 }}
+        - name: setup-s3-storrage-1
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: [ "--setup", "-id", "9900151", "-v", "{{ .Values.pyrusSetupParam.s3.keyId }}"]
+
+        - name: setup-s3-storrage-2
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: ["--setup", "-id", "9900152", "-v", "{{ .Values.pyrusSetupParam.s3.secretKey }}"]
+
+        - name: setup-s3-storrage-3
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: ["--setup", "-id", "9900153", "-v", "{{ .Values.pyrusSetupParam.s3.buket }}"]
+
+        - name: setup-s3-storrage-4
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: [ "--setup", "-id", "9910002", "-v", "{{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }}" ]
+
+        - name: setup-s3-storrage-5
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: [ "--setup", "-id", "9910004", "-v", "true"]
+
+        - name: setup-s3-storrage-1210
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: 
+            - --configure-s3
+            - --accessKey
+            - {{ .Values.pyrusSetupParam.s3.keyId }}
+            - --secretKey
+            - {{ .Values.pyrusSetupParam.s3.secretKey }}
+            - --bucket
+            - {{ .Values.pyrusSetupParam.s3.buket }}
+            - --endpointUrl
+            - {{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }}
+{{-     else }}
+{{-       fail "\n\n! BREAK ! NEED to define .Values.pyrusSetupParam.s3\n" }}
+{{-     end }}
+        - name: up-to-12-1-0-disable-use-database-file-storage
+          image: {{ $.Values.containersRepo.default }}/pyrus-setup:1.12.1
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          command:
+            - sh
+            - -c
+            - |
+              dotnet Pyrus.DataMigrations.dll --setup -id 9910001 -v false
+{{-     range $.Values.versionUpgradeHistory1121 }}
+{{-     $upversion := . }}
+        - name: up-to-{{ $upversion | replace "." "-" }}
+          image: {{ $.Values.containersRepo.default }}/pyrus-setup:{{ $upversion }}
+          #image: {{ $.Values.containersRepo.default }}/dev-pyrus-setup:1.87.55233.0
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          command:
+            - sh
+            - -c
+            - |
+              export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version \
+                | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
+              
+              printf "Current version: ${VERSION_IS}"
+              
+              printf "{{ $upversion }}\n${VERSION_IS}\n" \
+                | sort -V | head -n 1 | grep -q "{{ $upversion }}" && echo " skip" && exit 0
+              
+              echo " upping it..."
+              dotnet Pyrus.DataMigrations.dll --update --noninteractive
+{{-     end }}
+{{-  end }}
+
       containers:
         - name: check-relise-version-is-equal-bd-or-update
           image: {{ .Values.containersRepo.default }}/pyrus-setup:{{ .Values.tagsContainers.All }}
@@ -56,6 +178,11 @@ spec:
               export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
               printf "Current version: ${VERSION_IS}"
               printf "\nContainer version: {{ .Values.tagsContainers.All }}\n"
-              test "${VERSION_IS}" = "{{ .Values.tagsContainers }}" \
-                && echo "Version is equal"                          \
-                || dotnet Pyrus.DataMigrations.dll --update
+              
+              if [ "${VERSION_IS}" != "{{ .Values.tagsContainers.All }}" ];then
+                  echo "Update containers is fall"
+                  exit 1
+              fi
+              
+              echo "Version is equal"
+              

@@ -1,0 +1,114 @@
+{{- $nats := lookup "apps/v1" "StatefulSet" .Release.Namespace (include "nats.fullname" .Subcharts.nats) }}
+{{- if $nats  }}
+{{-   $natsVersion := index (split "-" (index $nats.metadata.labels "helm.sh/chart")) "_1" }}
+{{-   if (semverCompare ">=1.12.0" $.Values.tagsContainers.All) }}
+{{-     if (semverCompare "<0.18.2" $natsVersion) }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pre-upgrade-preparation
+  annotations:
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-weight: "-1"
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+    verbs:
+      - list
+      - get
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - deployments/scale
+      - deployments/status
+    verbs:
+      - get
+      - patch
+  - apiGroups: ["apps"]
+    resourceNames:
+      - {{ include "nats.fullname" .Subcharts.nats }}
+    resources:
+      - statefulsets
+    verbs:
+      - delete
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pre-upgrade-preparation
+  annotations:
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-weight: "-1"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pre-upgrade-preparation
+  annotations:
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-weight: "-1"
+subjects:
+  - kind: ServiceAccount
+    name: pre-upgrade-preparation
+roleRef:
+  kind: Role
+  name: pre-upgrade-preparation
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: &name pre-upgrade-preparation
+  annotations:
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-weight: "-1"
+  labels: &selector
+    app: *name
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    meta.helm.sh/release-name: {{ .Release.Name | quote }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace | quote }}
+spec:
+  activeDeadlineSeconds: 1200
+  template:
+    metadata:
+      labels: *selector
+    spec:
+      restartPolicy: Never
+      serviceAccountName: pre-upgrade-preparation
+      containers:
+        - name: nats-12-to-18
+          image: bitnami/kubectl:1.28.6
+          command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-async-worker 
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-bind-service
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-file-service
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-mail-reader
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-mail-sender
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-notification-service
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-preview-generator
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-schedule-to-today
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-web-api
+              
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-async-worker"
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-bind-service"
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-file-service"
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-mail-reader"
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-mail-sender"
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-notification-service"
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-preview-generator"
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-schedule-to-today"
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-web-api"
+              
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-identity-server || echo
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-identity-server" || echo
+              
+              kubectl -n {{ $.Release.Namespace }} delete statefulset pyrus-datacenter-nats || echo
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app.kubernetes.io/name=nats" || echo
+{{-     end }}
+{{-   end }}
+{{- end }}

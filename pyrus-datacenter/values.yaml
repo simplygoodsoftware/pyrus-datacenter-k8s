@@ -52,6 +52,11 @@ pyrusSetupParam:
   adminEmail: YOURADMINEMAIL
   adminPass: YOURADMINPASSWORD
   license: YOURLICENSE
+  #s3:
+  #  keyId:
+  #  secretKey:
+  #  buket:
+  #  S3_BLOB_STORAGE_ENDPOINT:
 
 ## Advanced settings
 
@@ -60,7 +65,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.10.0
+  All: 1.12.1
 
 ## Nats settings ##############################################################
 nats:
@@ -74,6 +79,20 @@ nats:
       maxPayload: "2000000"
       tls:
         allow_non_tls: true
+
+    jetstream:
+      enabled: true
+
+      memStorage:
+        enabled: true
+        size: 4Gi
+
+      fileStorage:
+        size: 4Gi
+        enabled: true
+
+        tls:
+          allow_non_tls: true
 
     logging:
       debug: "false"
@@ -105,7 +124,7 @@ nats:
 elasticsearch:
   esJavaOpts: "-Xms1g -Xmx1g"
   image: "simplygoodsoftware/elastic-selfhosted"
-  imageTag: "7.17.10-ha"
+  imageTag: "7.17.10"
   clusterHealthCheckParams: "wait_for_status=green&timeout=30s"
   resources:
     requests:
@@ -127,6 +146,14 @@ elasticsearch:
       value: "60%"
     - name: script.max_compilations_rate
       value: "100/1m"
+  extraVolumes:
+    - name: elastichsearch-cm-to-default
+      configMap:
+        name: elastichsearch-cm-to-default
+  extraVolumeMounts:
+    - name: elastichsearch-cm-to-default
+      mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+      subPath: elasticsearch.yml
   affinity:
   #  requiredDuringSchedulingIgnoredDuringExecution:
   #    nodeSelectorTerms:
@@ -284,7 +311,6 @@ countStrategy:
 startupProbe:
   pyrus-mail-reader: default
   pyrus-identity-server: default
-  pyrus-mail-reader: default
   pyrus-mail-sender: default
   pyrus-notification-service: default
   pyrus-bind-service: default
@@ -319,7 +345,6 @@ startupProbe:
 livenessProbe:
   pyrus-mail-reader: default
   pyrus-identity-server: default
-  pyrus-mail-reader: default
   pyrus-mail-sender: default
   pyrus-notification-service: default
   pyrus-bind-service: default
@@ -494,6 +519,25 @@ waitEndpoints:
     - pyrus-logs-pgsql
     - pyrus-nats
     - pyrus-smtp
+  pyrus-notification-service:
+    - pyrus-postgresql
+    - pyrus-elastic
+    - pyrus-logs-pgsql
+    - pyrus-nats
+  pyrus-identity-server:
+    - pyrus-postgresql
+    - pyrus-logs-pgsql
 
 deploymentUpdateStratagy:
   type: Recreate
+
+versionUpgradeHistoryBefore1121:
+  - 1.9.0
+  - 1.9.1
+  - 1.10.0
+  - 1.11.0
+  - 1.11.1
+  - 1.12.0
+
+versionUpgradeHistory1121:
+  - 1.12.1

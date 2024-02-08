@@ -1,9 +1,9 @@
 dependencies:
 - name: nats
   repository: https://nats-io.github.io/k8s/helm/charts/
-  version: 0.12.0
+  version: 0.18.2
 - name: postgres-operator
   repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
   version: 1.8.2
-digest: sha256:ead59a56e95581bec0c6e3c98a5e676b889cad099f2630dbc8d57c18b7bca637
-generated: "2022-09-27T14:05:25.0472432+03:00"
+digest: sha256:c50b25fae84d2875275e837d008c4eb0c60cdc6be3581c5eec51641213f1615d
+generated: "2024-01-16T09:51:47.4918313+03:00"
