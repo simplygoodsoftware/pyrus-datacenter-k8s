@@ -59,11 +59,4 @@ helm -n pyrus upgrade pyrus-datacenter                   \
 ```
 DO NOT FORGET TO REDEFINE YOURE VARIABLES AND CALL --reset-values
 
-### Update chart to 2.0.14
-
-We enabled nats jetstream, which entailed a change in the statefulset, so before updating to version 2.0.14 it must be removed: 
-```sh
-kubectl --namespace pyrus delete statefulsets.apps pyrus-nats
-```
-
 For a detailed explanation on installation parameters please refer to the [README](https://github.com/simplygoodsoftware/pyrus-datacenter-k8s/tree/main/pyrus-datacenter) document.
