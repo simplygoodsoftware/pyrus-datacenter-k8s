@@ -66,7 +66,8 @@ spec:
 
               dotnet Pyrus.DataMigrations.dll --update
 {{- end }}
-{{-   if .Values.pyrusSetupParam.s3 }}
+{{-   if (semverCompare ">=1.12.1" $.Values.tagsContainers.All) }}
+{{-     if .Values.pyrusSetupParam.s3 }}
         - name: setup-s3-storrage-1
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
@@ -123,13 +124,25 @@ spec:
             - {{ .Values.pyrusSetupParam.s3.buket }}
             - --endpointUrl
             - {{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }}
-{{- else }}
-{{-   fail "\n\n! BREAK ! NEED to define .Values.pyrusSetupParam.s3\n" }}
-{{- end }}
-{{- range $.Values.versionUpgradeHistory1121 }}
-{{- $upversion := . }}
+{{-     else }}
+{{-       fail "\n\n! BREAK ! NEED to define .Values.pyrusSetupParam.s3\n" }}
+{{-     end }}
+        - name: up-to-12-1-0-disable-use-database-file-storage
+          image: {{ $.Values.containersRepo.default }}/pyrus-setup:1.12.1
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          command:
+            - sh
+            - -c
+            - |
+              dotnet Pyrus.DataMigrations.dll --setup -id 9910001 -v false
+{{-     range $.Values.versionUpgradeHistory1121 }}
+{{-     $upversion := . }}
         - name: up-to-{{ $upversion | replace "." "-" }}
           image: {{ $.Values.containersRepo.default }}/pyrus-setup:{{ $upversion }}
+          #image: {{ $.Values.containersRepo.default }}/dev-pyrus-setup:1.87.55233.0
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -147,9 +160,9 @@ spec:
                 | sort -V | head -n 1 | grep -q "{{ $upversion }}" && echo " skip" && exit 0
               
               echo " upping it..."
-
               dotnet Pyrus.DataMigrations.dll --update --noninteractive
-{{- end }}
+{{-     end }}
+{{-  end }}
 
       containers:
         - name: check-relise-version-is-equal-bd-or-update

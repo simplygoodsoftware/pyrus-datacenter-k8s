@@ -1,8 +1,8 @@
 {{- $nats := lookup "apps/v1" "StatefulSet" .Release.Namespace (include "nats.fullname" .Subcharts.nats) }}
 {{- if $nats  }}
 {{-   $natsVersion := index (split "-" (index $nats.metadata.labels "helm.sh/chart")) "_1" }}
-{{-   if (semverCompare "<=1.12.1" $.Values.tagsContainers.All) }}
-{{-     if (semverCompare "<0.18.2" "0.12.0") }}
+{{-   if (semverCompare ">=1.12.0" $.Values.tagsContainers.All) }}
+{{-     if (semverCompare "<0.18.2" $natsVersion) }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role

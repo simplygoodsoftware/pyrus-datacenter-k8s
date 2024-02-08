@@ -519,6 +519,14 @@ waitEndpoints:
     - pyrus-logs-pgsql
     - pyrus-nats
     - pyrus-smtp
+  pyrus-notification-service:
+    - pyrus-postgresql
+    - pyrus-elastic
+    - pyrus-logs-pgsql
+    - pyrus-nats
+  pyrus-identity-server:
+    - pyrus-postgresql
+    - pyrus-logs-pgsql
 
 deploymentUpdateStratagy:
   type: Recreate
