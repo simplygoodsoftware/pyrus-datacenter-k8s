@@ -56,8 +56,10 @@ spec:
               command:
                 - bash
                 - -c
-                - |
-                  pg_isready -h ${HOSTNAME}
+                - >-
+                  pg_isready 
+                  --host=${HOSTNAME} 
+                  --username=${POSTGRES_USER}
             initialDelaySeconds: 15
             periodSeconds: 10
             timeoutSeconds: 5
