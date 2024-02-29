@@ -93,10 +93,6 @@ nats:
             $tplYaml: >-
               {{ include "nats.fullname" . }}-js-pvc
           size: 4Gi
-    promExporter:
-      enabled: true
-      podMonitor:
-        enabled: true
     monitor:
       enabled: true
     merge:
@@ -105,6 +101,10 @@ nats:
       logtime: false
       max_payload: 2000000
 
+  promExporter:
+    enabled: true
+    podMonitor:
+      enabled: false
   serviceAccount:
     enabled: true
 
