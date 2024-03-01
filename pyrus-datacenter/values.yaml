@@ -73,52 +73,151 @@ nats:
   cluster:
     enabled: true
     replicas: 3
-
-  nats:
-    limits:
-      maxPayload: "2000000"
-      tls:
-        allow_non_tls: true
-
+  config:
+    cluster:
+      enabled: true
+      replicas: 3
+      merge:
+        name: 
+          $tplYaml: >-
+            {{ include "nats.name" . }}
     jetstream:
       enabled: true
-
-      memStorage:
+      memoryStore:
         enabled: true
         size: 4Gi
-
-      fileStorage:
-        size: 4Gi
+      fileStore:
         enabled: true
+        pvc:
+          name:
+            $tplYaml: >-
+              {{ include "nats.fullname" . }}-js-pvc
+          size: 4Gi
+    monitor:
+      enabled: true
+    merge:
+      debug: false
+      trace: false
+      logtime: false
+      max_payload: 2000000
 
-        tls:
-          allow_non_tls: true
+  promExporter:
+    enabled: true
+    podMonitor:
+      enabled: false
+  serviceAccount:
+    enabled: true
 
-    logging:
-      debug: "false"
-      trace: "false"
-      logtime: "false"
+  statefulSet:
+    patch:
+    - op: remove
+      path: /spec/selector/matchLabels/app.kubernetes.io~1component
+    - $tplYamlSpread: |-
+        {{- $nats := lookup "apps/v1" "StatefulSet" .Release.Namespace (include "nats.fullname" .) }}
+        {{- if and $nats (index $nats.spec.volumeClaimTemplates 0).spec.volumeMode }}
+        - op: add 
+          path: /spec/volumeClaimTemplates/0/spec/volumeMode
+          value: Filesystem
+        {{- else }}
+        []
+        {{- end }}
+    - $tplYamlSpread: |-
+        {{- if and 
+          .Values.config.jetstream.enabled
+          .Values.config.jetstream.fileStore.enabled
+          .Values.config.jetstream.fileStore.pvc.enabled
+          .Values.config.resolver.enabled
+          .Values.config.resolver.pvc.enabled
+        }}
+        - op: move
+          from: /spec/volumeClaimTemplates/0
+          path: /spec/volumeClaimTemplates/1
+        {{- else}}
+        []
+        {{- end }}
 
-  auth:
+  headlessService:
+    name:
+      $tplYaml: >-
+        {{ include "nats.fullname" . }}
+
+  service:
     enabled: false
+  container:
+    image: 
+      repository: nats
+      tag: 2.10.11-alpine3.19
+    env:
+      GOMEMLIMIT: 7GiB
+    merge:
+      resources:
+        requests:
+          cpu: 500m
+          memory: 1Gi
+        limits:
+          cpu: 2
+          memory: 8Gi
 
-  affinity:
-    podAntiAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-       - topologyKey: kubernetes.io/hostname
-         labelSelector:
-           matchExpressions:
-             - key: app.kubernetes.io/name
-               operator: In
-               values:
-                 - nats
-  #  nodeAffinity:
-  #    requiredDuringSchedulingIgnoredDuringExecution:
-  #      nodeSelectorTerms:
-  #      - matchExpressions:
-  #        - key: "node-role.kubernetes.io/nats"
-  #          operator: Exists
+  reloader: 
+    merge: 
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
 
+  podTemplate:
+    merge:
+      spec: 
+        terminationGracePeriodSeconds: 180
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                      - nats
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values: 
+                      - nats
+          # nodeAffinity:
+          #   requiredDuringSchedulingIgnoredDuringExecution:
+          #     nodeSelectorTerms:
+          #     - matchExpressions:
+          #       - key: "node-role.kubernetes.io/nats"
+          #         operator: Exists
+  natsBox:
+    deployment:
+      name: 
+        $tplYaml: >-
+          {{ include "nats.fullname" . }}-box
+      patch:
+      - op: replace
+        path: /spec/selector/matchLabels
+        value:
+          app:
+            $tplYaml: >-
+              {{ include "nats.fullname" . }}-box
+      - op: add
+        path: /spec/template/metadata/labels/app
+        value:
+          $tplYaml: >-
+            {{ include "nats.fullname" . }}-box
+    container: 
+      merge: 
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi
 
 ## Elasticsearch settings #####################################################
 elasticsearch:
@@ -487,8 +586,6 @@ waitEndpoints:
     - pyrus-elastic
     - pyrus-logs-pgsql
     - pyrus-nats
-  pyrus-identity-server:
-    - pyrus-postgresql
   pyrus-web-api:
     - pyrus-postgresql
     - pyrus-elastic
