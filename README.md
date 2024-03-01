@@ -31,11 +31,16 @@ If you want to force version of containers, use next example install command:
 ```
 helm -n pyrus install pyrus-datacenter              \
   pyrus-datacenter-k8s/pyrus-datacenter             \
-  --set tagsContainers.All=1.4.3                    \
+  --set tagsContainers.All=1.12.0                   \
   --set pyrusSetupParam.adminEmail=YOURADMINEMAIL   \
   --set pyrusSetupParam.adminPass=YOURADMINPASSWORD \
   --set pyrusSetupParam.license=LICENSE             \
-  --set 'values-ingress-dir.tls[0].hosts[0]=YOURDOMAIN'
+  --set 'values-ingress-dir.tls[0].hosts[0]=YOURDOMAIN' \
+## version tagsContainers.All=1.12.1 and greater also required S3
+  --set pyrusSetupParam.s3.keyId=YOURKEY            \
+  --set pyrusSetupParam.s3.secretKey=YOURSECRETKEY  \
+  --set pyrusSetupParam.s3.buket=YOURBACKET         \
+  --set pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT=YOURS3ENDPOINT
 ```
 
 If you have values settings file from our company you just do next install command:

@@ -9,6 +9,8 @@ root:
       proxy_cache_min_uses 1;
       add_header X-Proxy-Cache $upstream_cache_status;
       more_set_headers "Strict-Transport-Security: max-age=15552000";
+    nginx.ingress.kubernetes.io/proxy-body-size: "250m"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "32"
   paths:
     - path: /
       pathType: Prefix
@@ -37,6 +39,8 @@ assets:
       more_set_headers $cache_header;
       proxy_cache_min_uses 1;
       add_header X-Proxy-Cache $upstream_cache_status;
+    nginx.ingress.kubernetes.io/proxy-body-size: "250m"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "32"
   paths:
     - path: /assets
       pathType: Prefix
@@ -52,8 +56,9 @@ t:
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_cache_min_uses 1;
       add_header X-Proxy-Cache $upstream_cache_status;
-      
       add_header Strict-Transport-Security "max-age=15552000;";
+    nginx.ingress.kubernetes.io/proxy-body-size: "250m"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "32"
   paths:
     - path: /t
       pathType: Prefix
@@ -70,6 +75,8 @@ v4:
     nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       add_header X-Proxy-Cache $upstream_cache_status;
+    nginx.ingress.kubernetes.io/proxy-body-size: "250m"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "32"
   paths:
     - path: /api/
       pathType: Prefix
@@ -81,6 +88,8 @@ js-libs-pdfjs:
     nginx.ingress.kubernetes.io/configuration-snippet: |
       gzip_types application/javascript;
       expires max;
+    nginx.ingress.kubernetes.io/proxy-body-size: "250m"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "32"
   paths:
     - path: /Js/Libs/pdfjs/
       pathType: Prefix
@@ -91,6 +100,8 @@ js-forms:
     nginx.ingress.kubernetes.io/affinity-mode: "balanced"
     nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
+    nginx.ingress.kubernetes.io/proxy-body-size: "250m"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "32"
   paths:
     - path: /webwidget/
       pathType: Prefix
