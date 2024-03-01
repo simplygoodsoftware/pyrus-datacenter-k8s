@@ -26,3 +26,4 @@ PUBLIC_LOGS_CONN_STRING: >-
           "DatabaseEngine": "Postgres",
           "DatabaseType": "PublicLogs"
       }
+NATS_HA_REPLICAS: "3"
