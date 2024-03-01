@@ -114,10 +114,17 @@ nats:
       path: /spec/selector/matchLabels/app.kubernetes.io~1component
     - $tplYamlSpread: |-
         {{- $nats := lookup "apps/v1" "StatefulSet" .Release.Namespace (include "nats.fullname" .) }}
-        {{- if and $nats (index $nats.spec.volumeClaimTemplates 0).spec.volumeMode }}
+        {{- if $nats }}
+        {{-   if $nats.spec.volumeClaimTemplates }}
+        {{-     if ne (len $nats.spec.volumeClaimTemplates) 0 }}
+        {{-       if (index $nats.spec.volumeClaimTemplates 0).spec.volumeMode }}
+          }}
         - op: add 
           path: /spec/volumeClaimTemplates/0/spec/volumeMode
           value: Filesystem
+        {{-       end }}
+        {{-     end }}
+        {{-   end }}
         {{- else }}
         []
         {{- end }}
