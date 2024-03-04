@@ -11,8 +11,12 @@ avatar:
 v4-files-download:
   annotations:
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      rewrite /v4/files/download/([0-9]+) /services/attachment?id=$1 break;
       add_header X-Proxy-Cache $upstream_cache_status;
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "40"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "2"
+    nginx.ingress.kubernetes.io/proxy-body-size: 250m
   paths:
     - path: /v4/files/download
       pathType: Prefix
@@ -20,6 +24,12 @@ v4-files-download:
       pathType: Prefix
 
 service-upload:
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "40"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "2"
+    nginx.ingress.kubernetes.io/proxy-body-size: 250m
   paths:
     - path: /services/upload
       pathType: Prefix

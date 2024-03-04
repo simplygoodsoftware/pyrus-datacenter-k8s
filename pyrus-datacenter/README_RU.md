@@ -65,6 +65,8 @@ kubectl create secret generic pyrus-ssl --from-file=tls.crt=your_cert.crt --from
   proxy-stream-next-upstream-timeout: 5s
   proxy-stream-next-upstream-tries: 7
   upstream-keepalive-time: 20m
+  client-header-buffer-size: "8k"
+  large-client-header-buffers: "8 16k"
 ```
 
 ## Резервное копирование и восстановление данных
