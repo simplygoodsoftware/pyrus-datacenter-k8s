@@ -56,7 +56,9 @@ pyrusSetupParam:
   #  keyId:
   #  secretKey:
   #  buket:
+  #  storageType:
   #  S3_BLOB_STORAGE_ENDPOINT:
+  #  azureConfig
 
 ## Advanced settings
 

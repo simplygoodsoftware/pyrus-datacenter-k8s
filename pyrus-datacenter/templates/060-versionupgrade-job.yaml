@@ -108,6 +108,19 @@ spec:
                 name: common-variables
           args: [ "--setup", "-id", "9910004", "-v", "true"]
 
+{{-       if eq .Values.pyrusSetupParam.s3.storageType "Azure" }}
+{{-         if not .Values.pyrusSetupParam.s3.azureConfig  }}
+{{-           fail "\n\n! BREAK ! .Values.pyrusSetupParam.s3.azureConfig must be specified for Azure\n" }}
+{{-         end }}
+        - name: setup-s3-storrage-azure
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: [ "--setup", "-id", "9911571", "-v", {{ .Values.pyrusSetupParam.s3.azureConfig | quote }}]
+{{-         end }}
+
         - name: setup-s3-storrage-1210
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
@@ -122,6 +135,14 @@ spec:
             - {{ .Values.pyrusSetupParam.s3.secretKey }}
             - --bucket
             - {{ .Values.pyrusSetupParam.s3.buket }}
+{{-       if .Values.pyrusSetupParam.s3.storageType }}
+{{-         $storageTypes := list "Aws" "MinIo" "Azure" "Mts" "VkCloud" }}
+{{-         if not (has .Values.pyrusSetupParam.s3.storageType $storageTypes)  }}
+{{-           fail "\n\n! BREAK ! .Values.pyrusSetupParam.s3.storageType must be in 'Aws', 'MinIo', 'Azure', 'Mts', 'VkCloud'\n" }}
+{{-         end }}
+            - --storageType 
+            - {{ .Values.pyrusSetupParam.s3.storageType }}
+{{-       end }}
             - --endpointUrl
             - {{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }}
 {{-     else }}
