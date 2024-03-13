@@ -40,6 +40,7 @@ helm -n pyrus install pyrus-datacenter              \
   --set pyrusSetupParam.s3.keyId=YOURKEY            \
   --set pyrusSetupParam.s3.secretKey=YOURSECRETKEY  \
   --set pyrusSetupParam.s3.buket=YOURBACKET         \
+  --set pyrusSetupParam.s3.storageType=YOURTYPE     \  ## choose options: Aws, MinIo, Azure
   --set pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT=YOURS3ENDPOINT
 ```
 
