@@ -56,7 +56,7 @@ pyrusSetupParam:
   #  keyId:
   #  secretKey:
   #  buket:
-  #  storageType:
+  #  storageType: ## choose one of the following options: AWS, MinIO or Azure
   #  S3_BLOB_STORAGE_ENDPOINT:
   #  azureConfig
 
