@@ -155,7 +155,6 @@ spec:
           args:
             - -wnall
 {{-   end }}
-
 {{-   if .Values.pyrusSetupParam.s3 }}
         - name: setup-s3-storrage-1
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
@@ -213,6 +212,16 @@ spec:
             - configMapRef:
                 name: common-variables
           args: ["--setup", "-id", "100001", "-v", "{{ first (first (index .Values "values-ingress-dir").tls).hosts }}"]
+
+{{- range $name, $value := .Values.pyrusSetupParam.setupById }}
+        - name: setup-setupbyid-{{ $name }}
+          image: {{ $.Values.containersRepo.default }}/{{ $.Values.imageDevPrefix }}pyrus-setup:{{ $.Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: ["--setup", "-id", "{{ $name }}", "-v", "{{ $value }}"]
+{{- end }}
 
 {{-   if .Values.imageDevPrefix }}
         - name: update-database-for-dev

@@ -159,6 +159,19 @@ spec:
             - -c
             - |
               dotnet Pyrus.DataMigrations.dll --setup -id 9910001 -v false
+
+        - name: up-to-12-1-0-hocus-correction
+          image: {{ $.Values.containersRepo.default }}/pyrus-setup:1.12.1
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          command:
+            - sh
+            - -c
+            - |
+              dotnet Pyrus.DataMigrations.dll --setup -id 1090005 -v pyrus-hocus:8009
+
 {{-     range $.Values.versionUpgradeHistory1121 }}
 {{-     $upversion := . }}
         - name: up-to-{{ $upversion | replace "." "-" }}

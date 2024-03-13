@@ -59,6 +59,9 @@ pyrusSetupParam:
   #  storageType: ## choose one of the following options: AWS, MinIO or Azure
   #  S3_BLOB_STORAGE_ENDPOINT:
   #  azureConfig
+  #setupById:
+  #  101301:
+  #  101302:
 
 ## Advanced settings
 
@@ -67,7 +70,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.12.1
+  All: 1.13.0
 
 ## Nats settings ##############################################################
 nats:
@@ -316,6 +319,7 @@ resources:
   pyrus-web-api: default
   pyrus-schedule-to-today: default
   pyrus-async-worker:  default
+  pyrus-hocus:  default
 
 ## Deep settings of Pyrus #####################################################
 defaults:
@@ -412,6 +416,11 @@ countStrategy:
     revisionHistoryLimit: 2
   pyrus-preview-generator:
     replicas: 3
+    maxSurge: 0
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
+  pyrus-hocus:
+    replicas: 2
     maxSurge: 0
     maxUnavailable: 1
     revisionHistoryLimit: 2
@@ -526,6 +535,7 @@ clusterIpServicePorts:
   pyrus-async-worker: [ "80" ]
   pyrus-smtp: [ 25 ]
   pyrus-nats: [ 4222 ]
+  pyrus-hocus: [ 8009 ]
 
 ## Deeper Pyrus settings #################################################
 env:
@@ -565,6 +575,9 @@ env:
       value: preview-generator
     - name: ALL_IMAGES_COUNT
       value: "3"
+  pyrus-hocus:
+    - name: APPLICATION_NAME
+      value: hocus
 
 imageDevPrefix:
 installationType: dc
@@ -581,6 +594,7 @@ deployDefaultTemplate:
   pyrus-async-worker: {}
   pyrus-schedule-to-today: {}
   pyrus-preview-generator: {}
+  pyrus-hocus: {}
 
 waitEndpoints:
   WaitOnEnd:
@@ -633,6 +647,10 @@ waitEndpoints:
   pyrus-identity-server:
     - pyrus-postgresql
     - pyrus-logs-pgsql
+  pyrus-hocus:
+    - pyrus-postgresql
+    - pyrus-logs-pgsql
+    - pyrus-nats
 
 deploymentUpdateStratagy:
   type: Recreate
@@ -647,3 +665,5 @@ versionUpgradeHistoryBefore1121:
 
 versionUpgradeHistory1121:
   - 1.12.1
+  - 1.13.0
+
