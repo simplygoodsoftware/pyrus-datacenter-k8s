@@ -123,7 +123,6 @@ nats:
         {{-   if $nats.spec.volumeClaimTemplates }}
         {{-     if ne (len $nats.spec.volumeClaimTemplates) 0 }}
         {{-       if (index $nats.spec.volumeClaimTemplates 0).spec.volumeMode }}
-          }}
         - op: add 
           path: /spec/volumeClaimTemplates/0/spec/volumeMode
           value: Filesystem
