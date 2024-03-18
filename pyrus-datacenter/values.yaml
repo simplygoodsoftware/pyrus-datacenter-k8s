@@ -419,7 +419,7 @@ countStrategy:
     maxUnavailable: 1
     revisionHistoryLimit: 2
   pyrus-hocus:
-    replicas: 2
+    replicas: 1
     maxSurge: 0
     maxUnavailable: 1
     revisionHistoryLimit: 2
