@@ -69,7 +69,7 @@ spec:
 {{-   if (semverCompare ">=1.12.1" $.Values.tagsContainers.All) }}
 {{-     if .Values.pyrusSetupParam.s3 }}
         - name: setup-s3-storrage-1
-          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:1.12.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -77,7 +77,7 @@ spec:
           args: [ "--setup", "-id", "9900151", "-v", "{{ .Values.pyrusSetupParam.s3.keyId }}"]
 
         - name: setup-s3-storrage-2
-          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:1.12.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -85,7 +85,7 @@ spec:
           args: ["--setup", "-id", "9900152", "-v", "{{ .Values.pyrusSetupParam.s3.secretKey }}"]
 
         - name: setup-s3-storrage-3
-          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:1.12.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -93,7 +93,7 @@ spec:
           args: ["--setup", "-id", "9900153", "-v", "{{ .Values.pyrusSetupParam.s3.buket }}"]
 
         - name: setup-s3-storrage-4
-          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:1.12.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -101,7 +101,7 @@ spec:
           args: [ "--setup", "-id", "9910002", "-v", "{{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }}" ]
 
         - name: setup-s3-storrage-5
-          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:1.12.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -113,7 +113,7 @@ spec:
 {{-           fail "\n\n! BREAK ! .Values.pyrusSetupParam.s3.azureConfig must be specified for Azure\n" }}
 {{-         end }}
         - name: setup-s3-storrage-azure
-          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:1.12.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -122,7 +122,7 @@ spec:
 {{-         end }}
 
         - name: setup-s3-storrage-1210
-          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:1.12.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -159,6 +159,19 @@ spec:
             - -c
             - |
               dotnet Pyrus.DataMigrations.dll --setup -id 9910001 -v false
+
+        - name: up-to-12-1-0-hocus-correction
+          image: {{ $.Values.containersRepo.default }}/pyrus-setup:1.12.1
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          command:
+            - sh
+            - -c
+            - |
+              dotnet Pyrus.DataMigrations.dll --setup -id 1090005 -v pyrus-hocus:8009
+
 {{-     range $.Values.versionUpgradeHistory1121 }}
 {{-     $upversion := . }}
         - name: up-to-{{ $upversion | replace "." "-" }}
