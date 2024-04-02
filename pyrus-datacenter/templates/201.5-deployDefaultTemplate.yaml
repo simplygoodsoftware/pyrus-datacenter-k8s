@@ -29,6 +29,10 @@ spec:
       annotations:
         checksum/config: {{ $.Files.Get "configs/connectionStrings.yaml" | sha256sum }}
     spec:
+      securityContext:
+        sysctls:
+        - name: "net.ipv4.ip_unprivileged_port_start"
+          value: "80"
 {{- if $vl.imagePullSecrets }}
       imagePullSecrets:
         - name: docker-pyrus-cred

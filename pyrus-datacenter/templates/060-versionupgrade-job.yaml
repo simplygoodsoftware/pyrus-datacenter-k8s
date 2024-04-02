@@ -100,14 +100,6 @@ spec:
                 name: common-variables
           args: [ "--setup", "-id", "9910002", "-v", "{{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }}" ]
 
-        - name: setup-s3-storrage-5
-          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:1.12.1
-          imagePullPolicy: IfNotPresent
-          envFrom:
-            - configMapRef:
-                name: common-variables
-          args: [ "--setup", "-id", "9910004", "-v", "true"]
-
 {{-       if eq .Values.pyrusSetupParam.s3.storageType "Azure" }}
 {{-         if not .Values.pyrusSetupParam.s3.azureConfig  }}
 {{-           fail "\n\n! BREAK ! .Values.pyrusSetupParam.s3.azureConfig must be specified for Azure\n" }}
@@ -148,18 +140,6 @@ spec:
 {{-     else }}
 {{-       fail "\n\n! BREAK ! NEED to define .Values.pyrusSetupParam.s3\n" }}
 {{-     end }}
-        - name: up-to-12-1-0-disable-use-database-file-storage
-          image: {{ $.Values.containersRepo.default }}/pyrus-setup:1.12.1
-          imagePullPolicy: IfNotPresent
-          envFrom:
-            - configMapRef:
-                name: common-variables
-          command:
-            - sh
-            - -c
-            - |
-              dotnet Pyrus.DataMigrations.dll --setup -id 9910001 -v false
-
         - name: up-to-12-1-0-hocus-correction
           image: {{ $.Values.containersRepo.default }}/pyrus-setup:1.12.1
           imagePullPolicy: IfNotPresent
