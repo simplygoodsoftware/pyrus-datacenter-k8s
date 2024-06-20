@@ -29,6 +29,8 @@ spec:
           volumeMounts:
             - name: {{ $cname }}-data
               mountPath: /var/lib/postgresql/data
+            - name: {{ $cname }}-logs
+              mountPath: /var/log/postgresql
           startupProbe:
             exec:
               command:
@@ -75,3 +77,12 @@ spec:
       resources:
         requests:
           storage: {{ index .Values.volumeSize $cname }}
+  - metadata:
+      name: {{ $cname }}-logs
+      labels:
+        app: *name
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
