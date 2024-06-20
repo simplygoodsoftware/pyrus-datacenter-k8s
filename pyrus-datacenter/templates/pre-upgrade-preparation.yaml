@@ -1,8 +1,15 @@
 {{- $nats := lookup "apps/v1" "StatefulSet" .Release.Namespace (include "nats.fullname" .Subcharts.nats) }}
-{{- if $nats  }}
+{{- $mainDB := lookup "apps/v1" "StatefulSet" .Release.Namespace "pyrus-postgresql" }}
+{{- $logsDB := lookup "apps/v1" "StatefulSet" .Release.Namespace "pyrus-logs-pgsql" }}
+{{- if or $nats $logsDB }}
 {{-   $natsVersion := index (split "-" (index $nats.metadata.labels "helm.sh/chart")) "_1" }}
+{{-   $needNatsUpgrade := semverCompare "<0.18.2" $natsVersion }}
+{{-   $needPostgresUpgrade := false }}
+{{- if $logsDB }}
+{{-     $needPostgresUpgrade = ne (len $logsDB.spec.volumeClaimTemplates) 2 }}
+{{- end }}
 {{-   if (semverCompare ">=1.12.0" $.Values.tagsContainers.All) }}
-{{-     if (semverCompare "<0.18.2" $natsVersion) }}
+{{-     if or $needNatsUpgrade $needPostgresUpgrade }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -28,7 +35,13 @@ rules:
       - patch
   - apiGroups: ["apps"]
     resourceNames:
+{{-       if or $needNatsUpgrade }}
       - {{ include "nats.fullname" .Subcharts.nats }}
+{{-       end }}
+{{-       if or $needPostgresUpgrade }}
+      - "pyrus-postgresql"
+      - "pyrus-logs-pgsql"
+{{-       end }}
     resources:
       - statefulsets
     verbs:
@@ -78,7 +91,7 @@ spec:
       restartPolicy: Never
       serviceAccountName: pre-upgrade-preparation
       containers:
-        - name: nats-12-to-18
+        - name: pre-upgrade-preparation
           image: bitnami/kubectl:1.28.6
           command:
             - /bin/sh
@@ -106,9 +119,20 @@ spec:
               
               kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-identity-server || echo
               kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-identity-server" || echo
-              
+
+{{-       if $needNatsUpgrade }}
               kubectl -n {{ $.Release.Namespace }} delete statefulset pyrus-datacenter-nats || echo
               kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app.kubernetes.io/name=nats" || echo
+{{-       end }}
+
+{{-       if $needPostgresUpgrade }}
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app.kubernetes.io/name=pyrus-logs-pgsql" || echo
+              kubectl -n {{ $.Release.Namespace }} delete statefulset pyrus-logs-pgsql || echo
+{{-         if $mainDB }}
+              kubectl -n {{ $.Release.Namespace }} delete statefulset pyrus-postgresql || echo
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app.kubernetes.io/name=pyrus-postgresql" || echo
+{{-         end }}
+{{-       end }}
 {{-     end }}
 {{-   end }}
 {{- end }}
