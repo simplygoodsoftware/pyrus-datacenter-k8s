@@ -16,7 +16,7 @@ v4-files-download:
     nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "40"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "2"
-    nginx.ingress.kubernetes.io/proxy-body-size: 250m
+    nginx.ingress.kubernetes.io/proxy-body-size: 2048m
   paths:
     - path: /v4/files/download
       pathType: Prefix
@@ -29,7 +29,7 @@ service-upload:
     nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "40"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "2"
-    nginx.ingress.kubernetes.io/proxy-body-size: 250m
+    nginx.ingress.kubernetes.io/proxy-body-size: 2048m
   paths:
     - path: /services/upload
       pathType: Prefix
