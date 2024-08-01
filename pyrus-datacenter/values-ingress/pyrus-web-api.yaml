@@ -108,6 +108,18 @@ js-forms:
     - path: /form/
       pathType: Prefix
 
+servicedeskapi-uploadfile:
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/affinity-mode: "balanced"
+    nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
+    nginx.ingress.kubernetes.io/proxy-body-size: "2048m"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "32"
+  paths:
+    - path: /servicedeskapi/v1/uploadfile
+      pathType: Prefix
+
 metrics:
   annotations:
     nginx.ingress.kubernetes.io/whitelist-source-range: 10.8.0.0/24,10.42.0.0/16,10.43.0.0/16
