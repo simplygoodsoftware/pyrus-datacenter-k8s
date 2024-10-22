@@ -3,7 +3,7 @@ dependencies:
   repository: https://nats-io.github.io/k8s/helm/charts/
   version: 1.1.9
 - name: postgres-operator
-  repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+  repository: https://simplygoodsoftware.github.io/pyrus-datacenter-k8s
   version: 1.8.2
-digest: sha256:e2eb7d3741380ce3b55373b0a714d552583228264c60209cc9da7f807c00370f
-generated: "2024-02-28T09:23:17.2013761+03:00"
+digest: sha256:47fc2f63268332ebf865bd34c005e5d68d4a0e07e32833318aad7c70fe1f0a30
+generated: "2024-10-22T04:36:20.069465819Z"

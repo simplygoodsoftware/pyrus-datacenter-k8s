@@ -156,6 +156,7 @@ spec:
             - -wnall
 {{-   end }}
 {{-   if .Values.pyrusSetupParam.s3 }}
+{{      if (semverCompare "<1.12.1" $.Values.tagsContainers.All) }}
         - name: setup-s3-storrage-1
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
@@ -195,7 +196,40 @@ spec:
             - configMapRef:
                 name: common-variables
           args: [ "--setup", "-id", "9910004", "-v", "true"]
+{{-     else }}
+        - name: setup-s3-storrage-1210
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: 
+            - --configure-s3
+            - --accessKey
+            - {{ .Values.pyrusSetupParam.s3.keyId }}
+            - --secretKey
+            - {{ .Values.pyrusSetupParam.s3.secretKey }}
+            - --bucket
+            - {{ .Values.pyrusSetupParam.s3.buket }}
+{{-         if .Values.pyrusSetupParam.s3.storageType }}
+{{-           $storageTypes := list "Aws" "MinIo" "Azure" "Mts" "VkCloud" }}
+{{-           if not (has .Values.pyrusSetupParam.s3.storageType $storageTypes)  }}
+{{-             fail "\n\n! BREAK ! .Values.pyrusSetupParam.s3.storageType must be in 'Aws', 'MinIo', 'Azure', 'Mts', 'VkCloud'\n" }}
+{{-           end }}
+            - --storageType 
+            - {{ .Values.pyrusSetupParam.s3.storageType }}
+{{-         end }}
+            - --endpointUrl
+            - {{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }}
+{{-     end }}
 {{-   end }}
+
+{{-  if (semverCompare ">1.12.0" $.Values.tagsContainers.All) }}
+{{-    if not .Values.pyrusSetupParam.s3 }}
+{{-      fail "\n\n! BREAK ! NEED to define .Values.pyrusSetupParam.s3\n" }}
+{{-    end }}
+{{-  end }}
+
 
         - name: setup-license-variables
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
