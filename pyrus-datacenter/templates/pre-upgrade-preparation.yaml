@@ -106,6 +106,7 @@ spec:
               kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-preview-generator
               kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-schedule-to-today
               kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-web-api
+              kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-hocus
               
               kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-async-worker"
               kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-bind-service"
@@ -116,6 +117,7 @@ spec:
               kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-preview-generator"
               kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-schedule-to-today"
               kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-web-api"
+              kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-hocus"
               
               kubectl -n {{ $.Release.Namespace }} scale --replicas=0 deployment.apps/pyrus-identity-server || echo
               kubectl -n {{ $.Release.Namespace }} wait --for=delete pod -l "app=pyrus-identity-server" || echo
