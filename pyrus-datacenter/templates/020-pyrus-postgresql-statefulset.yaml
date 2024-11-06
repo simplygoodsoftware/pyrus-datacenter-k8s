@@ -1,6 +1,6 @@
 {{- $cname := "pyrus-postgresql" }}
-{{- if not .Values.postgresql.enabledHA }}
-{{- if not .Values.database.external }}
+{{- if not $.Values.postgresql.enabledHA }}
+{{- if not $.Values.database.external }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -22,7 +22,7 @@ spec:
 {{- if .Values.imagePullSecrets }}
       imagePullSecrets:
         - name: docker-pyrus-cred
-{{- end }}
+{{- end }}	
       containers:
         - name: *name
           image: {{ .Values.containersRepo.default }}/{{ .Values.devPrefix }}pyrus-pgsql-13:{{ .Values.tagsContainers.All }}

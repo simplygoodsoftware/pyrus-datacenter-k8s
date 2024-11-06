@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pyrus-patrony-fix
+data:
+  start.sql: |
+    START TRANSACTION;
+    do $$
+    declare
+        rs text;
+    begin
+        create extension if not exists pg_cron;
+    exception when others then
+        get stacked diagnostics rs = message_text;
+        IF not rs like 'can only create extension in database postgres%' then
+            raise exception 'ERROR: %s', rs;
+        end if;
+        
+        create schema if not exists cron;
+        create or replace function cron.schedule(tm text, cl text) RETURNS void as $startf$
+        begin
+            create extension if not exists dblink;
+            perform * from dblink('dbname=postgres', 'SELECT cron.schedule_in_database('|| quote_literal(tm) || ',' || quote_literal('pyrusdb') ||','|| quote_literal(cl) ||');') AS target_inventory(target_item_id int);
+        end; $startf$ language plpgsql;
+    end $$;
+    COMMIT;
+    
+    START TRANSACTION;
+    do $$
+    begin
+        if not exists (
+            select * 
+            from pg_replication_slots 
+            where slot_name = 
+                (select value from cdc.params where name = 'slot_name')) then
+            perform * from pg_create_logical_replication_slot((select value from cdc.params where name = 'slot_name'), 'wal2json');
+    
+                perform cron.schedule('* * * * *', 'call cdc.do_every_interval();');
+    
+                perform cron.schedule('*/5 * * * *', 'call cdc.vacuum();');
+        end if;
+    end $$;    
+    COMMIT;
