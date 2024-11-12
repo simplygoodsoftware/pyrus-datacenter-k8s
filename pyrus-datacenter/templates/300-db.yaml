@@ -29,5 +29,7 @@ spec:
       - host    all          all       all                md5
   postgresql:
     version: "13"
+    parameters:
+      wal_level: logical
 {{-   end }}
 {{- end }}

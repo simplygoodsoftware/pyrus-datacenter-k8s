@@ -57,6 +57,12 @@ spec:
           args:
             - -ct
             - --start
+{{-     if $.Values.postgresql.enabledHA }}
+          volumeMounts:
+            - mountPath: /app/PostgresChangeDataCapture/start.sql
+              name: pyrus-patrony-fix
+              subPath: start.sql
+{{-     end }}
 
 {{-   end }}
 
@@ -275,4 +281,14 @@ spec:
           imagePullPolicy: IfNotPresent
           command: [ "ls" ]
 {{- end }}
+
+{{-     if $.Values.postgresql.enabledHA }}
+      volumes:
+        - name: pyrus-patrony-fix
+          configMap:
+            name: pyrus-patrony-fix
+            items:
+              - key: start.sql
+                path: start.sql
+{{-     end }}
 
