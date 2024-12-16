@@ -24,7 +24,7 @@ spec:
 {{- end }}
       containers:
         - name: *name
-          image: {{ .Values.containersRepo.default }}/{{ .Values.devPrefix }}{{ $cname }}:latest
+          image: {{ .Values.containersRepo.default }}/{{ .Values.devPrefix }}pyrus-pgsql-16:latest
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           volumeMounts:
             - name: {{ $cname }}-data
