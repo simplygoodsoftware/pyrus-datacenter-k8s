@@ -33,6 +33,9 @@ volumeSize:
 ## HA PostgreSQL configurations ###############################################
 postgresql:
   enabledHA: false
+  upgrade:
+    fromVersion: "13"
+    toVersion: "16"
   postgresql:
     configGeneral:
       kubernetes_use_configmaps: true
