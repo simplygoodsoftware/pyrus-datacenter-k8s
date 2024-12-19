@@ -85,4 +85,4 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 10Gi
+          storage: {{ index $.Values.volumeSize "pyrus-logs-pgsql-logs" | default "30Gi" }}

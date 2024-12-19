@@ -80,6 +80,6 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: {{ index $.Values.volumeSize "pyrus-postgresql" | default "30Gi" }}
+          storage: {{ index $.Values.volumeSize "pyrus-postgresql-logs" | default "30Gi" }}
 {{- end }}
 {{- end }}
