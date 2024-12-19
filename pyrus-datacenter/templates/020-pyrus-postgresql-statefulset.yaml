@@ -1,4 +1,4 @@
-{{- $cname := "pyrus-postgresql" }}
+{{- $cname   := "pyrus-postgresql-16" }}
 {{- if not .Values.postgresql.enabledHA }}
 {{- if not .Values.database.external }}
 apiVersion: apps/v1
@@ -66,20 +66,20 @@ spec:
   - metadata:
       name: {{ $cname }}-data
       labels:
-        app: *name
+        app: {{ $cname }}-data
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: {{ index .Values.volumeSize $cname }}
+          storage: {{ index $.Values.volumeSize "pyrus-postgresql" }}
   - metadata:
       name: {{ $cname }}-logs
       labels:
-        app: *name
+        app: {{ $cname }}-logs
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 1Gi
+          storage: {{ index $.Values.volumeSize "pyrus-postgresql" | default "30Gi" }}
 {{- end }}
 {{- end }}

@@ -14,7 +14,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Gi
+      storage: {{ index $.Values.volumeSize .statefulset.metadata.name }}
 
 ---
 apiVersion: batch/v1

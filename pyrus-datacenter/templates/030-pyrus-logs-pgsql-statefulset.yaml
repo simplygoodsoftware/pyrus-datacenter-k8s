@@ -1,4 +1,4 @@
-{{- $cname := "pyrus-logs-pgsql" }}
+{{- $cname := "pyrus-logs-pgsql-16" }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -76,7 +76,7 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: {{ index .Values.volumeSize $cname }}
+          storage: {{ index .Values.volumeSize "pyrus-logs-pgsql" }}
   - metadata:
       name: {{ $cname }}-logs
       labels:
@@ -85,4 +85,4 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 1Gi
+          storage: 10Gi

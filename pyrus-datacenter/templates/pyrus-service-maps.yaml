@@ -41,7 +41,7 @@ spec:
     port: 5432
     protocol: TCP
   selector:
-    app: pyrus-postgresql
+    app: pyrus-postgresql-16
 {{- end }}
 {{- end }}
 ---
@@ -56,4 +56,4 @@ spec:
     port: 5432
     protocol: TCP
   selector:
-    app: pyrus-logs-pgsql
+    app: pyrus-logs-pgsql-16

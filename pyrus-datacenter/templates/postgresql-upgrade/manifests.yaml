@@ -5,17 +5,6 @@
 {{-   $currentImage := (index $statefulset.spec.template.spec.containers 0).image }}
 {{-   if regexMatch (print ".*\\/pyrus-pgsql-[1-9]+") $currentImage -}}
 {{-     $imageVersion := splitList "-" $currentImage | last | splitList ":" | first }}
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mctest-{{ $statefulset.metadata.name }}
-  helm.sh/hook-weight: "-200"
-data:
-  someinfo: |
-    current: {{ $imageVersion }}
-    from: {{ $.Values.postgresql.upgrade.fromVersion }}
----
 {{-     if eq $imageVersion $.Values.postgresql.upgrade.fromVersion }}
 {{        template "pyrus.postgrsql-upgrade.init-volume" (dict "statefulset" $statefulset "Values" $.Values) }}
 {{        template "pyrus.postgrsql-upgrade.delete-postgres-statefulset" $statefulset }}

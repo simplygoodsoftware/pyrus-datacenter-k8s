@@ -6,7 +6,7 @@ metadata:
   name: {{ $.statefulset.metadata.name }}-migration
   annotations:
     helm.sh/hook: pre-upgrade
-    helm.sh/hook-weight: "-10"
+    helm.sh/hook-weight: "-20"
     #helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
   labels:
     app: postgresql-upgrade
@@ -49,5 +49,33 @@ spec:
       - name: postgres-data-{{ $.Values.postgresql.upgrade.toVersion }}
         persistentVolumeClaim:
           claimName: {{ include "pyrus.postgresql-upgrade.pvc-new" . }}
-
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: &name patch-pvc-labels
+  annotations:
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-weight: "-10"
+    #helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels: &selector
+    app: *name
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels: *selector
+    spec:
+      restartPolicy: Never
+      serviceAccountName: delete-postgres-statefulset
+      containers:
+        - name: path-pvc
+          image: bitnami/kubectl:1.28.6
+          command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl -n {{ $.statefulset.metadata.namespace }} label pvc {{ include "pyrus.postgresql-upgrade.pvc-new" . }} "app={{ $.statefulset.metadata.name }}"
+              kubectl -n {{ $.statefulset.metadata.namespace }} label pvc {{ include "pyrus.postgresql-upgrade.pvc-old" . }} "app"-
 {{ end }}

@@ -15,6 +15,14 @@ rules:
     verbs:
       - delete
       - list
+  - apiGroups: ["*"]
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - get
+      - list
+      - patch
+
 ---
 apiVersion: v1
 kind: ServiceAccount
