@@ -33,11 +33,13 @@ volumeSize:
 ## HA PostgreSQL configurations ###############################################
 postgresql:
   enabledHA: false
+  upgrade:
+    fromVersion: "13"
+    toVersion: "16"
   postgresql:
     configGeneral:
       kubernetes_use_configmaps: true
       docker_image: registry.opensource.zalan.do/acid/spilo-13:2.1-p1
-
 
 standalonePostgreSQLBackup: {}
   ## required backup values
@@ -70,7 +72,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.17.0
+  All: 1.18.1
 
 ## Nats settings ##############################################################
 nats:
@@ -671,4 +673,4 @@ versionUpgradeHistory1121:
   - 1.15.2
   - 1.16.0
   - 1.17.0
-
+  - 1.18.1

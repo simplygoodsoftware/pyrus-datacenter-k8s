@@ -1,4 +1,4 @@
-{{- $cname := "pyrus-logs-pgsql" }}
+{{- $cname := "pyrus-logs-pgsql-16" }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -24,7 +24,7 @@ spec:
 {{- end }}
       containers:
         - name: *name
-          image: {{ .Values.containersRepo.default }}/{{ .Values.devPrefix }}{{ $cname }}:latest
+          image: {{ .Values.containersRepo.default }}/{{ .Values.devPrefix }}pyrus-pgsql-16:latest
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           volumeMounts:
             - name: {{ $cname }}-data
@@ -76,7 +76,7 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: {{ index .Values.volumeSize $cname }}
+          storage: {{ index .Values.volumeSize "pyrus-logs-pgsql" }}
   - metadata:
       name: {{ $cname }}-logs
       labels:
@@ -85,4 +85,4 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 1Gi
+          storage: {{ index $.Values.volumeSize "pyrus-logs-pgsql-logs" | default "30Gi" }}

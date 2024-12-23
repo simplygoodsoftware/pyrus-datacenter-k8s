@@ -1,0 +1,16 @@
+{{- $statefulsets := lookup "apps/v1" "StatefulSet"  .Release.Namespace "" }}
+
+{{- range $index, $statefulset := $statefulsets.items }}
+{{    $from         := toString $.Values.postgresql.upgrade.fromVersion }}
+{{-   $currentImage := (index $statefulset.spec.template.spec.containers 0).image }}
+{{-   if regexMatch (print ".*\\/pyrus-pgsql-[1-9]+") $currentImage -}}
+{{-     $imageVersion := splitList "-" $currentImage | last | splitList ":" | first }}
+{{-     if eq $imageVersion $.Values.postgresql.upgrade.fromVersion }}
+{{        template "pyrus.postgrsql-upgrade.init-volume" (dict "statefulset" $statefulset "Values" $.Values) }}
+{{        template "pyrus.postgrsql-upgrade.delete-postgres-statefulset" $statefulset }}
+{{        template "pyrus.postgrsql-upgrade.migration" (dict "statefulset" $statefulset "Values" $.Values) }}
+{{-     end }}
+
+{{-   end }}
+{{- end }}
+
