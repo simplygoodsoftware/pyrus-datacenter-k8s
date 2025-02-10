@@ -1,8 +1,11 @@
 root:
   annotations:
     nginx.ingress.kubernetes.io/affinity: "cookie"
-    nginx.ingress.kubernetes.io/affinity-mode: "persistent"
+    nginx.ingress.kubernetes.io/affinity-mode: "balanced"
     nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-change-on-failure: "true"
+    nginx.ingress.kubernetes.io/proxy-next-upstream: error timeout invalid_header http_502 http_503
+    nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "4"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
     nginx.ingress.kubernetes.io/auth-cache-duration: 200 302 60m
     nginx.ingress.kubernetes.io/configuration-snippet: |
@@ -32,6 +35,9 @@ assets:
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/affinity-mode: "balanced"
     nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-change-on-failure: "true"
+    nginx.ingress.kubernetes.io/proxy-next-upstream: error timeout invalid_header http_502 http_503
+    nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "4"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
     nginx.ingress.kubernetes.io/auth-cache-duration: 200 302 60m;
     nginx.ingress.kubernetes.io/configuration-snippet: |
@@ -51,6 +57,9 @@ t:
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/affinity-mode: "balanced"
     nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-change-on-failure: "true"
+    nginx.ingress.kubernetes.io/proxy-next-upstream: error timeout invalid_header http_502 http_503
+    nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "4"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
     nginx.ingress.kubernetes.io/auth-cache-duration: 200 302 60m;
     nginx.ingress.kubernetes.io/configuration-snippet: |
@@ -72,6 +81,9 @@ v4:
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/affinity-mode: "balanced"
     nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-change-on-failure: "true"
+    nginx.ingress.kubernetes.io/proxy-next-upstream: error timeout invalid_header http_502 http_503
+    nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "4"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       add_header X-Proxy-Cache $upstream_cache_status;
@@ -99,6 +111,9 @@ js-forms:
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/affinity-mode: "balanced"
     nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-change-on-failure: "true"
+    nginx.ingress.kubernetes.io/proxy-next-upstream: error timeout invalid_header http_502 http_503
+    nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "4"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
     nginx.ingress.kubernetes.io/proxy-body-size: "250m"
     nginx.ingress.kubernetes.io/proxy-buffers-number: "32"
@@ -113,6 +128,9 @@ servicedeskapi-uploadfile:
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/affinity-mode: "balanced"
     nginx.ingress.kubernetes.io/session-cookie-name: "ingressstick"
+    nginx.ingress.kubernetes.io/session-cookie-change-on-failure: "true"
+    nginx.ingress.kubernetes.io/proxy-next-upstream: error timeout invalid_header http_502 http_503
+    nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "4"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "1200"
     nginx.ingress.kubernetes.io/proxy-body-size: "2048m"
     nginx.ingress.kubernetes.io/proxy-buffers-number: "32"
