@@ -72,7 +72,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.18.1
+  All: 1.19.0
 
 ## Nats settings ##############################################################
 nats:
@@ -340,26 +340,26 @@ defaults:
     httpGet:
       path: /health/ready
       port: 80
-    initialDelaySeconds: 30
+    initialDelaySeconds: 25
     periodSeconds: 10
-    timeoutSeconds: 10
+    timeoutSeconds: 5
     successThreshold: 1
     failureThreshold: 120
   livenessProbe:
     httpGet:
       path: /health/ready
       port: 80
-    initialDelaySeconds: 180
+    initialDelaySeconds: 60
     periodSeconds: 6
     timeoutSeconds: 6
     successThreshold: 1
-    failureThreshold: 10
+    failureThreshold: 50
   readinessProbe:
     httpGet:
       path: /health/ready
       port: 80
-    initialDelaySeconds: 30
-    periodSeconds: 3
+    initialDelaySeconds: 25
+    periodSeconds: 5
     timeoutSeconds: 3
     successThreshold: 1
     failureThreshold: 3
@@ -436,29 +436,29 @@ startupProbe:
     httpGet:
       path: /health/ready
       port: 80
-    initialDelaySeconds: 180
-    periodSeconds: 30
-    timeoutSeconds: 10
+    initialDelaySeconds: 25
+    periodSeconds: 10
+    timeoutSeconds: 5
     successThreshold: 1
     failureThreshold: 180
   pyrus-file-service:
     httpGet:
       path: /health/ready
       port: 18888
-    initialDelaySeconds: 30
+    initialDelaySeconds: 25
     periodSeconds: 10
-    timeoutSeconds: 10
+    timeoutSeconds: 5
     successThreshold: 1
-    failureThreshold: 60
+    failureThreshold: 180
   pyrus-schedule-to-today:
     httpGet:
       path: /health/ready
       port: 80
-    initialDelaySeconds: 180
+    initialDelaySeconds: 25
     periodSeconds: 10
-    timeoutSeconds: 10
+    timeoutSeconds: 5
     successThreshold: 1
-    failureThreshold: 120
+    failureThreshold: 180
 
 livenessProbe:
   pyrus-mail-reader: default
@@ -470,7 +470,7 @@ livenessProbe:
     httpGet:
       path: /health/ready
       port: 80
-    initialDelaySeconds: 30
+    initialDelaySeconds: 60
     periodSeconds: 10
     timeoutSeconds: 10
     successThreshold: 1
@@ -479,7 +479,7 @@ livenessProbe:
     httpGet:
       path: /health/ready
       port: 18888
-    initialDelaySeconds: 20
+    initialDelaySeconds: 60
     periodSeconds: 6
     timeoutSeconds: 6
     successThreshold: 1
@@ -503,7 +503,7 @@ readinessProbe:
     httpGet:
       path: /health/ready
       port: 80
-    initialDelaySeconds: 30
+    initialDelaySeconds: 25
     periodSeconds: 1
     timeoutSeconds: 1
     successThreshold: 5
@@ -512,7 +512,7 @@ readinessProbe:
     httpGet:
       path: /health/ready
       port: 80
-    initialDelaySeconds: 30
+    initialDelaySeconds: 25
     periodSeconds: 1
     timeoutSeconds: 1
     successThreshold: 7
@@ -521,7 +521,7 @@ readinessProbe:
     httpGet:
       path: /health/ready
       port: 18888
-    initialDelaySeconds: 30
+    initialDelaySeconds: 25
     periodSeconds: 1
     timeoutSeconds: 1
     successThreshold: 5
@@ -674,3 +674,4 @@ versionUpgradeHistory1121:
   - 1.16.0
   - 1.17.0
   - 1.18.1
+  - 1.19.0

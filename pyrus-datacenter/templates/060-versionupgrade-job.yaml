@@ -56,6 +56,10 @@ spec:
             - |
               export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version \
                 | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
+              if [ -z "$VERSION_IS" ];then
+                    echo "SKIP: may be version is to new, try to check it in future versions..."
+                    exit 0
+              fi
               
               printf "Current version: ${VERSION_IS}"
               
@@ -87,24 +91,30 @@ spec:
           envFrom:
             - configMapRef:
                 name: common-variables
-          args: 
-            - --configure-s3
-            - --accessKey
-            - {{ .Values.pyrusSetupParam.s3.keyId }}
-            - --secretKey
-            - {{ .Values.pyrusSetupParam.s3.secretKey }}
-            - --bucket
-            - {{ .Values.pyrusSetupParam.s3.buket }}
+          command:
+            - sh
+            - -c
+            - |
+              export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version \
+                | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
+              if [ -z "$VERSION_IS" ];then
+                    echo "SKIP: may be version is to new, try to check it in future versions..."
+                    exit 0
+              fi
+              
+              dotnet Pyrus.DataMigrations.dll                            \
+                  --configure-s3                                         \
+                  --accessKey {{ .Values.pyrusSetupParam.s3.keyId }}     \
+                  --secretKey {{ .Values.pyrusSetupParam.s3.secretKey }} \
+                  --bucket {{ .Values.pyrusSetupParam.s3.buket }}        \
 {{-       if .Values.pyrusSetupParam.s3.storageType }}
 {{-         $storageTypes := list "Aws" "MinIo" "Azure" "Mts" "VkCloud" }}
 {{-         if not (has .Values.pyrusSetupParam.s3.storageType $storageTypes)  }}
 {{-           fail "\n\n! BREAK ! .Values.pyrusSetupParam.s3.storageType must be in 'Aws', 'MinIo', 'Azure', 'Mts', 'VkCloud'\n" }}
 {{-         end }}
-            - --storageType 
-            - {{ .Values.pyrusSetupParam.s3.storageType }}
+                  --storageType {{ .Values.pyrusSetupParam.s3.storageType }}              \
 {{-       end }}
-            - --endpointUrl
-            - {{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }}
+                  --endpointUrl {{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }} \
 {{-     else }}
 {{-       fail "\n\n! BREAK ! NEED to define .Values.pyrusSetupParam.s3\n" }}
 {{-     end }}
@@ -118,6 +128,13 @@ spec:
             - sh
             - -c
             - |
+              export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version \
+                | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
+              if [ -z "$VERSION_IS" ];then
+                    echo "SKIP: may be version is to new, try to check it in future versions..."
+                    exit 0
+              fi
+              
               dotnet Pyrus.DataMigrations.dll --setup -id 1090005 -v pyrus-hocus:8009
 
 {{-     range $.Values.versionUpgradeHistory1121 }}
@@ -135,6 +152,10 @@ spec:
             - |
               export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version \
                 | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
+              if [ -z "$VERSION_IS" ];then
+                    echo "SKIP: may be version is to new, try to check it in future versions..."
+                    exit 0
+              fi
               
               printf "Current version: ${VERSION_IS}"
               
@@ -158,6 +179,11 @@ spec:
             - -c
             - |
               export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
+              if [ -z "$VERSION_IS" ];then
+                    echo "ERROR: version did not detected"
+                    exit 1
+              fi
+              
               printf "Current version: ${VERSION_IS}"
               printf "\nContainer version: {{ .Values.tagsContainers.All }}\n"
               
