@@ -72,7 +72,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.19.0
+  All: 1.19.1
 
 ## Nats settings ##############################################################
 nats:
@@ -675,3 +675,4 @@ versionUpgradeHistory1121:
   - 1.17.0
   - 1.18.1
   - 1.19.0
+  - 1.19.1
