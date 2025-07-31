@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: *name
-  replicas: 1
+  replicas: {{ (index $.Values.countStrategy "pyrus-smtp").replicas | default 0 }}
   template:
     metadata:
       labels:

@@ -3,9 +3,13 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: common-variables
-  annotations:
-    checksum/config: {{ $.Files.Get "configs/connectionStrings.yaml" | sha256sum }}
 data:
-  {{-   range $key, $vl := ($.Files.Get "configs/connectionStrings.yaml" | fromYaml) }}
+{{- if not (hasKey $.Values "connectionStringsCreds") }}
+{{-   range $key, $vl := ($.Files.Get ($.Values.connectionStringsPath | default "configs/connectionStrings.yaml") | fromYaml) }}
   {{ $key }}: {{ $vl | toYaml | indent 4 }}
-  {{-   end }}
+{{-   end }}
+{{- else if hasKey $.Values "connectionStringsCreds" }}
+{{-     range $key, $vl := $.Values.connectionStringsCreds }}
+  {{ $key }}: {{ $vl | toYaml | indent 4 }}
+{{-   end }}
+{{- end }}

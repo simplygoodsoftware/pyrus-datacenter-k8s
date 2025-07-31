@@ -20,10 +20,46 @@ database:
 preview:
   external: false
 
+logs:
+  external: false
+
 postgresqlOwnerCreds:
   pyrusdb:
     name: pyrusadm
     pass: pyruspwd
+
+## If you did not use configs/connectionStrings.yaml you can change next line to control db creds from here
+## uncomment_connectionStringsCreds -> connectionStringsCreds
+uncomment_connectionStringsCreds:
+  MAIN_CONN_STRING: >
+    {
+      "ConnectionName": "default",
+      "ConnectionString": "Server=pyrus-postgresql;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrusdb;",
+      "DatabaseEngine": "Postgres",
+      "DatabaseType": "Data"
+    }
+  PRIVATE_LOGS_CONN_STRING: >
+    {
+      "ConnectionName": "privateLogs",
+      "ConnectionString": "Server=pyrus-logs-pgsql;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrus_logs;",
+      "DatabaseEngine": "Postgres",
+      "DatabaseType": "PrivateLogs"
+    }
+  PUBLIC_LOGS_CONN_STRING: >
+    {
+      "ConnectionName": "publicLogs",
+      "ConnectionString": "Server=pyrus-logs-pgsql;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrus_logs;",
+      "DatabaseEngine": "Postgres",
+      "DatabaseType": "PublicLogs"
+    }
+  FILEDATA_CONN_STRING: >
+    {
+     "ConnectionName": "files",
+     "ConnectionString": "Server=pyrus-postgresql;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrusdb;",
+     "DatabaseEngine": "Postgres",
+     "DatabaseType": "Files"
+    }
+  NATS_HA_REPLICAS: "3"
 
 ## Legacy volume size settings ################################################
 volumeSize:
@@ -234,6 +270,7 @@ nats:
 
 ## Elasticsearch settings #####################################################
 elasticsearch:
+  internalChart: true
   esJavaOpts: "-Xms1g -Xmx1g"
   image: "simplygoodsoftware/elastic-selfhosted"
   imageTag: "7.17.10"
@@ -411,7 +448,7 @@ countStrategy:
     maxUnavailable: 1
     revisionHistoryLimit: 2
   pyrus-smtp:
-    replicas: 1
+    replicas: 0
     maxSurge: 0
     maxUnavailable: 1
     revisionHistoryLimit: 2
@@ -639,7 +676,6 @@ waitEndpoints:
     - pyrus-elastic
     - pyrus-logs-pgsql
     - pyrus-nats
-    - pyrus-smtp
   pyrus-notification-service:
     - pyrus-postgresql
     - pyrus-elastic
