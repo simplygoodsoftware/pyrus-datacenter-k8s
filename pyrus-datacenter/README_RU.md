@@ -145,7 +145,7 @@ wal-g backup-list
 
 Рекомендуемые образы:
 - **Для standalone-версии**: `cr.yandex/crpn0l4dp22f8mv5ln18/pyrus-pgsql-16:YOURVERSION`
-- **Для кластерной системы на базе Patroni**: `cr.yandex/crpj6igvm2ge2h2jahpu/spilo-17:0.17`
+- **Для кластерной системы на базе Patroni**: `cr.yandex/crpj6igvm2ge2h2jahpu/spilo-17:0.20`
 
 Для standalone-версии PostgreSql с нашим образом дополнительные конфигурации не требуются.
 
@@ -170,7 +170,7 @@ metadata:
   name: postgres
 spec:
   teamId: pyrus
-  dockerImage: cr.yandex/crpj6igvm2ge2h2jahpu/spilo-17:0.17
+  dockerImage: cr.yandex/crpj6igvm2ge2h2jahpu/spilo-17:0.20
   enableConnectionPooler: true
   volume:
     size: 100Gi
@@ -217,7 +217,7 @@ spec:
     dockerImage: cr.yandex/crpj6igvm2ge2h2jahpu/pgbouncer:0.9
     numberOfInstances: 2
     maxDBConnections: 200
-    mode: session
+    mode: transaction
     schema: "pooler"
     user: pooler
 
@@ -240,7 +240,7 @@ spec:
 ```yaml
 esJavaOpts: "-Xms1g -Xmx1g"
 image: "simplygoodsoftware/elastic-selfhosted"
-imageTag: "7.17.10"
+imageTag: "1.20.0"
 clusterHealthCheckParams: "wait_for_status=green&timeout=30s"
 resources:
   requests:
@@ -290,6 +290,8 @@ data:
 - Проверьте корректность портов подключения
 - Обновите логины и пароли
 - Убедитесь в корректности путей подключения
+
+При соединении на PostgreSql через pooler рекомендуется в ConnectionString добавлять **No Reset On Close=true;**
 
 ```yaml
 forceIngressClass: nginx
