@@ -25,16 +25,23 @@ spec:
         - name: docker-pyrus-cred
 {{- end }}
       initContainers:
+
+{{- if or (or (not .Values.database.external) $.Values.elasticsearch.internalChart) (not $.Values.logs.external)}}
         - name: depends-on
           image: {{ .Values.containersRepo.default }}/k8s-waits
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           command:
             - wait_endpoints
-{{- if not .Values.database.external }}
+{{-   if not .Values.database.external }}
             - {{ .Release.Namespace }}/endpoints/pyrus-postgresql
-{{- end }}
+{{-   end }}
+{{-   if $.Values.elasticsearch.internalChart }}
             - {{ .Release.Namespace }}/endpoints/pyrus-elastic
+{{-   end }}
+{{-   if not $.Values.logs.external }}
             - {{ .Release.Namespace }}/endpoints/pyrus-logs-pgsql
+{{-   end }}
+{{- end }}
         - name: wait-setup-variable-complite
           image: {{ .Values.containersRepo.default }}/k8s-waits
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
@@ -42,6 +49,7 @@ spec:
             - sh
             - -c
             - kubectl wait --for=condition=complete job.batch/set-pyrus-setupparam --timeout=600s
+
 {{- range $.Values.versionUpgradeHistoryBefore1121 }}
 {{- $upversion := . }}
         - name: up-to-{{ $upversion | replace "." "-" }}

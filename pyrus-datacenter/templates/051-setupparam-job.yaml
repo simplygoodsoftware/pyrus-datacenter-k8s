@@ -20,21 +20,25 @@ spec:
         - name: docker-pyrus-cred
 {{- end }}
       initContainers:
+{{- if or (or (not .Values.database.external) $.Values.elasticsearch.internalChart) (not $.Values.logs.external)}}
         - name: depends-on
           image: {{ .Values.containersRepo.default }}/k8s-waits
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           command:
             - wait_endpoints
-{{- if not .Values.database.external }}
+{{-   if not .Values.database.external }}
             - {{ .Release.Namespace }}/endpoints/pyrus-postgresql
-{{- end }}
+{{-   end }}
+{{-   if $.Values.elasticsearch.internalChart }}
             - {{ .Release.Namespace }}/endpoints/pyrus-elastic
+{{-   end }}
+{{-   if not $.Values.logs.external }}
             - {{ .Release.Namespace }}/endpoints/pyrus-logs-pgsql
+{{-   end }}
+{{- end }}
 
 {{- if eq .Release.Revision 1 }}
-
-{{-   if not .Values.database.external }}
-{{-     if not (hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME")  }}
+{{-   if not (hasKey .Values.standalonePostgreSQLBackup "RESTORE_NAME")  }}
         - name: setup-create-db
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
@@ -46,7 +50,17 @@ spec:
           envFrom:
             - configMapRef:
                 name: common-variables
-{{-     end }}
+{{-   end }}
+
+{{-   range $name, $value := .Values.pyrusSetupParam.setupById }}
+        - name: setup-setupbyid-{{ $name }}
+          image: {{ $.Values.containersRepo.default }}/{{ $.Values.imageDevPrefix }}pyrus-setup:{{ $.Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: ["--setup", "-id", "{{ $name }}", "-v", "{{ $value }}"]
+{{-   end }}
 
         - name: start-change-tracking
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
@@ -57,8 +71,6 @@ spec:
           args:
             - -ct
             - --start
-
-{{-   end }}
 
         - name: setup-elastic-index-it
           image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
@@ -246,16 +258,6 @@ spec:
             - configMapRef:
                 name: common-variables
           args: ["--setup", "-id", "100001", "-v", "{{ first (first (index .Values "values-ingress-dir").tls).hosts }}"]
-
-{{- range $name, $value := .Values.pyrusSetupParam.setupById }}
-        - name: setup-setupbyid-{{ $name }}
-          image: {{ $.Values.containersRepo.default }}/{{ $.Values.imageDevPrefix }}pyrus-setup:{{ $.Values.tagsContainers.All }}
-          imagePullPolicy: IfNotPresent
-          envFrom:
-            - configMapRef:
-                name: common-variables
-          args: ["--setup", "-id", "{{ $name }}", "-v", "{{ $value }}"]
-{{- end }}
 
 {{-   if .Values.imageDevPrefix }}
         - name: update-database-for-dev

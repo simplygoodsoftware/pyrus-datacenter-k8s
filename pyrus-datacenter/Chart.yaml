@@ -19,7 +19,7 @@ maintainers:
 type: application
 
 ## Helm chart version
-version: 2.0.35
+version: 2.0.36
 
 ## Pyrus default version
 appVersion: "latest"
@@ -35,3 +35,6 @@ dependencies:
     repository: "https://simplygoodsoftware.github.io/pyrus-datacenter-k8s"
     condition: postgresql.enabledHA
     alias: postgresql
+
+  - name: elasticsearch
+    condition: elasticsearch.internalChart

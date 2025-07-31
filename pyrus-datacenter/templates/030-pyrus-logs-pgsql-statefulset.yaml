@@ -1,3 +1,6 @@
+{{- $logs         := index $.Values "logs"  | default dict }}
+{{- $logsExternal := index $logs "external" | default false }}
+{{- if not $logsExternal }}
 {{- $cname := "pyrus-logs-pgsql-16" }}
 apiVersion: apps/v1
 kind: StatefulSet
@@ -86,3 +89,4 @@ spec:
       resources:
         requests:
           storage: {{ index $.Values.volumeSize "pyrus-logs-pgsql-logs" | default "30Gi" }}
+{{- end }}
