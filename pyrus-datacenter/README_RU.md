@@ -133,3 +133,271 @@ wal-g backup-list
 
 Восстановление из копии начнётся только если директория ${PGDATA} будет пустой.\
 В обратном случае, процесс восстановления будет проигнорирован и система запустится из файлов расположенных в данной директории, либо инициализировать чистую базу при их отсутствии.
+
+## Установка в конфигурации с внешними БД
+
+Существует возможность использовать внешние базы данных, не устанавливая их в рамках данного чарта. Ниже приведены рекомендуемые примеры конфигураций и образов.
+
+### Требования к PostgreSQL
+Необходимо наличие следующих модулей:
+- `pg_cron`
+- `wal2json`
+
+Рекомендуемые образы:
+- **Для standalone-версии**: `cr.yandex/crpn0l4dp22f8mv5ln18/pyrus-pgsql-16:YOURVERSION`
+- **Для кластерной системы на базе Patroni**: `cr.yandex/crpj6igvm2ge2h2jahpu/spilo-17:0.17`
+
+Для standalone-версии PostgreSql с нашим образом дополнительные конфигурации не требуются.
+
+При использовании кластерной версии на базе postgres-operator рекомендуется следующая конфигурация:
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: pyrusadm.postgres.credentials.postgresql.acid.zalan.do
+  labels:
+    application: spilo
+    cluster-name: postgres
+    team: pyrus
+data:
+  username: cHlydXNhZG0=
+  password: cHlydXNwd2Q=
+---
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: postgres
+spec:
+  teamId: pyrus
+  dockerImage: cr.yandex/crpj6igvm2ge2h2jahpu/spilo-17:0.17
+  enableConnectionPooler: true
+  volume:
+    size: 100Gi
+  numberOfInstances: 2
+  users:
+    pyrusadm:
+    - superuser
+    - createdb
+  databases:
+    pyrus-logs: pyrusadm
+    pyrusdb: pyrusadm
+  preparedDatabases:
+  postgresql:
+    version: "17"
+    parameters:
+      password_encryption: scram-sha-256
+      shared_preload_libraries: pg_cron,bg_mon,pg_stat_statements,pg_stat_kcache,pgextwlist,pg_auth_mon,set_user,auto_explain
+      cron.database_name: postgres
+      cron.use_background_workers: "on"
+      archive_timeout : 900s
+
+      cron.log_run: "false"
+      cron.log_statement: "false"
+      wal_level: logical
+  patroni:
+    synchronous_mode: true
+
+    pg_hba:
+    - local   all          all                          trust
+    - hostssl all          +zalandos 127.0.0.1/32       pam
+    - host    all          all       127.0.0.1/32       trust
+    - hostssl all          +zalandos ::1/128            pam
+    - host    all          all       ::1/128            trust
+    - local   replication  standby                      trust
+    - hostssl replication  standby   all                md5
+    - hostssl all          +zalandos all                pam
+    - host    all          all       all                md5
+    slots:
+      pyrus_wal:
+        database: pyrusdb
+        plugin: wal2json
+        type: logical
+  connectionPooler:
+    dockerImage: cr.yandex/crpj6igvm2ge2h2jahpu/pgbouncer:0.9
+    numberOfInstances: 2
+    maxDBConnections: 200
+    mode: session
+    schema: "pooler"
+    user: pooler
+
+```
+
+### Требования к Elasticsearch
+
+**Необходимые модули:**
+- hunspell
+- analysis-jmorphy2
+
+**Рекомендуемый образ:**
+`cr.yandex/crpn0l4dp22f8mv5ln18/elastic-selfhosted:YOURVERSION`
+
+**Для кластерной конфигурации в Kubernetes:**
+Рекомендуется использовать чарт из текущей сборки:
+`pyrus-datacenter/charts/elasticsearch`
+
+**Рекомендуемые параметры:**
+```yaml
+esJavaOpts: "-Xms1g -Xmx1g"
+image: "simplygoodsoftware/elastic-selfhosted"
+imageTag: "7.17.10"
+clusterHealthCheckParams: "wait_for_status=green&timeout=30s"
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "60"
+    memory: "200Gi"
+extraEnvs:
+  - name: cluster.name
+    value: docker-cluster
+  - name: indices.recovery.max_bytes_per_sec
+    value: "600mb"
+  - name: indices.fielddata.cache.size
+    value: "40%"
+  - name: indices.breaker.fielddata.limit
+    value: "40%"
+  - name: indices.breaker.request.limit
+    value: "60%"
+  - name: script.max_compilations_rate
+    value: "100/1m"
+extraVolumes:
+  - name: elastichsearch-cm-to-default
+    configMap:
+      name: elastichsearch-cm-to-default
+extraVolumeMounts:
+  - name: elastichsearch-cm-to-default
+    mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+    subPath: elasticsearch.yml
+```
+
+Конфигурация для файла elasticsearch.yml
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elastichsearch-cm-to-default
+data:
+  elasticsearch.yml: |
+    cluster.name: "docker-cluster"
+    network.host: 0.0.0.0
+```
+
+### Pyrus - минимально необходимая конфигурация
+Пожалуйста, внесите необходимые изменения в следующие параметры:
+- Укажите актуальные IP-адреса или доменные имена
+- Проверьте корректность портов подключения
+- Обновите логины и пароли
+- Убедитесь в корректности путей подключения
+
+```yaml
+forceIngressClass: nginx
+
+database:
+  external: true
+
+preview:
+  external: true
+
+logs:
+  external: true
+
+elasticsearch:
+  internalChart: false
+
+connectionStringsCreds:
+  MAIN_CONN_STRING: >
+    {
+      "ConnectionName": "default",
+      "ConnectionString": "Server=pyrus-postgresql-pooler.pyrus-postgresql.svc.cluster.local;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrusdb;",
+      "DatabaseEngine": "Postgres",
+      "DatabaseType": "Data"
+    }
+  PRIVATE_LOGS_CONN_STRING: >
+    {
+      "ConnectionName": "privateLogs",
+      "ConnectionString": "Server=pyrus-postgresql-logs-pooler.pyrus-postgresql-logs.svc.cluster.local;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrus_logs;",
+      "DatabaseEngine": "Postgres",
+      "DatabaseType": "PrivateLogs"
+    }
+  PUBLIC_LOGS_CONN_STRING: >
+    {
+      "ConnectionName": "publicLogs",
+      "ConnectionString": "Server=pyrus-postgresql-logs-pooler.pyrus-postgresql-logs.svc.cluster.local;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrus_logs;",
+      "DatabaseEngine": "Postgres",
+      "DatabaseType": "PublicLogs"
+    }
+  FILEDATA_CONN_STRING: >
+    {
+     "ConnectionName": "files",
+     "ConnectionString": "Server=pyrus-postgresql-pooler.pyrus-postgresql.svc.cluster.local;Port=5432;Username=pyrusadm;Password=pyruspwd;Database=pyrusdb;",
+     "DatabaseEngine": "Postgres",
+     "DatabaseType": "Files"
+    }
+  NATS_HA_REPLICAS: "3"
+
+webSecrets:
+  pyrus-ssl:
+    tls.crt: ...
+    tls.key: ...
+    tls.pem: ...
+
+values-ingress-dir:
+  secretNameDefault: pyrus-ssl
+  tls:
+    - hosts:
+      - pyrus.yourcompany.com
+
+pyrusSetupParam:
+  adminEmail: ...
+  adminPass: ...
+  license: ...
+  s3:
+    keyId: ...
+    secretKey: ...
+    buket: ...
+    storageType: ...
+    S3_BLOB_STORAGE_ENDPOINT: ...
+  setupById:
+    105119: http://elasticsearch-master.pyrus-elastic.svc.cluster.local:9200
+    #105121: ELASTIC_PASSWORD
+    #105120: ELASTIC_USER
+
+waitEndpoints:
+  WaitOnEnd:
+    - sh
+    - -c
+    - >
+      kubectl wait --for=condition=complete job.batch/set-pyrus-setupparam --timeout=600s
+      &&
+      kubectl wait --for=condition=complete job -l app=upgrade-version-{{ .Values.tagsContainers.All }} --timeout=600s
+  pyrus-preview-generator:
+    - pyrus-nats
+  pyrus-web-api:
+    - pyrus-nats
+  pyrus-file-service:
+    - pyrus-nats
+    - pyrus-identity-server
+  pyrus-bind-service:
+    - pyrus-nats
+  pyrus-mail-reader:
+    - pyrus-nats
+  pyrus-mail-sender:
+    - pyrus-nats
+  pyrus-async-worker:
+    - pyrus-nats
+  pyrus-notification-service:
+    - pyrus-nats
+  pyrus-identity-server:
+    - pyrus-nats
+  pyrus-hocus:
+    - pyrus-nats
+
+```
+
+Выполните установку следующей командой:
+```sh
+helm secrets -n pyrus install --create-namespace pyrus-dc pyrus-datacenter -f yourcompany.values.yaml
+```
+
