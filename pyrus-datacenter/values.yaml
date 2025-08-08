@@ -101,6 +101,11 @@ pyrusSetupParam:
   #  101301:
   #  101302:
 
+pyrusSetupParamByIdEveryUpgrade:
+#  101301:
+#  101302:
+
+
 ## Advanced settings
 
 imagePullSecrets:

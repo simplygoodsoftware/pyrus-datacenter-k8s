@@ -165,6 +165,16 @@ spec:
 {{-     end }}
 {{-  end }}
 
+{{-   range $name, $value := $.Values.pyrusSetupParamByIdEveryUpgrade }}
+        - name: setup-setupbyid-{{ $name }}
+          image: {{ $.Values.containersRepo.default }}/{{ $.Values.imageDevPrefix }}pyrus-setup:{{ $.Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: ["--setup", "-id", "{{ $name }}", "-v", "{{ $value }}"]
+{{-   end }}
+
       containers:
         - name: check-relise-version-is-equal-bd-or-update
           image: {{ .Values.containersRepo.default }}/pyrus-setup:{{ .Values.tagsContainers.All }}
