@@ -496,6 +496,15 @@ startupProbe:
     timeoutSeconds: 5
     successThreshold: 1
     failureThreshold: 180
+  pyrus-hocus:
+    httpGet:
+      path: /health/ready
+      port: 8009
+    initialDelaySeconds: 5
+    periodSeconds: 2
+    timeoutSeconds: 2
+    successThreshold: 1
+    failureThreshold: 120
 
 livenessProbe:
   pyrus-mail-reader: default
@@ -530,6 +539,15 @@ livenessProbe:
     timeoutSeconds: 10
     successThreshold: 1
     failureThreshold: 25
+  pyrus-hocus:
+    httpGet:
+      path: /health/ready
+      port: 8009
+    initialDelaySeconds: 5
+    periodSeconds: 1
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 120
 
 readinessProbe:
   pyrus-identity-server: default

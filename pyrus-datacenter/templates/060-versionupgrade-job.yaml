@@ -126,24 +126,14 @@ spec:
 {{-     else }}
 {{-       fail "\n\n! BREAK ! NEED to define .Values.pyrusSetupParam.s3\n" }}
 {{-     end }}
+
         - name: up-to-12-1-0-hocus-correction
-          image: {{ $.Values.containersRepo.default }}/pyrus-setup:1.12.1
+          image: {{ $.Values.containersRepo.default }}/pyrus-setup:{{ $.Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
                 name: common-variables
-          command:
-            - sh
-            - -c
-            - |
-              export VERSION_IS=$(dotnet Pyrus.DataMigrations.dll --version \
-                | sed -nr '/version is [0-9.]+/{s/.*version is ([0-9.]*)$/\1/;p}')
-              if [ -z "$VERSION_IS" ];then
-                    echo "SKIP: may be version is to new, try to check it in future versions..."
-                    exit 0
-              fi
-              
-              dotnet Pyrus.DataMigrations.dll --setup -id 1090005 -v pyrus-hocus:8009
+          args: [ "--setup", "-id", "1090005", "-v", "pyrus-hocus:8009"]
 
 {{-     range $.Values.versionUpgradeHistory1121 }}
 {{-     $upversion := . }}
