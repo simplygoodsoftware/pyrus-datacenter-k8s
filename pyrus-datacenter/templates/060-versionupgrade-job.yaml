@@ -127,14 +127,6 @@ spec:
 {{-       fail "\n\n! BREAK ! NEED to define .Values.pyrusSetupParam.s3\n" }}
 {{-     end }}
 
-        - name: up-to-12-1-0-hocus-correction
-          image: {{ $.Values.containersRepo.default }}/pyrus-setup:{{ $.Values.tagsContainers.All }}
-          imagePullPolicy: IfNotPresent
-          envFrom:
-            - configMapRef:
-                name: common-variables
-          args: [ "--setup", "-id", "1090005", "-v", "pyrus-hocus:8009"]
-
 {{-     range $.Values.versionUpgradeHistory1121 }}
 {{-     $upversion := . }}
         - name: up-to-{{ $upversion | replace "." "-" }}
@@ -164,6 +156,14 @@ spec:
               dotnet Pyrus.DataMigrations.dll --update --noninteractive
 {{-     end }}
 {{-  end }}
+
+        - name: hocus-correction
+          image: {{ $.Values.containersRepo.default }}/pyrus-setup:{{ $.Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: [ "--setup", "-id", "1090005", "-v", "pyrus-hocus:8009"]
 
 {{-   range $name, $value := $.Values.pyrusSetupParamByIdEveryUpgrade }}
         - name: setup-setupbyid-{{ $name }}
