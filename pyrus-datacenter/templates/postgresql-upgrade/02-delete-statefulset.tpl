@@ -70,7 +70,7 @@ spec:
       serviceAccountName: delete-postgres-statefulset
       containers:
         - name: delete-postgres-statefulset
-          image: bitnami/kubectl:1.28.6
+          image: cr.yandex/crpjh07630tmeovd2eqb/bitnami/kubectl:1.28.6
           command:
             - /bin/sh
             - -c
