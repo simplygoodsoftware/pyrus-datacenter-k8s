@@ -366,6 +366,15 @@ resources:
 
 ## Deep settings of Pyrus #####################################################
 defaults:
+#  secretRef:
+#    "/etc/ssl/certs":
+#      ca-certificates.crt: |
+#        -----BEGIN CERTIFICATE-----
+#        ...
+#        -----END CERTIFICATE-----
+#        -----BEGIN CERTIFICATE-----
+#        ...
+#        -----END CERTIFICATE-----
   countStrategy:
     replicas: 3
     maxSurge: 0

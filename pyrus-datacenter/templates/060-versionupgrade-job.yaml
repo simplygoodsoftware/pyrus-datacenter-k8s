@@ -94,7 +94,7 @@ spec:
 {{-         end }}
 
         - name: setup-s3-storrage-1210
-          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:1.12.1
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
