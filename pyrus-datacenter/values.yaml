@@ -104,7 +104,8 @@ pyrusSetupParam:
 pyrusSetupParamByIdEveryUpgrade:
 #  101301:
 #  101302:
-
+## Enabled bots on http
+#  100006: "true"
 
 ## Advanced settings
 
