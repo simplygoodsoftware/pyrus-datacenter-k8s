@@ -78,12 +78,16 @@ spec:
 
               dotnet Pyrus.DataMigrations.dll --update
 {{- end }}
-{{-   if (semverCompare ">=1.12.1" $.Values.tagsContainers.All) }}
-{{-     if .Values.pyrusSetupParam.s3 }}
-{{-       if eq .Values.pyrusSetupParam.s3.storageType "Azure" }}
-{{-         if not .Values.pyrusSetupParam.s3.azureConfig  }}
-{{-           fail "\n\n! BREAK ! .Values.pyrusSetupParam.s3.azureConfig must be specified for Azure\n" }}
-{{-         end }}
+
+{{-   if not $.Values.pyrusSetupParam.s3 }}
+{{-     fail "\n\n! BREAK ! NEED to define .Values.pyrusSetupParam.s3\n" }}
+{{-   end }}
+
+{{-   if and (semverCompare ">=1.12.1" $.Values.tagsContainers.All) $.Values.versionUpgradeHistoryBefore1121 }}
+{{-     if eq .Values.pyrusSetupParam.s3.storageType "Azure" }}
+{{-       if not .Values.pyrusSetupParam.s3.azureConfig  }}
+{{-         fail "\n\n! BREAK ! .Values.pyrusSetupParam.s3.azureConfig must be specified for Azure\n" }}
+{{-       end }}
         - name: setup-s3-storrage-azure
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:1.12.1
           imagePullPolicy: IfNotPresent
@@ -91,7 +95,7 @@ spec:
             - configMapRef:
                 name: common-variables
           args: [ "--setup", "-id", "9911571", "-v", {{ .Values.pyrusSetupParam.s3.azureConfig | quote }}]
-{{-         end }}
+{{-     end }}
 
         - name: setup-s3-storrage-1210
           image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:1.12.1
@@ -115,23 +119,20 @@ spec:
                   --accessKey {{ .Values.pyrusSetupParam.s3.keyId }}     \
                   --secretKey {{ .Values.pyrusSetupParam.s3.secretKey }} \
                   --bucket {{ .Values.pyrusSetupParam.s3.buket }}        \
-{{-       if .Values.pyrusSetupParam.s3.storageType }}
-{{-         $storageTypes := list "Aws" "MinIo" "Azure" "Mts" "VkCloud" }}
-{{-         if not (has .Values.pyrusSetupParam.s3.storageType $storageTypes)  }}
-{{-           fail "\n\n! BREAK ! .Values.pyrusSetupParam.s3.storageType must be in 'Aws', 'MinIo', 'Azure', 'Mts', 'VkCloud'\n" }}
-{{-         end }}
-                  --storageType {{ .Values.pyrusSetupParam.s3.storageType }}              \
+{{-     if .Values.pyrusSetupParam.s3.storageType }}
+{{-       $storageTypes := list "Aws" "MinIo" "Azure" "Mts" "VkCloud" }}
+{{-       if not (has .Values.pyrusSetupParam.s3.storageType $storageTypes)  }}
+{{-         fail "\n\n! BREAK ! .Values.pyrusSetupParam.s3.storageType must be in 'Aws', 'MinIo', 'Azure', 'Mts', 'VkCloud'\n" }}
 {{-       end }}
-                  --endpointUrl {{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }} \
-{{-     else }}
-{{-       fail "\n\n! BREAK ! NEED to define .Values.pyrusSetupParam.s3\n" }}
+                  --storageType {{ .Values.pyrusSetupParam.s3.storageType }}              \
 {{-     end }}
+                  --endpointUrl {{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }} \
+{{-   end }}
 
 {{-     range $.Values.versionUpgradeHistory1121 }}
 {{-     $upversion := . }}
         - name: up-to-{{ $upversion | replace "." "-" }}
           image: {{ $.Values.containersRepo.default }}/pyrus-setup:{{ $upversion }}
-          #image: {{ $.Values.containersRepo.default }}/dev-pyrus-setup:1.87.55233.0
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -155,7 +156,14 @@ spec:
               echo " upping it..."
               dotnet Pyrus.DataMigrations.dll --update --noninteractive
 {{-     end }}
-{{-  end }}
+
+        - name: setup-license-variables
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-setup:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args: ["--setup", "-id", "100000", "-v", "{{ .Values.pyrusSetupParam.license }}"]
 
         - name: hocus-correction
           image: {{ $.Values.containersRepo.default }}/pyrus-setup:{{ $.Values.tagsContainers.All }}
