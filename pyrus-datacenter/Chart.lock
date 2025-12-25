@@ -5,5 +5,8 @@ dependencies:
 - name: postgres-operator
   repository: https://simplygoodsoftware.github.io/pyrus-datacenter-k8s
   version: 1.8.2
-digest: sha256:47fc2f63268332ebf865bd34c005e5d68d4a0e07e32833318aad7c70fe1f0a30
-generated: "2024-10-22T04:36:20.069465819Z"
+- name: elasticsearch
+  repository: ""
+  version: 7.17.3
+digest: sha256:71791792f2688e02a3e7fba8a078405d16758d695919fd97e3e621c0c39e2a05
+generated: "2025-12-24T15:34:02.688752362Z"
