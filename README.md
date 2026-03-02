@@ -66,3 +66,5 @@ helm -n pyrus upgrade pyrus-datacenter                   \
 DO NOT FORGET TO REDEFINE YOURE VARIABLES AND CALL --reset-values
 
 For a detailed explanation on installation parameters please refer to the [README](https://github.com/simplygoodsoftware/pyrus-datacenter-k8s/tree/main/pyrus-datacenter) document.
+
+To change one parameter without using helm upgrade, you can use the following [example](./pyrus-setup-params.yaml).

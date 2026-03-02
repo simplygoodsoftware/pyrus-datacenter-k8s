@@ -1,0 +1,27 @@
+## If you need to change a single internal value
+## and you don't want to use `helm upgrade` because it is a long operation,
+## you can run this command:
+##
+##   kubectl apply -f pyrus-setup-params.yaml
+##
+## Do not forget to set your namespace!
+apiVersion: v1
+kind: Pod
+metadata:
+  name: set-pyrus-setup-param
+  namespace: pyrus
+spec:
+  containers:
+  - name: set-pyrus-setup-param
+    envFrom:
+    - configMapRef:
+        name: common-variables
+    image: simplygoodsoftware/pyrus-setup:1.21.0
+    imagePullPolicy: IfNotPresent
+    args:
+    - --setup
+    - -id
+    - "100000"
+    - -v
+    - YOURLICENSE
+
