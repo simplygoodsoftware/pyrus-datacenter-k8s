@@ -173,15 +173,21 @@ spec:
                 name: common-variables
           args: [ "--setup", "-id", "1090005", "-v", "pyrus-hocus:8009"]
 
-{{-   range $name, $value := $.Values.pyrusSetupParamByIdEveryUpgrade }}
-        - name: setup-setupbyid-{{ $name }}
+{{-     if $.Values.pyrusSetupParamByIdEveryUpgrade }}
+        - name: setup-setupbyid-everyupgrade
           image: {{ $.Values.containersRepo.default }}/{{ $.Values.imageDevPrefix }}pyrus-setup:{{ $.Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
                 name: common-variables
-          args: ["--setup", "-id", "{{ $name }}", "-v", "{{ $value }}"]
-{{-   end }}
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              set -ex
+{{-       range $name, $value := $.Values.pyrusSetupParamByIdEveryUpgrade }}
+              dotnet Pyrus.DataMigrations.dll --setup -id "{{ $name }}" -v "{{ $value }}"
+{{-       end }}
+{{-     end }}
 
       containers:
         - name: check-relise-version-is-equal-bd-or-update
