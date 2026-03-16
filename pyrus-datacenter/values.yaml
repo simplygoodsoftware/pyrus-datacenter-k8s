@@ -100,6 +100,12 @@ pyrusSetupParam:
   #setupById:
   #  101301:
   #  101302:
+  #  2500006: pyrus-nats-0.example.com,pyrus-nats-1.example.com,pyrus-nats-2.example.com
+  #  2500007: "4222"
+  #  2500008: natsSysUser
+  #  2500009: natsSysPassword
+  #  2500010: natsJsUser
+  #  2500011: natsJsPassword
 
 pyrusSetupParamByIdEveryUpgrade:
 #  101301:
@@ -114,7 +120,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.23.0
+  All: 1.23.1
 
 ## Nats settings ##############################################################
 nats:
@@ -750,3 +756,4 @@ versionUpgradeHistory1121:
   - 1.22.0
   - 1.22.1
   - 1.23.0
+  - 1.23.1
