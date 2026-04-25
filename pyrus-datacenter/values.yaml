@@ -120,7 +120,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.23.1
+  All: 1.24.0
 
 ## Nats settings ##############################################################
 nats:
@@ -757,3 +757,4 @@ versionUpgradeHistory1121:
   - 1.22.1
   - 1.23.0
   - 1.23.1
+  - 1.24.0
