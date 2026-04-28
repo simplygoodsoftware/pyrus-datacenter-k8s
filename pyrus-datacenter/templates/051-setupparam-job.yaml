@@ -78,6 +78,7 @@ spec:
             - -ct
             - --start
 
+{{-      if (semverCompare "<1.24.0" $.Values.tagsContainers.All) }}
         - name: setup-elastic-index-it
           image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
@@ -86,6 +87,16 @@ spec:
                 name: common-variables
           args:
             - -it
+{{-      else }}
+        - name: setup-elastic-index-it
+          image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
+          imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
+          envFrom:
+            - configMapRef:
+                name: common-variables
+          args:
+            - -ti
+{{-      end }}
 
         - name: setup-elastic-index-in
           image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
