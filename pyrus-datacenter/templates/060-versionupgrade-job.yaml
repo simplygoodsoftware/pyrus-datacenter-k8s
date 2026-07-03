@@ -26,7 +26,7 @@ spec:
 {{- end }}
       initContainers:
 
-{{- if or (or (not .Values.database.external) $.Values.elasticsearch.internalChart) (not $.Values.logs.external)}}
+{{- if or (not .Values.database.external) $.Values.elasticsearch.internalChart (not $.Values.logs.external) $.Values.clickhouse.internal }}
         - name: depends-on
           image: {{ .Values.containersRepo.default }}/k8s-waits
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
@@ -40,6 +40,9 @@ spec:
 {{-   end }}
 {{-   if not $.Values.logs.external }}
             - {{ .Release.Namespace }}/endpoints/pyrus-logs-pgsql
+{{-   end }}
+{{-   if $.Values.clickhouse.internal }}
+            - {{ .Release.Namespace }}/endpoints/{{ $.Values.clickhouse.clusterName }}-shard-0
 {{-   end }}
 {{- end }}
         - name: wait-setup-variable-complite

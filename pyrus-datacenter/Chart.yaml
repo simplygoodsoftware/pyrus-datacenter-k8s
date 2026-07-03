@@ -44,7 +44,7 @@ dependencies:
     alias: clickhouse-operator
     version: 0.25.6
     repository: https://helm.altinity.com
-    condition: clickhouse.internal
+    condition: clickhouse-operator.enabled
 
   - name: clickhouse
     repository: "https://simplygoodsoftware.github.io/pyrus-datacenter-k8s"

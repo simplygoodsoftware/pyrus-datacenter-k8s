@@ -750,11 +750,18 @@ versionUpgradeHistory1121:
   - 1.25.0
 
 clickhouse-operator:
+  enabled: true
   serviceMonitor:
     enabled: true
 
 clickhouse:
   internal: true
+
+  # use only for external (clickhouse.internal: false) clickhouse
+  externalUser: "pyrus_writer"
+  externalUserPassword: "pyruspwd"
+  externalHost: ""
+  externalPort: ""
 
   clusterName: pyrus-clickhouse
 
