@@ -85,9 +85,6 @@ standalonePostgreSQLBackup: {}
   ## optional if you use different s3 storage than aws
   #AWS_ENDPOINT:
 
-audioTranscription:
-  enabled: false
-
 ## Standard required installation settings ###################################
 pyrusSetupParam:
   adminEmail: YOURADMINEMAIL
@@ -642,48 +639,15 @@ env:
   pyrus-notification-service:
     - name: GcmPushBrokerOptions__PyrusWorkersCount
       value: "3"
-  pyrus-identity-server:
-    - name: APPLICATION_NAME
-      value: identity-server
   pyrus-mail-reader:
-    - name: APPLICATION_NAME
-      value: mail-reader
     - name: MAILREADER_ENVIRONMENT
       value: Production
-  pyrus-mail-sender:
-    - name: APPLICATION_NAME
-      value: mail-sender
   pyrus-bind-service:
-    - name: APPLICATION_NAME
-      value: bind-service
     - name: HOST
       value: bind
-  pyrus-web-api:
-    - name: APPLICATION_NAME
-      value: web-api
-  pyrus-familiar-service:
-    - name: APPLICATION_NAME
-      value: familiar-service
-  pyrus-stt-service:
-    - name: APPLICATION_NAME
-      value: stt-service
-  pyrus-file-service:
-    - name: APPLICATION_NAME
-      value: file-service
-  pyrus-async-worker:
-    - name: APPLICATION_NAME
-      value: async-worker
-  pyrus-schedule-to-today:
-    - name: APPLICATION_NAME
-      value: schedule-to-today
   pyrus-preview-generator:
-    - name: APPLICATION_NAME
-      value: preview-generator
     - name: ALL_IMAGES_COUNT
       value: "3"
-  pyrus-hocus:
-    - name: APPLICATION_NAME
-      value: hocus
 
 imageDevPrefix:
 installationType: dc

@@ -70,12 +70,6 @@ kubectl create secret generic pyrus-ssl --from-file=tls.crt=your_cert.crt --from
   large-client-header-buffers: "8 16k"
 ```
 
-### [Распознавание речи](https://pyrus.com/ru/help/datacenter/parameters#raspoznavanie-rechi)
-```
-audioTranscription:
-  enabled: true
-```
-
 ## Резервное копирование и восстановление данных
 
 Pyrus Datacenter поставляется с внутренней СУБД PostgreSQL, используемой для хранения данных.\
