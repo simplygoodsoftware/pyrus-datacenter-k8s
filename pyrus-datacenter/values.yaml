@@ -118,7 +118,6 @@ pyrusSetupParamByIdEveryUpgrade:
 imagePullSecrets:
 containersRepo:
   default: simplygoodsoftware
-  pyrus-stt-service: cr.yandex/crpn0l4dp22f8mv5ln18
 
 tagsContainers:
   All: 1.25.0
@@ -369,7 +368,6 @@ resources:
   pyrus-identity-server: default
   pyrus-web-api: default
   pyrus-familiar-service: default
-  pyrus-stt-service: default
   pyrus-schedule-to-today: default
   pyrus-async-worker:  default
   pyrus-hocus:  default
@@ -461,11 +459,6 @@ countStrategy:
     maxSurge: 1
     maxUnavailable: 1
     revisionHistoryLimit: 2
-  pyrus-stt-service:
-    replicas: 2
-    maxSurge: 1
-    maxUnavailable: 1
-    revisionHistoryLimit: 2
   pyrus-async-worker:
     replicas: 2
     maxSurge: 1
@@ -504,7 +497,6 @@ startupProbe:
   pyrus-notification-service: default
   pyrus-bind-service: default
   pyrus-familiar-service: default
-  pyrus-stt-service: default
   pyrus-web-api:
     httpGet:
       path: /health/ready
@@ -549,7 +541,6 @@ livenessProbe:
   pyrus-notification-service: default
   pyrus-bind-service: default
   pyrus-familiar-service: default
-  pyrus-stt-service: default
   pyrus-web-api:
     httpGet:
       path: /health/ready
@@ -593,7 +584,6 @@ readinessProbe:
   pyrus-mail-sender: default
   pyrus-notification-service: default
   pyrus-familiar-service: default
-  pyrus-stt-service: default
   pyrus-bind-service:
     httpGet:
       path: /health/ready
@@ -661,7 +651,6 @@ deployDefaultTemplate:
   pyrus-bind-service: {}
   pyrus-web-api: {}
   pyrus-familiar-service: {}
-  pyrus-stt-service: {}
   pyrus-file-service: {}
   pyrus-async-worker: {}
   pyrus-schedule-to-today: {}
@@ -686,10 +675,6 @@ waitEndpoints:
     - pyrus-elastic
     - pyrus-logs-pgsql
   pyrus-familiar-service:
-    - pyrus-postgresql
-    - pyrus-logs-pgsql
-    - pyrus-nats
-  pyrus-stt-service:
     - pyrus-postgresql
     - pyrus-logs-pgsql
     - pyrus-nats
