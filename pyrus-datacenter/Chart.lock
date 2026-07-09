@@ -8,5 +8,11 @@ dependencies:
 - name: elasticsearch
   repository: ""
   version: 7.17.3
-digest: sha256:71791792f2688e02a3e7fba8a078405d16758d695919fd97e3e621c0c39e2a05
-generated: "2025-12-24T15:34:02.688752362Z"
+- name: altinity-clickhouse-operator
+  repository: https://helm.altinity.com
+  version: 0.25.6
+- name: clickhouse
+  repository: https://simplygoodsoftware.github.io/pyrus-datacenter-k8s
+  version: 1.0.0
+digest: sha256:722f2625747967db31f6004b28b2271a98e7a1818c28a783c42f3f6a6bb5cb4b
+generated: "2026-07-03T07:31:48.039343261Z"
