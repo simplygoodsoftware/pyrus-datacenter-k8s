@@ -749,15 +749,18 @@ versionUpgradeHistory1121:
   - 1.24.1
   - 1.25.0
 
+reportEngine:
+  enabled: true
+
 clickhouse-operator:
   enabled: true
   serviceMonitor:
-    enabled: true
+    enabled: false
 
 clickhouse:
   internal: true
 
-  # use only for external (clickhouse.internal: false) clickhouse
+  # use only for external clickhouse (clickhouse.internal: false)
   externalUser: "pyrus_writer"
   externalUserPassword: "pyruspwd"
   externalHost: ""
@@ -868,7 +871,7 @@ clickhouse:
       size: 100Gi
 
   monitoring:
-    enabled: true
+    enabled: false
     interval: 30s
 
   backup:

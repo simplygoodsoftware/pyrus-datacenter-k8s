@@ -14,5 +14,5 @@ dependencies:
 - name: clickhouse
   repository: https://simplygoodsoftware.github.io/pyrus-datacenter-k8s
   version: 1.0.0
-digest: sha256:722f2625747967db31f6004b28b2271a98e7a1818c28a783c42f3f6a6bb5cb4b
-generated: "2026-07-03T07:31:48.039343261Z"
+digest: sha256:888ade2e3ae738d0e97a559ba859e91d2de658adcee548f7a2e4e64d9d00c44c
+generated: "2026-07-09T18:46:25.000931599+03:00"
