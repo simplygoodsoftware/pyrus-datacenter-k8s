@@ -120,7 +120,7 @@ containersRepo:
   default: simplygoodsoftware
 
 tagsContainers:
-  All: 1.24.1
+  All: 1.25.0
 
 ## Nats settings ##############################################################
 nats:
@@ -367,6 +367,7 @@ resources:
   pyrus-file-service: default
   pyrus-identity-server: default
   pyrus-web-api: default
+  pyrus-familiar-service: default
   pyrus-schedule-to-today: default
   pyrus-async-worker:  default
   pyrus-hocus:  default
@@ -453,6 +454,11 @@ countStrategy:
     maxSurge: 0
     maxUnavailable: 2
     revisionHistoryLimit: 2
+  pyrus-familiar-service:
+    replicas: 2
+    maxSurge: 1
+    maxUnavailable: 1
+    revisionHistoryLimit: 2
   pyrus-async-worker:
     replicas: 2
     maxSurge: 1
@@ -490,6 +496,7 @@ startupProbe:
   pyrus-mail-sender: default
   pyrus-notification-service: default
   pyrus-bind-service: default
+  pyrus-familiar-service: default
   pyrus-web-api:
     httpGet:
       path: /health/ready
@@ -533,6 +540,7 @@ livenessProbe:
   pyrus-mail-sender: default
   pyrus-notification-service: default
   pyrus-bind-service: default
+  pyrus-familiar-service: default
   pyrus-web-api:
     httpGet:
       path: /health/ready
@@ -575,6 +583,7 @@ readinessProbe:
   pyrus-mail-reader: default
   pyrus-mail-sender: default
   pyrus-notification-service: default
+  pyrus-familiar-service: default
   pyrus-bind-service:
     httpGet:
       path: /health/ready
@@ -607,6 +616,7 @@ clusterIpServicePorts:
   pyrus-identity-server: [ 80 ]
   pyrus-bind-service: [ 80 ]
   pyrus-web-api: [ 80 ]
+  pyrus-familiar-service: [ 80 ]
   pyrus-file-service: [ "80:18888", "18888:18888" ]
   pyrus-notification-service: [ "80" ]
   pyrus-async-worker: [ "80" ]
@@ -619,42 +629,15 @@ env:
   pyrus-notification-service:
     - name: GcmPushBrokerOptions__PyrusWorkersCount
       value: "3"
-  pyrus-identity-server:
-    - name: APPLICATION_NAME
-      value: identity-server
   pyrus-mail-reader:
-    - name: APPLICATION_NAME
-      value: mail-reader
     - name: MAILREADER_ENVIRONMENT
       value: Production
-  pyrus-mail-sender:
-    - name: APPLICATION_NAME
-      value: mail-sender
   pyrus-bind-service:
-    - name: APPLICATION_NAME
-      value: bind-service
     - name: HOST
       value: bind
-  pyrus-web-api:
-    - name: APPLICATION_NAME
-      value: web-api
-  pyrus-file-service:
-    - name: APPLICATION_NAME
-      value: file-service
-  pyrus-async-worker:
-    - name: APPLICATION_NAME
-      value: async-worker
-  pyrus-schedule-to-today:
-    - name: APPLICATION_NAME
-      value: schedule-to-today
   pyrus-preview-generator:
-    - name: APPLICATION_NAME
-      value: preview-generator
     - name: ALL_IMAGES_COUNT
       value: "3"
-  pyrus-hocus:
-    - name: APPLICATION_NAME
-      value: hocus
 
 imageDevPrefix:
 installationType: dc
@@ -667,6 +650,7 @@ deployDefaultTemplate:
   pyrus-mail-reader: {}
   pyrus-bind-service: {}
   pyrus-web-api: {}
+  pyrus-familiar-service: {}
   pyrus-file-service: {}
   pyrus-async-worker: {}
   pyrus-schedule-to-today: {}
@@ -690,6 +674,10 @@ waitEndpoints:
     - pyrus-postgresql
     - pyrus-elastic
     - pyrus-logs-pgsql
+  pyrus-familiar-service:
+    - pyrus-postgresql
+    - pyrus-logs-pgsql
+    - pyrus-nats
   pyrus-file-service:
     - pyrus-postgresql
     - pyrus-elastic
@@ -759,3 +747,4 @@ versionUpgradeHistory1121:
   - 1.23.1
   - 1.24.0
   - 1.24.1
+  - 1.25.0
