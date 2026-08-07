@@ -41,7 +41,7 @@ spec:
       initContainers:
 {{-    if (hasKey $vl.waitEndpoints $cname) }}
         - name: depends-on
-          image: {{ $vl.containersRepo.default }}/k8s-waits
+          image: {{ include "pyrus-infra-repo" (list $vl) }}/k8s-waits
           imagePullPolicy: IfNotPresent
           command:
             - wait_endpoints
@@ -51,7 +51,7 @@ spec:
 {{-    end }}
 {{-    if (hasKey $vl.waitEndpoints "WaitOnEnd") }}
         - name: wait-setup-variable-complite
-          image: {{ $vl.containersRepo.default }}/k8s-waits
+          image: {{ include "pyrus-infra-repo" (list $vl) }}/k8s-waits
           imagePullPolicy: IfNotPresent
           command:
 {{-        range $vl.waitEndpoints.WaitOnEnd }}

@@ -1,6 +1,6 @@
 {{- define "pyrus-datacenter.docker-pyrus-cred" -}}
 auths:
-  https://index.docker.io/v1/:
+  {{ .Values.imagePullRegistry | default "https://index.docker.io/v1/" | quote }}:
     auth: {{ .Values.imagePullSecrets | b64enc }}
 {{- end  }}
 
@@ -57,14 +57,19 @@ auths:
   {{- end }}
 {{- end }}
 
+{{- define "pyrus-infra-repo" }}
+  {{- $vl := index . 0 -}}
+  {{- $vl.infraContainersRepo | default $vl.k8sWaitsRepo | default $vl.containersRepo.default }}
+{{- end }}
+
 {{- define "pyrus-image" }}
   {{- $vl          := index . 0 -}}
   {{- $cname       := index . 1 -}}
   {{- if or (eq $vl.installationType "prod") (eq $vl.installationType "dc") }}
     {{- if hasKey $vl.tagsContainers $cname }}
-      {{- include "pyrus-repo" (list $vl $cname) }}/{{- $cname }}:{{ index $vl.tagsContainers $cname }}
+      {{- include "pyrus-repo" (list $vl $cname) }}/{{ $vl.imageDevPrefix }}{{- $cname }}:{{ index $vl.tagsContainers $cname }}
     {{- else }}
-      {{- include "pyrus-repo" (list $vl $cname) }}/{{- $cname }}:{{ $vl.tagsContainers.All }}
+      {{- include "pyrus-repo" (list $vl $cname) }}/{{ $vl.imageDevPrefix }}{{- $cname }}:{{ $vl.tagsContainers.All }}
     {{- end }}
   {{- else if eq $vl.installationType "mock" }}
     {{- index $vl.mockImageContainersTags $cname | default $vl.mockImageContainersTags.All}}
@@ -132,4 +137,3 @@ auths:
 {{-      end }}
 {{-   end }}
 {{- end }}
-

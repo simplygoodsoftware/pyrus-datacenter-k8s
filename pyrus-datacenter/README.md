@@ -58,6 +58,12 @@ kubectl create secret generic pyrus-ssl --from-file=tls.crt=your_cert.crt --from
   large-client-header-buffers: "8 16k"
 ```
 
+## Report Engine
+
+Report Engine uses ClickHouse as an analytical storage for report data. The chart supports both bundled and external ClickHouse configurations.
+
+See [Report Engine configuration](docs/report-engine.md) for supported value combinations, ClickHouse requirements, and value reference.
+
 ## Backup and Restore
 
 Pyrus Datacenter comes with an internal PostgreSQL service, which is used for data storage.\
@@ -120,4 +126,3 @@ wal-g backup-list
 
 The restoration will only start if the ${PGDATA} directory is empty.\
 Otherwise, the process will be skipped and the system will start using the data located in that directory, or re-initialize from scratch if that's empty.
-

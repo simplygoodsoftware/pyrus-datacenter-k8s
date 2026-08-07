@@ -53,7 +53,7 @@ spec:
         - name: docker-pyrus-cred
       containers:
       - name: init-volume
-        image: {{ $.Values.containersRepo.default }}/{{ .Values.devPrefix }}pyrus-pgsql-{{ $.Values.postgresql.upgrade.toVersion }}:{{ .Values.tagsContainers.All }}
+        image: {{ $.Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-pgsql-{{ $.Values.postgresql.upgrade.toVersion }}:{{ .Values.tagsContainers.All }}
         env:
         - name: DISABLE_SCHEMA_INIT
           value: "1"

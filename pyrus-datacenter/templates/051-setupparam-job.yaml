@@ -22,7 +22,7 @@ spec:
       initContainers:
 {{- if or (not .Values.database.external) $.Values.elasticsearch.internalChart (not $.Values.logs.external) }}
         - name: depends-on
-          image: {{ .Values.containersRepo.default }}/k8s-waits
+          image: {{ include "pyrus-infra-repo" (list .Values) }}/k8s-waits
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           command:
             - wait_endpoints
@@ -89,7 +89,7 @@ spec:
             - -it
 {{-      else }}
         - name: setup-elastic-index-it
-          image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -99,7 +99,7 @@ spec:
 {{-      end }}
 
         - name: setup-elastic-index-in
-          image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -108,7 +108,7 @@ spec:
             - -in
 
         - name: setup-elastic-index-ic
-          image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -117,7 +117,7 @@ spec:
             - -ic
 
         - name: setup-elastic-index-ip
-          image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -140,7 +140,7 @@ spec:
             ]
 
         - name: setup-elastic-index-rt
-          image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -149,7 +149,7 @@ spec:
             - -rt
 
         - name: setup-elastic-index-wgall
-          image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -158,7 +158,7 @@ spec:
             - -wgall
 
         - name: setup-elastic-index-wcall
-          image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -167,7 +167,7 @@ spec:
             - -wcall
 
         - name: setup-elastic-index-wpall
-          image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -176,7 +176,7 @@ spec:
             - -wpall
 
         - name: setup-elastic-index-wnall
-          image: {{ .Values.containersRepo.default }}/pyrus-elastic-console:{{ .Values.tagsContainers.All }}
+          image: {{ .Values.containersRepo.default }}/{{ .Values.imageDevPrefix }}pyrus-elastic-console:{{ .Values.tagsContainers.All }}
           imagePullPolicy: {{ .Values.pullPolicy | default "IfNotPresent" }}
           envFrom:
             - configMapRef:
@@ -276,21 +276,10 @@ spec:
                 name: common-variables
           args: ["--setup", "-id", "100001", "-v", "{{ first (first (index .Values "values-ingress-dir").tls).hosts }}"]
 
-{{-   if .Values.imageDevPrefix }}
-        - name: update-database-for-dev
-          image: {{ .Values.containersRepo.default }}/dev-pyrus-setup:{{ .Values.tagsContainers.All }}
-          imagePullPolicy: IfNotPresent
-          envFrom:
-            - configMapRef:
-                name: common-variables
-          args:
-            - --update
-{{-   end }}
-
 {{- end }}
       containers:
         - name: setup-complite
-          image: {{ .Values.containersRepo.default }}/k8s-waits
+          image: {{ include "pyrus-infra-repo" (list .Values) }}/k8s-waits
           imagePullPolicy: IfNotPresent
           command: [ "ls" ]
 {{- end }}

@@ -115,12 +115,19 @@ pyrusSetupParamByIdEveryUpgrade:
 
 ## Advanced settings
 
+# imagePullSecrets is a legacy docker auth string in "username:password" format.
+# imagePullRegistry defaults to Docker Hub to preserve existing behavior.
 imagePullSecrets:
+imagePullRegistry: https://index.docker.io/v1/
 containersRepo:
   default: simplygoodsoftware
 
+infraContainersRepo:
+
 tagsContainers:
   All: 1.25.0
+
+devExpectedDbVersion:
 
 ## Nats settings ##############################################################
 nats:
@@ -749,16 +756,15 @@ versionUpgradeHistory1121:
   - 1.24.1
   - 1.25.0
 
-reportEngine:
-  enabled: true
+versionUpgradeHistoryDev:
 
-clickhouse-operator:
-  enabled: true
-  serviceMonitor:
-    enabled: false
+reportEngine:
+  enabled: false
 
 clickhouse:
   internal: true
+
+  clusterName: clickhouse
 
   # use only for external clickhouse (clickhouse.internal: false)
   externalUser: "pyrus_writer"
@@ -766,9 +772,8 @@ clickhouse:
   externalHost: ""
   externalPort: ""
 
-  clusterName: pyrus-clickhouse
-
   keeper:
+    enabled: false
     replicas: 1
     # nodeRoleSelectorLabel: keeper
     image:
@@ -818,6 +823,7 @@ clickhouse:
       size: 10Gi
 
   clickhouse:
+    enabled: false
     shardsCount: 1
     replicasCount: 1
     # nodeRoleSelectorLabel: clickhouse
@@ -859,6 +865,20 @@ clickhouse:
         password: pyruspwd
         networks:
           ip: "10.0.0.0/8"
+        grants:
+          query:
+          - >-
+            GRANT SHOW,
+            SELECT,
+            INSERT,
+            ALTER,
+            CREATE TABLE,
+            CREATE VIEW ON public.*,
+            CREATE USER ON *.*,
+            CLUSTER ON *.*,
+            SELECT ON system.tables,
+            CREATE ROW POLICY ON public.* WITH GRANT OPTION
+          - GRANT CREATE DATABASE ON public.*
 
     resources:
       requests:
