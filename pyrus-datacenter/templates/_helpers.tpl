@@ -59,7 +59,7 @@ auths:
 
 {{- define "pyrus-infra-repo" }}
   {{- $vl := index . 0 -}}
-  {{- $vl.infraContainersRepo | default $vl.k8sWaitsRepo | default $vl.containersRepo.default }}
+  {{- $vl.infraContainersRepo | default $vl.containersRepo.default }}
 {{- end }}
 
 {{- define "pyrus-image" }}
