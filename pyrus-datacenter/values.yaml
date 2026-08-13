@@ -115,12 +115,19 @@ pyrusSetupParamByIdEveryUpgrade:
 
 ## Advanced settings
 
+# imagePullSecrets is a legacy docker auth string in "username:password" format.
+# imagePullRegistry defaults to Docker Hub to preserve existing behavior.
 imagePullSecrets:
+imagePullRegistry: https://index.docker.io/v1/
 containersRepo:
   default: simplygoodsoftware
 
+infraContainersRepo:
+
 tagsContainers:
   All: 1.25.0
+
+devExpectedDbVersion:
 
 ## Nats settings ##############################################################
 nats:
@@ -133,7 +140,7 @@ nats:
       enabled: true
       replicas: 3
       merge:
-        name: 
+        name:
           $tplYaml: >-
             {{ include "nats.name" . }}
     jetstream:
@@ -173,7 +180,7 @@ nats:
         {{-   if $nats.spec.volumeClaimTemplates }}
         {{-     if ne (len $nats.spec.volumeClaimTemplates) 0 }}
         {{-       if (index $nats.spec.volumeClaimTemplates 0).spec.volumeMode }}
-        - op: add 
+        - op: add
           path: /spec/volumeClaimTemplates/0/spec/volumeMode
           value: Filesystem
         {{-       end }}
@@ -183,7 +190,7 @@ nats:
         []
         {{- end }}
     - $tplYamlSpread: |-
-        {{- if and 
+        {{- if and
           .Values.config.jetstream.enabled
           .Values.config.jetstream.fileStore.enabled
           .Values.config.jetstream.fileStore.pvc.enabled
@@ -205,7 +212,7 @@ nats:
   service:
     enabled: false
   container:
-    image: 
+    image:
       repository: nats
       tag: 2.10.11-alpine3.19
     env:
@@ -219,8 +226,8 @@ nats:
           cpu: 2
           memory: 8Gi
 
-  reloader: 
-    merge: 
+  reloader:
+    merge:
         resources:
           requests:
             cpu: 50m
@@ -231,7 +238,7 @@ nats:
 
   podTemplate:
     merge:
-      spec: 
+      spec:
         terminationGracePeriodSeconds: 180
         affinity:
           podAntiAffinity:
@@ -245,7 +252,7 @@ nats:
                       - nats
                   - key: app.kubernetes.io/component
                     operator: In
-                    values: 
+                    values:
                       - nats
           # nodeAffinity:
           #   requiredDuringSchedulingIgnoredDuringExecution:
@@ -255,7 +262,7 @@ nats:
           #         operator: Exists
   natsBox:
     deployment:
-      name: 
+      name:
         $tplYaml: >-
           {{ include "nats.fullname" . }}-box
       patch:
@@ -270,8 +277,8 @@ nats:
         value:
           $tplYaml: >-
             {{ include "nats.fullname" . }}-box
-    container: 
-      merge: 
+    container:
+      merge:
         resources:
           requests:
             cpu: 100m
@@ -748,3 +755,162 @@ versionUpgradeHistory1121:
   - 1.24.0
   - 1.24.1
   - 1.25.0
+
+versionUpgradeHistoryDev:
+
+reportEngine:
+  enabled: false
+
+clickhouse:
+  internal: true
+
+  clusterName: clickhouse
+
+  # use only for external clickhouse (clickhouse.internal: false)
+  externalUser: "pyrus_writer"
+  externalUserPassword: "pyruspwd"
+  externalHost: ""
+  externalPort: ""
+
+  keeper:
+    enabled: false
+    replicas: 3
+    # nodeRoleSelectorLabel: keeper
+    image:
+      repository: clickhouse/clickhouse-keeper
+      tag: "26.1.2.11-alpine"
+    settings:
+      prometheus:
+        endpoint: /metrics
+        port: 7000
+        metrics: true
+        events: true
+        asynchronous_metrics: true
+      keeper_server:
+        tcp_port: 2181
+        server_id_from_hostname: true
+        four_letter_word_white_list: "*"
+        coordination_settings:
+          operation_timeout_ms: "10000"
+          session_timeout_ms: "30000"
+          dead_session_check_period_ms: "500"
+          heart_beat_interval_ms: "500"
+          election_timeout_lower_bound_ms: "1000"
+          election_timeout_upper_bound_ms: "2000"
+          rotate_log_storage_interval: "100000"
+          reserved_log_items: "100000"
+          snapshot_distance: "75000"
+          snapshots_to_keep: "3"
+          stale_log_gap: "10000"
+          fresh_log_gap: "200"
+          max_requests_batch_size: "100"
+          force_sync: true
+          raft_logs_level: information
+      logger:
+        level: warning
+        size: 200M
+        count: 5
+      send_crash_reports:
+        enabled: false
+    resources:
+      requests:
+        memory: 512Mi
+        cpu: 100m
+      limits:
+        memory: 2Gi
+        cpu: 1000m
+    storage:
+      size: 10Gi
+
+  clickhouse:
+    enabled: false
+    shardsCount: 1
+    replicasCount: 2
+    # nodeRoleSelectorLabel: clickhouse
+    image:
+      repository: clickhouse/clickhouse-server
+      tag: "26.1.2.11-alpine"
+    settings:
+      prometheus:
+        endpoint: /metrics
+        port: 8001
+        metrics: true
+        events: true
+        asynchronous_metrics: true
+      merge_tree:
+        max_bytes_to_merge_at_max_space_in_pool: "161061273600"
+        parts_to_delay_insert: "1000"
+        parts_to_throw_insert: "3000"
+        max_delay_to_insert: 1
+        max_suspicious_broken_parts: "100"
+      max_server_memory_usage: "7516192768" # 7 GiB
+      max_connections: "4096"
+      keep_alive_timeout: "3"
+      max_concurrent_queries: "100"
+      uncompressed_cache_size: "4294967296"
+      mark_cache_size: "5368709120"
+      mlock_executable: true
+      logger:
+        level: warning
+        size: 1000M
+        count: "10"
+      compression:
+        case:
+          method: lz4
+      send_crash_reports:
+        enabled: false
+
+    users:
+      pyrus_writer:
+        password: pyruspwd
+        networks:
+          ip: "10.0.0.0/8"
+        grants:
+          query:
+          - >-
+            GRANT SHOW,
+            SELECT,
+            INSERT,
+            ALTER,
+            CREATE TABLE,
+            CREATE VIEW ON public.*,
+            CREATE USER ON *.*,
+            CLUSTER ON *.*,
+            SELECT ON system.tables,
+            CREATE ROW POLICY ON public.* WITH GRANT OPTION
+          - GRANT CREATE DATABASE ON public.*
+
+    resources:
+      requests:
+        memory: 2Gi
+        cpu: 1
+      limits:
+        memory: 8Gi
+        cpu: 4
+    storage:
+      size: 100Gi
+
+  monitoring:
+    enabled: false
+    interval: 30s
+
+  backup:
+    enabled: false
+    restore: false
+    image:
+      repository: altinity/clickhouse-backup
+      tag: "2.6.42"
+    debug: false
+    schedule: "0 0 * * *"
+    # 1 - Mon, 7 - Sun
+    FULL_BACKUP_WEEKDAY: "6"
+    BACKUP_PASSWORD:
+    BACKUPS_TO_KEEP_REMOTE: "7"
+    network: "10.0.0.0/16"
+    S3_ENDPOINT:
+    S3_REGION:
+    S3_BUCKET:
+    S3_ACCESS_KEY:
+    S3_SECRET_KEY:
+    # {shard} is macro defined by clickhouse-operator
+    S3_PATH: clickhouse/shard-{shard}

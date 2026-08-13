@@ -31,7 +31,7 @@ spec:
       {{- with (index .statefulset.spec.template.spec.containers 0) }}
       containers:
       - name: postgresql-upgrade-{{ $.Values.postgresql.upgrade.fromVersion }}-to-{{ $.Values.postgresql.upgrade.toVersion }}
-        image: {{ $.Values.containersRepo.default }}/pyrus-pgsql-migrator:{{ $.Values.postgresql.upgrade.fromVersion }}-to-{{ $.Values.postgresql.upgrade.toVersion }}
+        image: {{ include "pyrus-infra-repo" (list $.Values) }}/pyrus-pgsql-migrator:{{ $.Values.postgresql.upgrade.fromVersion }}-to-{{ $.Values.postgresql.upgrade.toVersion }}
         env:
           {{- if .env }}
           {{-   .env | toYaml | nindent 8 }}

@@ -8,5 +8,8 @@ dependencies:
 - name: elasticsearch
   repository: ""
   version: 7.17.3
-digest: sha256:71791792f2688e02a3e7fba8a078405d16758d695919fd97e3e621c0c39e2a05
-generated: "2025-12-24T15:34:02.688752362Z"
+- name: clickhouse
+  repository: https://simplygoodsoftware.github.io/pyrus-datacenter-k8s
+  version: 1.0.1
+digest: sha256:5dfb3f9182bede5cb98a7aab8108ef932ebc05c7a14412fb95bff2d8412f22fe
+generated: "2026-08-03T07:12:37.878324261Z"

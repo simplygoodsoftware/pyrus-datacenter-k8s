@@ -23,6 +23,17 @@ containersRepo:
 
 elasticsearch:
   image: "cr.yandex/crpn0l4dp22f8mv5ln18/elastic-selfhosted"
+
+clickhouse:
+  clickhouse:
+    image:
+      repository: cr.yandex/crpn0l4dp22f8mv5ln18/clickhouse-server
+  keeper:
+    image:
+      repository: cr.yandex/crpn0l4dp22f8mv5ln18/clickhouse-keeper
+  backup:
+    image:
+      repository: cr.yandex/crpn0l4dp22f8mv5ln18/clickhouse-backup
 ```
 ### Форсирование версии Pyrus Datacenter
 ```
@@ -69,6 +80,12 @@ kubectl create secret generic pyrus-ssl --from-file=tls.crt=your_cert.crt --from
   client-header-buffer-size: "8k"
   large-client-header-buffers: "8 16k"
 ```
+
+## Движок отчетов
+
+Движок отчетов использует ClickHouse как аналитическое хранилище для данных отчетов. Чарт поддерживает конфигурации со встроенным и внешним ClickHouse.
+
+Комбинации параметров, требования к ClickHouse и справочник values описаны в [документации движка отчетов](docs/report-engine.ru.md).
 
 ## Резервное копирование и восстановление данных
 
@@ -366,6 +383,19 @@ pyrusSetupParam:
     #105121: ELASTIC_PASSWORD
     #105120: ELASTIC_USER
 
+reportEngine:
+  enabled: true
+
+clickhouse:
+  internal: false
+
+  clusterName: ...
+
+  externalUser: ...
+  externalUserPassword: ...
+  externalHost: ...
+  externalPort: ...
+
 waitEndpoints:
   WaitOnEnd:
     - sh
@@ -377,6 +407,8 @@ waitEndpoints:
   pyrus-preview-generator:
     - pyrus-nats
   pyrus-web-api:
+    - pyrus-nats
+  pyrus-familiar-service:
     - pyrus-nats
   pyrus-file-service:
     - pyrus-nats
@@ -402,4 +434,3 @@ waitEndpoints:
 ```sh
 helm secrets -n pyrus install --create-namespace pyrus-dc pyrus-datacenter -f yourcompany.values.yaml
 ```
-

@@ -39,3 +39,8 @@ dependencies:
   - name: elasticsearch
     condition: elasticsearch.internalChart
     version: 7.17.3
+
+  - name: clickhouse
+    repository: "https://simplygoodsoftware.github.io/pyrus-datacenter-k8s"
+    condition: clickhouse.internal
+    version: 1.0.1
