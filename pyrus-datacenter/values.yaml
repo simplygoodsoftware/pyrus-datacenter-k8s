@@ -774,7 +774,7 @@ clickhouse:
 
   keeper:
     enabled: false
-    replicas: 1
+    replicas: 3
     # nodeRoleSelectorLabel: keeper
     image:
       repository: clickhouse/clickhouse-keeper
@@ -825,7 +825,7 @@ clickhouse:
   clickhouse:
     enabled: false
     shardsCount: 1
-    replicasCount: 1
+    replicasCount: 2
     # nodeRoleSelectorLabel: clickhouse
     image:
       repository: clickhouse/clickhouse-server
