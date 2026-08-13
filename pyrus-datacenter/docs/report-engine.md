@@ -42,7 +42,6 @@ clickhouse:
 
   clickhouse:
     enabled: true
-    replicasCount: 1
     users:
       pyrus_writer:
         password: <user password>
@@ -110,7 +109,7 @@ The `clickhouse.keeper.settings`, `clickhouse.clickhouse.settings`, `clickhouse.
 | Value | Default | Required | Description |
 | --- | --- | --- | --- |
 | `clickhouse.keeper.enabled` | `false` | bundled ClickHouse | Enables ClickHouse Keeper resources in the bundled `clickhouse` subchart. |
-| `clickhouse.keeper.replicas` | `1` | bundled ClickHouse | Number of ClickHouse Keeper replicas. |
+| `clickhouse.keeper.replicas` | `3` | bundled ClickHouse | Number of ClickHouse Keeper replicas. |
 | `clickhouse.keeper.nodeRoleSelectorLabel` | unset | no | If set, Keeper pods are scheduled on nodes with the `node-role.kubernetes.io/<value>: enabled` label. |
 | `clickhouse.keeper.image.repository` | `clickhouse/clickhouse-keeper` | bundled ClickHouse | ClickHouse Keeper image repository. |
 | `clickhouse.keeper.image.tag` | `26.1.2.11-alpine` | bundled ClickHouse | ClickHouse Keeper image tag. |
@@ -127,7 +126,7 @@ The `clickhouse.keeper.settings`, `clickhouse.clickhouse.settings`, `clickhouse.
 | --- | --- | --- | --- |
 | `clickhouse.clickhouse.enabled` | `false` | bundled ClickHouse | Enables ClickHouse server resources in the bundled `clickhouse` subchart. |
 | `clickhouse.clickhouse.shardsCount` | `1` | bundled ClickHouse | Number of ClickHouse shards. Pyrus supports only `1`. |
-| `clickhouse.clickhouse.replicasCount` | `1` | bundled ClickHouse | Number of ClickHouse replicas. |
+| `clickhouse.clickhouse.replicasCount` | `2` | bundled ClickHouse | Number of ClickHouse replicas. |
 | `clickhouse.clickhouse.nodeRoleSelectorLabel` | unset | no | If set, ClickHouse pods are scheduled on nodes with the `node-role.kubernetes.io/<value>: enabled` label. |
 | `clickhouse.clickhouse.image.repository` | `clickhouse/clickhouse-server` | bundled ClickHouse | ClickHouse server image repository. |
 | `clickhouse.clickhouse.image.tag` | `26.1.2.11-alpine` | bundled ClickHouse | ClickHouse server image tag. |

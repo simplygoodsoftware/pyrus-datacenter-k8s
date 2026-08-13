@@ -23,6 +23,17 @@ containersRepo:
 
 elasticsearch:
   image: "cr.yandex/crpn0l4dp22f8mv5ln18/elastic-selfhosted"
+
+clickhouse:
+  clickhouse:
+    image:
+      repository: cr.yandex/crpn0l4dp22f8mv5ln18/clickhouse-server
+  keeper:
+    image:
+      repository: cr.yandex/crpn0l4dp22f8mv5ln18/clickhouse-keeper
+  backup:
+    image:
+      repository: cr.yandex/crpn0l4dp22f8mv5ln18/clickhouse-backup
 ```
 ### Форсирование версии Pyrus Datacenter
 ```

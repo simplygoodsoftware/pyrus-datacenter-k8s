@@ -42,7 +42,6 @@ clickhouse:
 
   clickhouse:
     enabled: true
-    replicasCount: 1
     users:
       pyrus_writer:
         password: <пароль пользователя>
@@ -110,7 +109,7 @@ grants:
 | Value | Default | Required | Описание |
 | --- | --- | --- | --- |
 | `clickhouse.keeper.enabled` | `false` | встроенный ClickHouse | Включает ресурсы ClickHouse Keeper во встроенном сабчарте `clickhouse`. |
-| `clickhouse.keeper.replicas` | `1` | встроенный ClickHouse | Количество реплик ClickHouse Keeper. |
+| `clickhouse.keeper.replicas` | `3` | встроенный ClickHouse | Количество реплик ClickHouse Keeper. |
 | `clickhouse.keeper.nodeRoleSelectorLabel` | unset | no | Если задано, pod'ы Keeper будут запускаться на нодах с label `node-role.kubernetes.io/<value>: enabled`. |
 | `clickhouse.keeper.image.repository` | `clickhouse/clickhouse-keeper` | встроенный ClickHouse | Repository образа ClickHouse Keeper. |
 | `clickhouse.keeper.image.tag` | `26.1.2.11-alpine` | встроенный ClickHouse | Tag образа ClickHouse Keeper. |
@@ -127,7 +126,7 @@ grants:
 | --- | --- | --- | --- |
 | `clickhouse.clickhouse.enabled` | `false` | встроенный ClickHouse | Включает ресурсы ClickHouse server во встроенном сабчарте `clickhouse`. |
 | `clickhouse.clickhouse.shardsCount` | `1` | встроенный ClickHouse | Количество шардов ClickHouse. Pyrus поддерживает только `1`. |
-| `clickhouse.clickhouse.replicasCount` | `1` | встроенный ClickHouse | Количество реплик ClickHouse. |
+| `clickhouse.clickhouse.replicasCount` | `2` | встроенный ClickHouse | Количество реплик ClickHouse. |
 | `clickhouse.clickhouse.nodeRoleSelectorLabel` | unset | no | Если задано, pod'ы ClickHouse будут запускаться на нодах с label `node-role.kubernetes.io/<value>: enabled`. |
 | `clickhouse.clickhouse.image.repository` | `clickhouse/clickhouse-server` | встроенный ClickHouse | Repository образа ClickHouse server. |
 | `clickhouse.clickhouse.image.tag` | `26.1.2.11-alpine` | встроенный ClickHouse | Tag образа ClickHouse server. |
