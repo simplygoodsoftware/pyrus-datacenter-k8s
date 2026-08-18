@@ -27,13 +27,13 @@ elasticsearch:
 clickhouse:
   clickhouse:
     image:
-      repository: cr.yandex/crpn0l4dp22f8mv5ln18/clickhouse-server
+      repository: cr.yandex/crpn0l4dp22f8mv5ln18/pyrus-clickhouse
   keeper:
     image:
-      repository: cr.yandex/crpn0l4dp22f8mv5ln18/clickhouse-keeper
+      repository: cr.yandex/crpn0l4dp22f8mv5ln18/pyrus-clickhouse-keeper
   backup:
     image:
-      repository: cr.yandex/crpn0l4dp22f8mv5ln18/clickhouse-backup
+      repository: cr.yandex/crpn0l4dp22f8mv5ln18/pyrus-clickhouse-backup
 ```
 ### Форсирование версии Pyrus Datacenter
 ```

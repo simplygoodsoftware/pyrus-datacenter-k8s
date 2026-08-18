@@ -2,7 +2,16 @@ apiVersion: v1
 entries:
   clickhouse:
   - apiVersion: v2
-    created: "2026-07-31T12:43:43.455998111Z"
+    created: "2026-08-18T13:05:41.173458116Z"
+    description: Altinity clickhouse cluster
+    digest: f9f870a91ddd2b97da0c606923fdeb484dd979b5da412fcb77794ee19445af71
+    name: clickhouse
+    type: application
+    urls:
+    - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/clickhouse-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    created: "2026-08-18T13:05:41.173048935Z"
     description: Altinity clickhouse cluster
     digest: cf5bff119b95b7c26e91bf35d01b2bd38fd6f720c9fc79a2a8d131fc2094ea73
     name: clickhouse
@@ -11,7 +20,7 @@ entries:
     - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/clickhouse-1.0.1.tgz
     version: 1.0.1
   - apiVersion: v2
-    created: "2026-07-31T12:43:43.454692907Z"
+    created: "2026-08-18T13:05:41.172612018Z"
     description: Altinity clickhouse cluster
     digest: dc9ff1bd782ac6b162dbe1d5e70846b2637cd2f8a58ca381a4c214881f702925
     name: clickhouse
@@ -21,7 +30,7 @@ entries:
     version: 1.0.0
   clickhouse-operator:
   - apiVersion: v2
-    created: "2026-07-31T12:43:43.45947972Z"
+    created: "2026-08-18T13:05:41.176478263Z"
     dependencies:
     - alias: operator
       name: altinity-clickhouse-operator
@@ -37,7 +46,7 @@ entries:
   postgres-operator:
   - apiVersion: v2
     appVersion: 1.8.2
-    created: "2026-07-31T12:43:43.461268325Z"
+    created: "2026-08-18T13:05:41.177187857Z"
     description: Postgres Operator creates and manages PostgreSQL clusters running
       in Kubernetes
     digest: f77ffad2e98b72a621e5527015cf607935d3ed688f10ba4b626435acb9631b5b
@@ -60,7 +69,7 @@ entries:
   pyrus-datacenter:
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.692422743Z"
+    created: "2026-08-18T13:05:41.368152338Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -89,7 +98,7 @@ entries:
     version: 2.0.47
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.686758128Z"
+    created: "2026-08-18T13:05:41.362767542Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -118,7 +127,7 @@ entries:
     version: 2.0.46
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.680397411Z"
+    created: "2026-08-18T13:05:41.356778699Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -147,7 +156,7 @@ entries:
     version: 2.0.45
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.674540896Z"
+    created: "2026-08-18T13:05:41.352975113Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -176,7 +185,7 @@ entries:
     version: 2.0.44
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.668305179Z"
+    created: "2026-08-18T13:05:41.348332098Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -205,7 +214,7 @@ entries:
     version: 2.0.43
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.663064965Z"
+    created: "2026-08-18T13:05:41.344005937Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -234,7 +243,7 @@ entries:
     version: 2.0.42
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.656769248Z"
+    created: "2026-08-18T13:05:41.33925725Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -262,7 +271,7 @@ entries:
     version: 2.0.41
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.650950632Z"
+    created: "2026-08-18T13:05:41.335461645Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -290,7 +299,7 @@ entries:
     version: 2.0.40
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.640527204Z"
+    created: "2026-08-18T13:05:41.324547451Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -318,7 +327,7 @@ entries:
     version: 2.0.39
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.63498149Z"
+    created: "2026-08-18T13:05:41.320746493Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -346,7 +355,7 @@ entries:
     version: 2.0.38
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.628631473Z"
+    created: "2026-08-18T13:05:41.315526112Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -374,7 +383,7 @@ entries:
     version: 2.0.37
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.622999358Z"
+    created: "2026-08-18T13:05:41.309918978Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -402,7 +411,7 @@ entries:
     version: 2.0.36
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.617610943Z"
+    created: "2026-08-18T13:05:41.304897203Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -427,7 +436,7 @@ entries:
     version: 2.0.35
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.611688927Z"
+    created: "2026-08-18T13:05:41.300801733Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -452,7 +461,7 @@ entries:
     version: 2.0.34
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.606471613Z"
+    created: "2026-08-18T13:05:41.297069606Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -477,7 +486,7 @@ entries:
     version: 2.0.33
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.600617998Z"
+    created: "2026-08-18T13:05:41.292101722Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -502,7 +511,7 @@ entries:
     version: 2.0.32
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.595372384Z"
+    created: "2026-08-18T13:05:41.286282252Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -527,7 +536,7 @@ entries:
     version: 2.0.31
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.589147967Z"
+    created: "2026-08-18T13:05:41.280788951Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -552,7 +561,7 @@ entries:
     version: 2.0.30
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.57902764Z"
+    created: "2026-08-18T13:05:41.272438678Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -577,7 +586,7 @@ entries:
     version: 2.0.29
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.573205624Z"
+    created: "2026-08-18T13:05:41.266967308Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -602,7 +611,7 @@ entries:
     version: 2.0.28
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.568067611Z"
+    created: "2026-08-18T13:05:41.26098095Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -627,7 +636,7 @@ entries:
     version: 2.0.27
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.562008994Z"
+    created: "2026-08-18T13:05:41.255376743Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -652,7 +661,7 @@ entries:
     version: 2.0.26
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.556369679Z"
+    created: "2026-08-18T13:05:41.250951982Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -677,7 +686,7 @@ entries:
     version: 2.0.25
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.551232665Z"
+    created: "2026-08-18T13:05:41.246969448Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -702,7 +711,7 @@ entries:
     version: 2.0.24
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.54541735Z"
+    created: "2026-08-18T13:05:41.243315926Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -727,7 +736,7 @@ entries:
     version: 2.0.23
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.540187236Z"
+    created: "2026-08-18T13:05:41.239210078Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -752,7 +761,7 @@ entries:
     version: 2.0.22
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.534681421Z"
+    created: "2026-08-18T13:05:41.235535797Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -777,7 +786,7 @@ entries:
     version: 2.0.21
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.529155206Z"
+    created: "2026-08-18T13:05:41.231393683Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -802,7 +811,7 @@ entries:
     version: 2.0.20
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.51917228Z"
+    created: "2026-08-18T13:05:41.224588239Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -827,7 +836,7 @@ entries:
     version: 2.0.19
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.513245164Z"
+    created: "2026-08-18T13:05:41.21989187Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -852,7 +861,7 @@ entries:
     version: 2.0.18
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.50811045Z"
+    created: "2026-08-18T13:05:41.215411987Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -877,7 +886,7 @@ entries:
     version: 2.0.17
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.501704233Z"
+    created: "2026-08-18T13:05:41.21147379Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -902,7 +911,7 @@ entries:
     version: 2.0.16
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.49700092Z"
+    created: "2026-08-18T13:05:41.205937075Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -927,7 +936,7 @@ entries:
     version: 2.0.15
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.491748106Z"
+    created: "2026-08-18T13:05:41.200796154Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -952,7 +961,7 @@ entries:
     version: 2.0.14
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.487080094Z"
+    created: "2026-08-18T13:05:41.196706925Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -977,7 +986,7 @@ entries:
     version: 2.0.13
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.482400881Z"
+    created: "2026-08-18T13:05:41.192847651Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1002,7 +1011,7 @@ entries:
     version: 2.0.12
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.477428768Z"
+    created: "2026-08-18T13:05:41.189398527Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1027,7 +1036,7 @@ entries:
     version: 2.0.11
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.473025056Z"
+    created: "2026-08-18T13:05:41.185830505Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1052,7 +1061,7 @@ entries:
     version: 2.0.10
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.712386297Z"
+    created: "2026-08-18T13:05:41.384858441Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1077,7 +1086,7 @@ entries:
     version: 2.0.9
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.707360783Z"
+    created: "2026-08-18T13:05:41.380361105Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1102,7 +1111,7 @@ entries:
     version: 2.0.7
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.70255157Z"
+    created: "2026-08-18T13:05:41.376067121Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1127,7 +1136,7 @@ entries:
     version: 2.0.6
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.697154556Z"
+    created: "2026-08-18T13:05:41.371383712Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1152,7 +1161,7 @@ entries:
     version: 2.0.5
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.645559818Z"
+    created: "2026-08-18T13:05:41.329565744Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1177,7 +1186,7 @@ entries:
     version: 2.0.4
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.583570552Z"
+    created: "2026-08-18T13:05:41.276891002Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1202,7 +1211,7 @@ entries:
     version: 2.0.3
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.52303839Z"
+    created: "2026-08-18T13:05:41.227499055Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1222,7 +1231,7 @@ entries:
     version: 2.0.2
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.468059743Z"
+    created: "2026-08-18T13:05:41.182633826Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1242,7 +1251,7 @@ entries:
     version: 2.0.1
   - apiVersion: v2
     appVersion: latest
-    created: "2026-07-31T12:43:43.464689334Z"
+    created: "2026-08-18T13:05:41.179741736Z"
     dependencies:
     - condition: nats.enabled
       name: nats
@@ -1260,4 +1269,4 @@ entries:
     urls:
     - https://simplygoodsoftware.github.io/pyrus-datacenter-k8s/pyrus-datacenter-2.0.0.tgz
     version: 2.0.0
-generated: "2026-07-31T12:43:43.453228703Z"
+generated: "2026-08-18T13:05:41.172093184Z"

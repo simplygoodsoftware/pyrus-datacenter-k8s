@@ -103,6 +103,7 @@ grants:
 | `clickhouse.externalPort` | `""` | внешний ClickHouse | HTTP port внешнего ClickHouse. Обязателен при `reportEngine.enabled=true` и `clickhouse.internal=false`. |
 | `clickhouse.externalUser` | `pyrus_writer` | внешний ClickHouse | Пользователь, под которым Pyrus подключается к внешнему ClickHouse. Обязателен при `reportEngine.enabled=true` и `clickhouse.internal=false`. |
 | `clickhouse.externalUserPassword` | `pyruspwd` | внешний ClickHouse | Пароль для `clickhouse.externalUser`. Обязателен при `reportEngine.enabled=true` и `clickhouse.internal=false`. |
+| `clickhouse.imagePullSecrets` | `[]` | no | Kubernetes Secrets для скачивания образов всеми pod'ами встроенного ClickHouse. Каждый элемент должен содержать `name`. |
 
 ### ClickHouse Keeper
 
