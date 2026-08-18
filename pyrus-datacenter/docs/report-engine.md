@@ -103,6 +103,7 @@ The `clickhouse.keeper.settings`, `clickhouse.clickhouse.settings`, `clickhouse.
 | `clickhouse.externalPort` | `""` | external ClickHouse | External ClickHouse HTTP port. Required when `reportEngine.enabled=true` and `clickhouse.internal=false`. |
 | `clickhouse.externalUser` | `pyrus_writer` | external ClickHouse | User used by Pyrus to connect to external ClickHouse. Required when `reportEngine.enabled=true` and `clickhouse.internal=false`. |
 | `clickhouse.externalUserPassword` | `pyruspwd` | external ClickHouse | Password for `clickhouse.externalUser`. Required when `reportEngine.enabled=true` and `clickhouse.internal=false`. |
+| `clickhouse.imagePullSecrets` | `[]` | no | Kubernetes image pull secrets used by all bundled ClickHouse pods. Each item must contain a `name`. |
 
 ### ClickHouse Keeper
 
