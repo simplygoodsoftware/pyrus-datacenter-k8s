@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: *name
-  replicas: {{ (index $.Values.countStrategy "pyrus-smtp").replicas | default 0 }}
+  replicas: {{ (index $.Values.countStrategy $cname).replicas | default 0 }}
   template:
     metadata:
       labels:
@@ -18,4 +18,9 @@ spec:
       containers:
         - name: *name
           image: namshi/smtp
-
+          {{- if hasKey $.Values.env $cname }}
+          env:
+            {{- with (index $.Values.env $cname) }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- end }}
