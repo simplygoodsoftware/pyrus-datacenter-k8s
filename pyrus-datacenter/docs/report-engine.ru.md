@@ -112,8 +112,8 @@ grants:
 | `clickhouse.keeper.enabled` | `false` | встроенный ClickHouse | Включает ресурсы ClickHouse Keeper во встроенном сабчарте `clickhouse`. |
 | `clickhouse.keeper.replicas` | `3` | встроенный ClickHouse | Количество реплик ClickHouse Keeper. |
 | `clickhouse.keeper.nodeRoleSelectorLabel` | unset | no | Если задано, pod'ы Keeper будут запускаться на нодах с label `node-role.kubernetes.io/<value>: enabled`. |
-| `clickhouse.keeper.image.repository` | `clickhouse/clickhouse-keeper` | встроенный ClickHouse | Repository образа ClickHouse Keeper. |
-| `clickhouse.keeper.image.tag` | `26.1.2.11-alpine` | встроенный ClickHouse | Tag образа ClickHouse Keeper. |
+| `clickhouse.keeper.image.repository` | `simplygoodsoftware/pyrus-clickhouse-keeper` | встроенный ClickHouse | Repository образа ClickHouse Keeper. |
+| `clickhouse.keeper.image.tag` | `tagsContainers.All` | встроенный ClickHouse | Tag образа ClickHouse Keeper. Совпадает с версией Pyrus в `tagsContainers.All`. |
 | `clickhouse.keeper.settings` | см. `values.yaml` | no | Вложенные настройки ClickHouse Keeper, которые чарт передает в Altinity operator. Здесь можно настраивать `prometheus`, `keeper_server`, `logger`, `coordination_settings` и другие параметры Keeper. |
 | `clickhouse.keeper.resources.requests.cpu` | `100m` | встроенный ClickHouse | CPU request для pod'а Keeper. |
 | `clickhouse.keeper.resources.requests.memory` | `512Mi` | встроенный ClickHouse | Memory request для pod'а Keeper. |
@@ -129,8 +129,8 @@ grants:
 | `clickhouse.clickhouse.shardsCount` | `1` | встроенный ClickHouse | Количество шардов ClickHouse. Pyrus поддерживает только `1`. |
 | `clickhouse.clickhouse.replicasCount` | `2` | встроенный ClickHouse | Количество реплик ClickHouse. |
 | `clickhouse.clickhouse.nodeRoleSelectorLabel` | unset | no | Если задано, pod'ы ClickHouse будут запускаться на нодах с label `node-role.kubernetes.io/<value>: enabled`. |
-| `clickhouse.clickhouse.image.repository` | `clickhouse/clickhouse-server` | встроенный ClickHouse | Repository образа ClickHouse server. |
-| `clickhouse.clickhouse.image.tag` | `26.1.2.11-alpine` | встроенный ClickHouse | Tag образа ClickHouse server. |
+| `clickhouse.clickhouse.image.repository` | `simplygoodsoftware/pyrus-clickhouse` | встроенный ClickHouse | Repository образа ClickHouse server. |
+| `clickhouse.clickhouse.image.tag` | `tagsContainers.All` | встроенный ClickHouse | Tag образа ClickHouse server. Совпадает с версией Pyrus в `tagsContainers.All`. |
 | `clickhouse.clickhouse.settings` | см. `values.yaml` | no | Вложенные настройки ClickHouse server, которые чарт передает в Altinity operator. Здесь можно настраивать `prometheus`, `merge_tree`, лимиты памяти и подключений, caches, `logger`, `compression` и другие параметры ClickHouse. |
 | `clickhouse.clickhouse.profiles` | `default`, `readonly`, `readwrite` | no | Профили ClickHouse users. Вложенные значения рендерятся как `profile/key`. |
 | `clickhouse.clickhouse.quotas` | `default` | no | Quotas ClickHouse users. Вложенные значения рендерятся как `quota/interval/key`. |
@@ -163,8 +163,8 @@ grants:
 | --- | --- | --- | --- |
 | `clickhouse.backup.enabled` | `false` | no | Включает backup sidecar в pod ClickHouse и CronJob для регулярных backup. |
 | `clickhouse.backup.restore` | `false` | no | Включает restore job для восстановления последнего backup при установке или обновлении чарта, а также добавляет backup sidecar. |
-| `clickhouse.backup.image.repository` | `altinity/clickhouse-backup` | backup | Repository образа `clickhouse-backup`. |
-| `clickhouse.backup.image.tag` | `2.6.42` | backup | Tag образа `clickhouse-backup`. |
+| `clickhouse.backup.image.repository` | `simplygoodsoftware/pyrus-clickhouse-backup` | backup | Repository образа `clickhouse-backup`. |
+| `clickhouse.backup.image.tag` | `tagsContainers.All` | backup | Tag образа `clickhouse-backup`. Совпадает с версией Pyrus в `tagsContainers.All`. |
 | `clickhouse.backup.debug` | `false` | backup | Включает debug-режим `clickhouse-backup` и S3 debug output. |
 | `clickhouse.backup.schedule` | `0 0 * * *` | backup | Расписание backup CronJob в cron-формате. |
 | `clickhouse.backup.FULL_BACKUP_WEEKDAY` | `6` | backup | День недели для полного backup: `1` - Monday, `7` - Sunday. В остальные дни создается incremental backup. |

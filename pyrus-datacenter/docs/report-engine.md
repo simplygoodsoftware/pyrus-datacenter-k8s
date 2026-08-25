@@ -112,8 +112,8 @@ The `clickhouse.keeper.settings`, `clickhouse.clickhouse.settings`, `clickhouse.
 | `clickhouse.keeper.enabled` | `false` | bundled ClickHouse | Enables ClickHouse Keeper resources in the bundled `clickhouse` subchart. |
 | `clickhouse.keeper.replicas` | `3` | bundled ClickHouse | Number of ClickHouse Keeper replicas. |
 | `clickhouse.keeper.nodeRoleSelectorLabel` | unset | no | If set, Keeper pods are scheduled on nodes with the `node-role.kubernetes.io/<value>: enabled` label. |
-| `clickhouse.keeper.image.repository` | `clickhouse/clickhouse-keeper` | bundled ClickHouse | ClickHouse Keeper image repository. |
-| `clickhouse.keeper.image.tag` | `26.1.2.11-alpine` | bundled ClickHouse | ClickHouse Keeper image tag. |
+| `clickhouse.keeper.image.repository` | `simplygoodsoftware/pyrus-clickhouse-keeper` | bundled ClickHouse | ClickHouse Keeper image repository. |
+| `clickhouse.keeper.image.tag` | `tagsContainers.All` | bundled ClickHouse | ClickHouse Keeper image tag. Matches the Pyrus version in `tagsContainers.All`. |
 | `clickhouse.keeper.settings` | see `values.yaml` | no | Nested ClickHouse Keeper settings passed by the chart to the Altinity operator. Use this section to configure `prometheus`, `keeper_server`, `logger`, `coordination_settings`, and other Keeper parameters. |
 | `clickhouse.keeper.resources.requests.cpu` | `100m` | bundled ClickHouse | CPU request for the Keeper pod. |
 | `clickhouse.keeper.resources.requests.memory` | `512Mi` | bundled ClickHouse | Memory request for the Keeper pod. |
@@ -129,8 +129,8 @@ The `clickhouse.keeper.settings`, `clickhouse.clickhouse.settings`, `clickhouse.
 | `clickhouse.clickhouse.shardsCount` | `1` | bundled ClickHouse | Number of ClickHouse shards. Pyrus supports only `1`. |
 | `clickhouse.clickhouse.replicasCount` | `2` | bundled ClickHouse | Number of ClickHouse replicas. |
 | `clickhouse.clickhouse.nodeRoleSelectorLabel` | unset | no | If set, ClickHouse pods are scheduled on nodes with the `node-role.kubernetes.io/<value>: enabled` label. |
-| `clickhouse.clickhouse.image.repository` | `clickhouse/clickhouse-server` | bundled ClickHouse | ClickHouse server image repository. |
-| `clickhouse.clickhouse.image.tag` | `26.1.2.11-alpine` | bundled ClickHouse | ClickHouse server image tag. |
+| `clickhouse.clickhouse.image.repository` | `simplygoodsoftware/pyrus-clickhouse` | bundled ClickHouse | ClickHouse server image repository. |
+| `clickhouse.clickhouse.image.tag` | `tagsContainers.All` | bundled ClickHouse | ClickHouse server image tag. Matches the Pyrus version in `tagsContainers.All`. |
 | `clickhouse.clickhouse.settings` | see `values.yaml` | no | Nested ClickHouse server settings passed by the chart to the Altinity operator. Use this section to configure `prometheus`, `merge_tree`, memory and connection limits, caches, `logger`, `compression`, and other ClickHouse parameters. |
 | `clickhouse.clickhouse.profiles` | `default`, `readonly`, `readwrite` | no | ClickHouse user profiles. Nested values are rendered as `profile/key`. |
 | `clickhouse.clickhouse.quotas` | `default` | no | ClickHouse user quotas. Nested values are rendered as `quota/interval/key`. |
@@ -163,8 +163,8 @@ Only ClickHouse is backed up. Keeper is not backed up because it stores state th
 | --- | --- | --- | --- |
 | `clickhouse.backup.enabled` | `false` | no | Enables the backup sidecar in the ClickHouse pod and the CronJob for regular backups. |
 | `clickhouse.backup.restore` | `false` | no | Enables the restore job that restores the latest backup during chart install or upgrade, and also adds the backup sidecar. |
-| `clickhouse.backup.image.repository` | `altinity/clickhouse-backup` | backup | `clickhouse-backup` image repository. |
-| `clickhouse.backup.image.tag` | `2.6.42` | backup | `clickhouse-backup` image tag. |
+| `clickhouse.backup.image.repository` | `simplygoodsoftware/pyrus-clickhouse-backup` | backup | `clickhouse-backup` image repository. |
+| `clickhouse.backup.image.tag` | `tagsContainers.All` | backup | `clickhouse-backup` image tag. Matches the Pyrus version in `tagsContainers.All`. |
 | `clickhouse.backup.debug` | `false` | backup | Enables `clickhouse-backup` debug mode and S3 debug output. |
 | `clickhouse.backup.schedule` | `0 0 * * *` | backup | Backup CronJob schedule in cron format. |
 | `clickhouse.backup.FULL_BACKUP_WEEKDAY` | `6` | backup | Weekday for full backups: `1` - Monday, `7` - Sunday. Incremental backups are created on other days. |
