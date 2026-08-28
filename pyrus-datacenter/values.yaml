@@ -125,7 +125,7 @@ containersRepo:
 infraContainersRepo:
 
 tagsContainers:
-  All: 1.26.0
+  All: 1.26.1
 
 devExpectedDbVersion:
 
@@ -756,6 +756,7 @@ versionUpgradeHistory1121:
   - 1.24.1
   - 1.25.0
   - 1.26.0
+  - 1.26.1
 
 versionUpgradeHistoryDev:
 
@@ -780,7 +781,7 @@ clickhouse:
     # nodeRoleSelectorLabel: keeper
     image:
       repository: simplygoodsoftware/pyrus-clickhouse-keeper
-      tag: "1.26.0"
+      tag: "1.26.1"
     settings:
       prometheus:
         endpoint: /metrics
@@ -831,7 +832,7 @@ clickhouse:
     # nodeRoleSelectorLabel: clickhouse
     image:
       repository: simplygoodsoftware/pyrus-clickhouse
-      tag: "1.26.0"
+      tag: "1.26.1"
     settings:
       prometheus:
         endpoint: /metrics
@@ -901,7 +902,7 @@ clickhouse:
     restore: false
     image:
       repository: simplygoodsoftware/pyrus-clickhouse-backup
-      tag: "1.26.0"
+      tag: "1.26.1"
     debug: false
     schedule: "0 0 * * *"
     # 1 - Mon, 7 - Sun
