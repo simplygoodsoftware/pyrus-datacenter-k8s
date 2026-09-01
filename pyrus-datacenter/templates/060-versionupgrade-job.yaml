@@ -74,8 +74,11 @@ spec:
               
               printf "Current version: ${VERSION_IS}"
               
-              printf "{{ $upversion }}\n${VERSION_IS}\n" \
-                | sort -V | head -n 1 | grep -q "{{ $upversion }}" && echo " skip" && exit 0
+              OLDEST_VERSION=$(printf "{{ $upversion }}\n${VERSION_IS}\n" | sort -V | head -n 1)
+              if [ "${VERSION_IS}" != "{{ $upversion }}" ] && [ "${OLDEST_VERSION}" = "{{ $upversion }}" ]; then
+                    echo " skip: migrator image is older than current DC version"
+                    exit 0
+              fi
               
               echo "Upping it."
 
@@ -153,8 +156,11 @@ spec:
               
               printf "Current version: ${VERSION_IS}"
               
-              printf "{{ $upversion }}\n${VERSION_IS}\n" \
-                | sort -V | head -n 1 | grep -q "{{ $upversion }}" && echo " skip" && exit 0
+              OLDEST_VERSION=$(printf "{{ $upversion }}\n${VERSION_IS}\n" | sort -V | head -n 1)
+              if [ "${VERSION_IS}" != "{{ $upversion }}" ] && [ "${OLDEST_VERSION}" = "{{ $upversion }}" ]; then
+                    echo " skip: migrator image is older than current DC version"
+                    exit 0
+              fi
               
               echo " upping it..."
               dotnet Pyrus.DataMigrations.dll --update --noninteractive
@@ -181,8 +187,11 @@ spec:
               
               printf "Current version: ${VERSION_IS}"
               
-              printf "{{ $upversion }}\n${VERSION_IS}\n" \
-                | sort -V | head -n 1 | grep -q "{{ $upversion }}" && echo " skip" && exit 0
+              OLDEST_VERSION=$(printf "{{ $upversion }}\n${VERSION_IS}\n" | sort -V | head -n 1)
+              if [ "${VERSION_IS}" != "{{ $upversion }}" ] && [ "${OLDEST_VERSION}" = "{{ $upversion }}" ]; then
+                    echo " skip: migrator image is older than current DC version"
+                    exit 0
+              fi
               
               echo " upping it..."
               dotnet Pyrus.DataMigrations.dll --update --noninteractive
