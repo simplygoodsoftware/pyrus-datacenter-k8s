@@ -8,7 +8,7 @@ avatar:
     - path: /services/avatar
       pathType: Prefix
     - path: /services/kb
-      pathType: Prefix 
+      pathType: Prefix
 
 v4-files-download:
   annotations:
@@ -47,4 +47,9 @@ service-upload:
     - path: /services/viewtxt
       pathType: Prefix
     - path: /restapi/upload
+      pathType: Prefix
+
+service-me:
+  paths:
+    - path: /services/me/
       pathType: Prefix
