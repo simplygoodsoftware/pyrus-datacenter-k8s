@@ -98,7 +98,7 @@ grants:
 | --- | --- | --- | --- |
 | `reportEngine.enabled` | `false` | no | Включает или выключает движок отчетов. |
 | `clickhouse.internal` | `true` | no | Если `true`, используется встроенный сабчарт `clickhouse`. Если `false`, используется внешний endpoint ClickHouse. |
-| `clickhouse.clusterName` | `clickhouse` | no | Имя кластера ClickHouse. Если заполнено, движок отчетов использует replicated mode. Если пустое, используется single-node mode. |
+| `clickhouse.clusterName` | `clickhouse` | no | Имя кластера ClickHouse. Если заполнено, движок отчетов использует replicated mode. Если пустое (`""`), используется single-node mode; встроенный CHI при этом использует техническое имя `clickhouse`. |
 | `clickhouse.externalHost` | `""` | внешний ClickHouse | HTTP host внешнего ClickHouse. Обязателен при `reportEngine.enabled=true` и `clickhouse.internal=false`. |
 | `clickhouse.externalPort` | `""` | внешний ClickHouse | HTTP port внешнего ClickHouse. Обязателен при `reportEngine.enabled=true` и `clickhouse.internal=false`. |
 | `clickhouse.externalUser` | `pyrus_writer` | внешний ClickHouse | Пользователь, под которым Pyrus подключается к внешнему ClickHouse. Обязателен при `reportEngine.enabled=true` и `clickhouse.internal=false`. |
@@ -132,6 +132,7 @@ grants:
 | `clickhouse.clickhouse.image.repository` | `simplygoodsoftware/pyrus-clickhouse` | встроенный ClickHouse | Repository образа ClickHouse server. |
 | `clickhouse.clickhouse.image.tag` | `tagsContainers.All` | встроенный ClickHouse | Tag образа ClickHouse server. Совпадает с версией Pyrus в `tagsContainers.All`. |
 | `clickhouse.clickhouse.settings` | см. `values.yaml` | no | Вложенные настройки ClickHouse server, которые чарт передает в Altinity operator. Здесь можно настраивать `prometheus`, `merge_tree`, лимиты памяти и подключений, caches, `logger`, `compression` и другие параметры ClickHouse. |
+| `clickhouse.clickhouse.settings.remote_url_allow_hosts.host` | `["127.0.0.1:7171"]` | backup | Разрешенные адреса для URL-запросов. Сохраняйте `127.0.0.1:7171` для доступа таблиц `system.backup_*` к API бэкапов. |
 | `clickhouse.clickhouse.profiles` | `default`, `readonly`, `readwrite` | no | Профили ClickHouse users. Вложенные значения рендерятся как `profile/key`. |
 | `clickhouse.clickhouse.quotas` | `default` | no | Quotas ClickHouse users. Вложенные значения рендерятся как `quota/interval/key`. |
 | `clickhouse.clickhouse.users` | `default`, `pyrus_writer` | встроенный ClickHouse | Пользователи ClickHouse. Вложенные значения рендерятся как `user/key`. |
@@ -177,3 +178,38 @@ grants:
 | `clickhouse.backup.S3_ACCESS_KEY` | unset | backup | Access key для S3. |
 | `clickhouse.backup.S3_SECRET_KEY` | unset | backup | Secret key для S3. |
 | `clickhouse.backup.S3_PATH` | `clickhouse/shard-{shard}` | backup | Путь backup в bucket. Макрос `{shard}` заменяется номером шарда. |
+
+### Резервное хранилище бэкапов
+
+Полные бэкапы в отдельное S3-хранилище по собственному расписанию. Для включения нужны `clickhouse.backup.enabled=true` и `clickhouse.backup.reserve.enabled=true`.
+
+| Value | Default | Required | Описание |
+| --- | --- | --- | --- |
+| `clickhouse.backup.reserve.enabled` | `false` | no | Включает резервный backup sidecar и CronJob при `clickhouse.backup.enabled=true`. |
+| `clickhouse.backup.reserve.schedule` | `0 6 * * 0` | резервный backup | Расписание полных бэкапов в cron-формате. |
+| `clickhouse.backup.reserve.BACKUPS_TO_KEEP_REMOTE` | `2` | резервный backup | Количество полных бэкапов, сохраняемых в резервном хранилище. |
+| `clickhouse.backup.reserve.S3_ENDPOINT` | unset | резервный backup | S3 endpoint резервного хранилища. |
+| `clickhouse.backup.reserve.S3_REGION` | unset | no | S3 region резервного хранилища. Необязателен для некоторых S3-compatible storage. |
+| `clickhouse.backup.reserve.S3_BUCKET` | unset | резервный backup | S3 bucket для резервных бэкапов. |
+| `clickhouse.backup.reserve.S3_ACCESS_KEY` | unset | резервный backup | Access key для резервного S3-хранилища. |
+| `clickhouse.backup.reserve.S3_SECRET_KEY` | unset | резервный backup | Secret key для резервного S3-хранилища. |
+| `clickhouse.backup.reserve.S3_PATH` | `clickhouse/shard-{shard}` | резервный backup | Путь backup в резервном bucket. Макрос `{shard}` заменяется номером шарда. |
+
+Добавьте эту конфигурацию в установку с уже настроенными основными бэкапами:
+
+```yaml
+clickhouse:
+  backup:
+    enabled: true
+    reserve:
+      enabled: true
+      schedule: "0 6 * * 0"
+      BACKUPS_TO_KEEP_REMOTE: "2"
+      S3_ENDPOINT: https://reserve-s3.example.com
+      S3_BUCKET: reserve-backups
+      S3_ACCESS_KEY: <access key резервного хранилища>
+      S3_SECRET_KEY: <secret key резервного хранилища>
+      S3_PATH: clickhouse/shard-{shard}
+```
+
+Восстановление из резервного хранилища — вручную через `clickhouse-backup` в контейнере `clickhouse-backup-reserve`; `clickhouse.backup.restore` использует основное хранилище.

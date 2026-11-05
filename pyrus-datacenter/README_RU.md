@@ -22,7 +22,12 @@ containersRepo:
   default: cr.yandex/crpn0l4dp22f8mv5ln18
 
 elasticsearch:
-  image: "cr.yandex/crpn0l4dp22f8mv5ln18/elastic-selfhosted"
+  image: cr.yandex/crpn0l4dp22f8mv5ln18/elastic-selfhosted
+
+nats:
+  container:
+    image:
+      repository: cr.yandex/crpn0l4dp22f8mv5ln18/pyrus-nats
 
 clickhouse:
   clickhouse:
