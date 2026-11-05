@@ -1,5 +1,5 @@
 {{- $rl := .Release }}
-{{- if lt (len .Values.pyrusMetrics) 0  }}
+{{- if gt (len .Values.pyrusMetrics) 0  }}
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor

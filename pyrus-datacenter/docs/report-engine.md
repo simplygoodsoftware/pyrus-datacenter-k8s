@@ -98,7 +98,7 @@ The `clickhouse.keeper.settings`, `clickhouse.clickhouse.settings`, `clickhouse.
 | --- | --- | --- | --- |
 | `reportEngine.enabled` | `false` | no | Enables or disables Report Engine. |
 | `clickhouse.internal` | `true` | no | If `true`, uses the bundled `clickhouse` subchart. If `false`, uses an external ClickHouse endpoint. |
-| `clickhouse.clusterName` | `clickhouse` | no | ClickHouse cluster name. If set, Report Engine uses replicated mode. If empty, it uses single-node mode. |
+| `clickhouse.clusterName` | `clickhouse` | no | ClickHouse cluster name. If set, Report Engine uses replicated mode. If empty (`""`), it uses single-node mode; the bundled CHI still uses the technical name `clickhouse`. |
 | `clickhouse.externalHost` | `""` | external ClickHouse | External ClickHouse HTTP host. Required when `reportEngine.enabled=true` and `clickhouse.internal=false`. |
 | `clickhouse.externalPort` | `""` | external ClickHouse | External ClickHouse HTTP port. Required when `reportEngine.enabled=true` and `clickhouse.internal=false`. |
 | `clickhouse.externalUser` | `pyrus_writer` | external ClickHouse | User used by Pyrus to connect to external ClickHouse. Required when `reportEngine.enabled=true` and `clickhouse.internal=false`. |
@@ -132,6 +132,7 @@ The `clickhouse.keeper.settings`, `clickhouse.clickhouse.settings`, `clickhouse.
 | `clickhouse.clickhouse.image.repository` | `simplygoodsoftware/pyrus-clickhouse` | bundled ClickHouse | ClickHouse server image repository. |
 | `clickhouse.clickhouse.image.tag` | `tagsContainers.All` | bundled ClickHouse | ClickHouse server image tag. Matches the Pyrus version in `tagsContainers.All`. |
 | `clickhouse.clickhouse.settings` | see `values.yaml` | no | Nested ClickHouse server settings passed by the chart to the Altinity operator. Use this section to configure `prometheus`, `merge_tree`, memory and connection limits, caches, `logger`, `compression`, and other ClickHouse parameters. |
+| `clickhouse.clickhouse.settings.remote_url_allow_hosts.host` | `["127.0.0.1:7171"]` | backup | Allowed URL hosts. Keep `127.0.0.1:7171` for the `system.backup_*` tables to access the backup API. |
 | `clickhouse.clickhouse.profiles` | `default`, `readonly`, `readwrite` | no | ClickHouse user profiles. Nested values are rendered as `profile/key`. |
 | `clickhouse.clickhouse.quotas` | `default` | no | ClickHouse user quotas. Nested values are rendered as `quota/interval/key`. |
 | `clickhouse.clickhouse.users` | `default`, `pyrus_writer` | bundled ClickHouse | ClickHouse users. Nested values are rendered as `user/key`. |
@@ -177,3 +178,38 @@ Only ClickHouse is backed up. Keeper is not backed up because it stores state th
 | `clickhouse.backup.S3_ACCESS_KEY` | unset | backup | S3 access key. |
 | `clickhouse.backup.S3_SECRET_KEY` | unset | backup | S3 secret key. |
 | `clickhouse.backup.S3_PATH` | `clickhouse/shard-{shard}` | backup | Backup path in the bucket. The `{shard}` macro is replaced with the shard number. |
+
+### Reserve Backup Storage
+
+Full backups to separate S3 storage on their own schedule. Requires both `clickhouse.backup.enabled=true` and `clickhouse.backup.reserve.enabled=true`.
+
+| Value | Default | Required | Description |
+| --- | --- | --- | --- |
+| `clickhouse.backup.reserve.enabled` | `false` | no | Enables the reserve backup sidecar and CronJob when `clickhouse.backup.enabled=true`. |
+| `clickhouse.backup.reserve.schedule` | `0 6 * * 0` | reserve backup | Full backup schedule in cron format. |
+| `clickhouse.backup.reserve.BACKUPS_TO_KEEP_REMOTE` | `2` | reserve backup | Number of full backups kept in reserve storage. |
+| `clickhouse.backup.reserve.S3_ENDPOINT` | unset | reserve backup | S3 endpoint for reserve storage. |
+| `clickhouse.backup.reserve.S3_REGION` | unset | no | S3 region for reserve storage. Optional for some S3-compatible storage. |
+| `clickhouse.backup.reserve.S3_BUCKET` | unset | reserve backup | S3 bucket for reserve backups. |
+| `clickhouse.backup.reserve.S3_ACCESS_KEY` | unset | reserve backup | S3 access key for reserve storage. |
+| `clickhouse.backup.reserve.S3_SECRET_KEY` | unset | reserve backup | S3 secret key for reserve storage. |
+| `clickhouse.backup.reserve.S3_PATH` | `clickhouse/shard-{shard}` | reserve backup | Backup path in the reserve bucket. The `{shard}` macro is replaced with the shard number. |
+
+Add this configuration to an installation with main backups already configured:
+
+```yaml
+clickhouse:
+  backup:
+    enabled: true
+    reserve:
+      enabled: true
+      schedule: "0 6 * * 0"
+      BACKUPS_TO_KEEP_REMOTE: "2"
+      S3_ENDPOINT: https://reserve-s3.example.com
+      S3_BUCKET: reserve-backups
+      S3_ACCESS_KEY: <reserve access key>
+      S3_SECRET_KEY: <reserve secret key>
+      S3_PATH: clickhouse/shard-{shard}
+```
+
+Restore from reserve storage manually with `clickhouse-backup` in the `clickhouse-backup-reserve` container; `clickhouse.backup.restore` uses the main storage.

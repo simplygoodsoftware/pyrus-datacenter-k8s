@@ -125,7 +125,7 @@ containersRepo:
 infraContainersRepo:
 
 tagsContainers:
-  All: 1.27.0
+  All: 1.27.1
 
 devExpectedDbVersion:
 
@@ -213,8 +213,8 @@ nats:
     enabled: false
   container:
     image:
-      repository: nats
-      tag: 2.10.11-alpine3.19
+      repository: simplygoodsoftware/pyrus-nats
+      tag: 1.27.1
     env:
       GOMEMLIMIT: 7GiB
     merge:
@@ -383,7 +383,7 @@ resources:
 defaults:
 #  secretRef:
 #    "/etc/ssl/certs":
-#      ca-certificates.crt: |
+#      corp-root-ca.pem: |
 #        -----BEGIN CERTIFICATE-----
 #        ...
 #        -----END CERTIFICATE-----
@@ -758,6 +758,7 @@ versionUpgradeHistory1121:
   - 1.26.0
   - 1.26.1
   - 1.27.0
+  - 1.27.1
 
 versionUpgradeHistoryDev:
 
@@ -782,7 +783,7 @@ clickhouse:
     # nodeRoleSelectorLabel: keeper
     image:
       repository: simplygoodsoftware/pyrus-clickhouse-keeper
-      tag: "1.27.0"
+      tag: "1.27.1"
     settings:
       prometheus:
         endpoint: /metrics
@@ -833,7 +834,7 @@ clickhouse:
     # nodeRoleSelectorLabel: clickhouse
     image:
       repository: simplygoodsoftware/pyrus-clickhouse
-      tag: "1.27.0"
+      tag: "1.27.1"
     settings:
       prometheus:
         endpoint: /metrics
@@ -903,7 +904,7 @@ clickhouse:
     restore: false
     image:
       repository: simplygoodsoftware/pyrus-clickhouse-backup
-      tag: "1.27.0"
+      tag: "1.27.1"
     debug: false
     schedule: "0 0 * * *"
     # 1 - Mon, 7 - Sun

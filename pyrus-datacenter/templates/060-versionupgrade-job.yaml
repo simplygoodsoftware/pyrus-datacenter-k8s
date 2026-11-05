@@ -42,7 +42,7 @@ spec:
             - {{ .Release.Namespace }}/endpoints/pyrus-logs-pgsql
 {{-   end }}
 {{-   if and $.Values.clickhouse.internal $.Values.clickhouse.clickhouse.enabled }}
-            - {{ .Release.Namespace }}/endpoints/{{ $.Values.clickhouse.chiName }}-shard-0
+            - {{ .Release.Namespace }}/endpoints/{{ $.Values.clickhouse.chiName }}-shard-0-client
 {{-   end }}
 {{- end }}
         - name: wait-setup-variable-complite
@@ -135,8 +135,57 @@ spec:
                   --endpointUrl {{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }} \
 {{-   end }}
 
+{{-     $reportEngineConfigRendered := false }}
 {{-     range $.Values.versionUpgradeHistory1121 }}
 {{-     $upversion := . }}
+{{-     if and (not $reportEngineConfigRendered) (semverCompare ">=1.26.0" $upversion) (semverCompare ">=1.26.0" $.Values.tagsContainers.All) }}
+{{-       $reportEngineConfigRendered = true }}
+        - name: configure-report-engine
+          image: {{ $.Values.containersRepo.default }}/{{ $.Values.imageDevPrefix }}pyrus-setup:{{ $.Values.tagsContainers.All }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: common-variables
+{{-       if $.Values.reportEngine.enabled }}
+{{-         $clickhouseCluster := $.Values.clickhouse.clusterName }}
+{{-         $clickhouseMode := "SingleNode" }}
+{{-         if $clickhouseCluster }}
+{{-           $clickhouseMode = "Replicated" }}
+{{-         end }}
+{{-         $clickhousePort := "8123" }}
+{{-         $clickhouseHost := printf "%s-shard-0-client.%s.svc.cluster.local." $.Values.clickhouse.chiName $.Release.Namespace }}
+{{-         $clickhouseUser := "pyrus_writer" }}
+{{-         $clickhousePassword := "" }}
+{{-         if $.Values.clickhouse.internal }}
+{{-           $clickhousePassword = required "\n\n! BREAK ! .Values.clickhouse.clickhouse.users.pyrus_writer.password must be specified for reportEngine.enabled=true with internal clickhouse\n" $.Values.clickhouse.clickhouse.users.pyrus_writer.password }}
+{{-         else }}
+{{-           $clickhousePort = required "\n\n! BREAK ! .Values.clickhouse.externalPort must be specified for reportEngine.enabled=true with external clickhouse\n" $.Values.clickhouse.externalPort }}
+{{-           $clickhouseHost = required "\n\n! BREAK ! .Values.clickhouse.externalHost must be specified for reportEngine.enabled=true with external clickhouse\n" $.Values.clickhouse.externalHost }}
+{{-           $clickhouseUser = required "\n\n! BREAK ! .Values.clickhouse.externalUser must be specified for reportEngine.enabled=true with external clickhouse\n" $.Values.clickhouse.externalUser }}
+{{-           $clickhousePassword = required "\n\n! BREAK ! .Values.clickhouse.externalUserPassword must be specified for reportEngine.enabled=true with external clickhouse\n" $.Values.clickhouse.externalUserPassword }}
+{{-         end }}
+          args:
+            - enable-report-engine
+            - --clickhouseMode
+            - {{ $clickhouseMode | quote }}
+{{-         if $clickhouseCluster }}
+            - --clickhouseCluster
+            - {{ $clickhouseCluster | quote }}
+{{-         end }}
+            - --clickhouseHost
+            - {{ $clickhouseHost | quote }}
+            - --clickhousePort
+            - {{ $clickhousePort | quote }}
+            - --clickhouseUser
+            - {{ $clickhouseUser | quote }}
+            - --clickhousePassword
+            - {{ $clickhousePassword | quote }}
+{{-       else }}
+          args:
+            - disable-report-engine
+{{-       end }}
+{{-     end }}
+
         - name: up-to-{{ $upversion | replace "." "-" }}
           image: {{ include "pyrus-infra-repo" (list $.Values) }}/pyrus-setup:{{ $upversion }}
           imagePullPolicy: IfNotPresent
@@ -212,53 +261,6 @@ spec:
             - configMapRef:
                 name: common-variables
           args: [ "--setup", "-id", "1090005", "-v", "pyrus-hocus:8009"]
-
-{{-     if semverCompare ">=1.26.0" $.Values.tagsContainers.All }}
-        - name: configure-report-engine
-          image: {{ $.Values.containersRepo.default }}/{{ $.Values.imageDevPrefix }}pyrus-setup:{{ $.Values.tagsContainers.All }}
-          imagePullPolicy: IfNotPresent
-          envFrom:
-            - configMapRef:
-                name: common-variables
-{{-       if $.Values.reportEngine.enabled }}
-{{-         $clickhouseCluster := $.Values.clickhouse.clusterName }}
-{{-         $clickhouseMode := "SingleNode" }}
-{{-         if $clickhouseCluster }}
-{{-           $clickhouseMode = "Replicated" }}
-{{-         end }}
-{{-         $clickhousePort := "8123" }}
-{{-         $clickhouseHost := printf "%s-shard-0.%s.svc.cluster.local" $.Values.clickhouse.chiName .Release.Namespace }}
-{{-         $clickhouseUser := "pyrus_writer" }}
-{{-         $clickhousePassword := "" }}
-{{-         if $.Values.clickhouse.internal }}
-{{-           $clickhousePassword = required "\n\n! BREAK ! .Values.clickhouse.clickhouse.users.pyrus_writer.password must be specified for reportEngine.enabled=true with internal clickhouse\n" $.Values.clickhouse.clickhouse.users.pyrus_writer.password }}
-{{-         else }}
-{{-           $clickhousePort = required "\n\n! BREAK ! .Values.clickhouse.externalPort must be specified for reportEngine.enabled=true with external clickhouse\n" $.Values.clickhouse.externalPort }}
-{{-           $clickhouseHost = required "\n\n! BREAK ! .Values.clickhouse.externalHost must be specified for reportEngine.enabled=true with external clickhouse\n" $.Values.clickhouse.externalHost }}
-{{-           $clickhouseUser = required "\n\n! BREAK ! .Values.clickhouse.externalUser must be specified for reportEngine.enabled=true with external clickhouse\n" $.Values.clickhouse.externalUser }}
-{{-           $clickhousePassword = required "\n\n! BREAK ! .Values.clickhouse.externalUserPassword must be specified for reportEngine.enabled=true with external clickhouse\n" $.Values.clickhouse.externalUserPassword }}
-{{-         end }}
-          args:
-            - enable-report-engine
-            - --clickhouseMode
-            - {{ $clickhouseMode | quote }}
-{{-         if $clickhouseCluster }}
-            - --clickhouseCluster
-            - {{ $clickhouseCluster | quote }}
-{{-         end }}
-            - --clickhouseHost
-            - {{ $clickhouseHost | quote }}
-            - --clickhousePort
-            - {{ $clickhousePort | quote }}
-            - --clickhouseUser
-            - {{ $clickhouseUser | quote }}
-            - --clickhousePassword
-            - {{ $clickhousePassword | quote }}
-{{-       else }}
-          args:
-            - disable-report-engine
-{{-       end }}
-{{-     end }}
 
 {{-     if $.Values.pyrusSetupParamByIdEveryUpgrade }}
         - name: setup-setupbyid-everyupgrade
