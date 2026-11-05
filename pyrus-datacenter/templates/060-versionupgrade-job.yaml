@@ -135,9 +135,11 @@ spec:
                   --endpointUrl {{ .Values.pyrusSetupParam.s3.S3_BLOB_STORAGE_ENDPOINT }} \
 {{-   end }}
 
+{{-     $reportEngineConfigRendered := false }}
 {{-     range $.Values.versionUpgradeHistory1121 }}
 {{-     $upversion := . }}
-{{-     if and (eq $upversion "1.26.0") (semverCompare ">=1.26.0" $.Values.tagsContainers.All) }}
+{{-     if and (not $reportEngineConfigRendered) (semverCompare ">=1.26.0" $upversion) (semverCompare ">=1.26.0" $.Values.tagsContainers.All) }}
+{{-       $reportEngineConfigRendered = true }}
         - name: configure-report-engine
           image: {{ $.Values.containersRepo.default }}/{{ $.Values.imageDevPrefix }}pyrus-setup:{{ $.Values.tagsContainers.All }}
           imagePullPolicy: IfNotPresent
