@@ -1,0 +1,22 @@
+{{- /*
+Validate the loaded subcharts against Chart.yaml, including nested dependencies.
+Helm removes disabled dependencies before rendering and resolves dependency aliases.
+*/ -}}
+{{- define "pyrus-datacenter.validateDependencies" -}}
+{{- $ctx := . -}}
+{{- range $dep := $ctx.Chart.Dependencies -}}
+{{-   $name := default $dep.Name $dep.Alias -}}
+{{-   $sub := index $ctx.Subcharts $name -}}
+{{-   if not $sub -}}
+{{-     fail (printf "ERROR: Chart %s expects dependency %s=%s but the subchart is missing. Run 'helm dependency build <chart-path>' before installing or upgrading." $ctx.Chart.Name $name $dep.Version) -}}
+{{-   end -}}
+{{-   if not (semverCompare $dep.Version $sub.Chart.Version) -}}
+{{-     fail (printf "ERROR: Chart %s expects dependency %s=%s but the subchart version is %s. Run 'helm dependency build <chart-path>' before installing or upgrading." $ctx.Chart.Name $name $dep.Version $sub.Chart.Version) -}}
+{{-   end -}}
+{{- end -}}
+{{- range $sub := $ctx.Subcharts -}}
+{{-   include "pyrus-datacenter.validateDependencies" $sub -}}
+{{- end -}}
+{{- end -}}
+
+{{- include "pyrus-datacenter.validateDependencies" . -}}
